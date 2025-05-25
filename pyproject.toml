@@ -1,0 +1,23 @@
+[project]
+name = "ski-season-planner"
+version = "0.1.0"
+description = "A Streamlit application for planning ski seasons."
+authors = [
+    {name = "Michele Ricciardi", email = "info@michelericciardi.co.uk"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+dependencies = [
+    "streamlit",
+    "pandas",
+    "langchain (>=0.3.25,<0.4.0)",
+]
+
+packages = [
+    { include = "agent" },
+    { include = "src" },
+] 
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

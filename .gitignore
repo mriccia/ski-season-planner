@@ -1,0 +1,27 @@
+__pycache__
+poetry.lock
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.pkl.gz
+*.egg
+*.egg-info
+*.whl
+*.db
+*.sqlite3
+*.log
+*.coverage
+*.DS_Store
+*.env
+*.env.*
+*.vscode
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints
+# Ignore Python virtual environments
+venv/
+# Ignore PyCharm project files
+.idea/
+# Ignore build directories
+build/
+dist/
