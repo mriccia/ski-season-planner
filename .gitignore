@@ -25,3 +25,4 @@ venv/
 # Ignore build directories
 build/
 dist/
+logs/
