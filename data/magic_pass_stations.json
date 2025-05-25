@@ -649,106 +649,271 @@
     },
     {
       "name": "Faltschen",
+      "base_altitude": 1200,
+      "top_altitude": 1800,
+      "vertical_drop": 600,
+      "total_pistes_km": 5,
+      "lifts": 2,
       "region": "Bern"
     },
     {
       "name": "Aeschiallmend",
+      "base_altitude": 1000,
+      "top_altitude": 1400,
+      "vertical_drop": 400,
+      "total_pistes_km": 4,
+      "lifts": 2,
       "region": "Bern"
     },
     {
       "name": "Bumbach Schangnau",
+      "base_altitude": 920,
+      "top_altitude": 1365,
+      "vertical_drop": 445,
+      "total_pistes_km": 10,
+      "difficulty_breakdown": {
+        "easy_km": 6,
+        "intermediate_km": 3,
+        "difficult_km": 1
+      },
+      "lifts": 4,
       "region": "Bern"
     },
     {
       "name": "Eischoll",
+      "base_altitude": 1260,
+      "top_altitude": 2200,
+      "vertical_drop": 940,
+      "total_pistes_km": 15,
+      "difficulty_breakdown": {
+        "easy_km": 10,
+        "intermediate_km": 4.5,
+        "difficult_km": 0.5
+      },
+      "lifts": 4,
       "region": "Valais"
     },
     {
       "name": "Gantrisch Gurnigel",
+      "base_altitude": 1340,
+      "top_altitude": 1590,
+      "vertical_drop": 250,
+      "total_pistes_km": 6,
+      "difficulty_breakdown": {
+        "easy_km": 4,
+        "intermediate_km": 2,
+        "difficult_km": 0
+      },
+      "lifts": 3,
       "region": "Bern"
     },
     {
       "name": "Gspon",
+      "base_altitude": 1900,
+      "top_altitude": 2200,
+      "vertical_drop": 300,
+      "total_pistes_km": 5,
+      "lifts": 2,
       "region": "Valais"
     },
     {
       "name": "Gurnigelbad",
+      "base_altitude": 1150,
+      "top_altitude": 1250,
+      "vertical_drop": 100,
+      "total_pistes_km": 0.7,
+      "difficulty_breakdown": {
+        "easy_km": 0.7,
+        "intermediate_km": 0,
+        "difficult_km": 0
+      },
+      "lifts": 1,
       "region": "Bern"
     },
     {
       "name": "Kiental",
+      "base_altitude": 926,
+      "top_altitude": 1490,
+      "vertical_drop": 564,
+      "total_pistes_km": 7,
+      "difficulty_breakdown": {
+        "easy_km": 2,
+        "intermediate_km": 5,
+        "difficult_km": 0
+      },
+      "lifts": 3,
       "region": "Bern"
     },
     {
       "name": "Ste-Croix/Les Rasses",
+      "base_altitude": 1100,
+      "top_altitude": 1580,
+      "vertical_drop": 480,
+      "total_pistes_km": 20,
+      "lifts": 7,
       "region": "Vaud"
     },
     {
       "name": "Marbachegg",
+      "base_altitude": 900,
+      "top_altitude": 1500,
+      "vertical_drop": 600,
+      "total_pistes_km": 15,
+      "lifts": 3,
       "region": "Lucerne"
     },
     {
       "name": "Moosalp",
+      "base_altitude": 1500,
+      "top_altitude": 2000,
+      "vertical_drop": 500,
+      "total_pistes_km": 25,
+      "lifts": 8,
       "region": "Valais"
     },
     {
       "name": "Ottenleue",
+      "base_altitude": 1000,
+      "top_altitude": 1400,
+      "vertical_drop": 400,
+      "total_pistes_km": 3,
+      "lifts": 1,
       "region": "Bern"
     },
     {
       "name": "Riffenmatt",
+      "base_altitude": 1000,
+      "top_altitude": 1400,
+      "vertical_drop": 400,
+      "total_pistes_km": 3,
+      "lifts": 1,
       "region": "Bern"
     },
     {
       "name": "Rüschegg",
+      "base_altitude": 1000,
+      "top_altitude": 1500,
+      "vertical_drop": 500,
+      "total_pistes_km": 13,
+      "lifts": 5,
       "region": "Bern"
     },
     {
       "name": "Selital",
+      "base_altitude": 1200,
+      "top_altitude": 1700,
+      "vertical_drop": 500,
+      "total_pistes_km": 10,
+      "lifts": 3,
       "region": "Bern"
     },
     {
       "name": "Unterbäch",
+      "base_altitude": 1200,
+      "top_altitude": 2500,
+      "vertical_drop": 1300,
+      "total_pistes_km": 20,
+      "lifts": 5,
       "region": "Valais"
     },
     {
       "name": "Visperterminen",
+      "base_altitude": 1370,
+      "top_altitude": 2338,
+      "vertical_drop": 968,
+      "total_pistes_km": 20,
+      "lifts": 4,
       "region": "Valais"
     },
     {
       "name": "Schwanden",
+      "base_altitude": 1000,
+      "top_altitude": 1400,
+      "vertical_drop": 400,
+      "total_pistes_km": 5,
+      "lifts": 2,
       "region": "Bern"
     },
     {
       "name": "Wilerallmi",
+      "base_altitude": 1000,
+      "top_altitude": 1400,
+      "vertical_drop": 400,
+      "total_pistes_km": 5,
+      "lifts": 2,
       "region": "Obwalden"
     },
     {
       "name": "Homberg",
+      "base_altitude": 940,
+      "top_altitude": 1093,
+      "vertical_drop": 153,
+      "total_pistes_km": 3,
+      "difficulty_breakdown": {
+        "easy_km": 3,
+        "intermediate_km": 0,
+        "difficult_km": 0
+      },
+      "lifts": 1,
       "region": "Bern"
     },
     {
       "name": "Hirmentaz",
+      "base_altitude": 1100,
+      "top_altitude": 1610,
+      "vertical_drop": 510,
+      "total_pistes_km": 25,
+      "lifts": 14,
       "region": "France"
     },
     {
       "name": "Les Habères",
+      "base_altitude": 1000,
+      "top_altitude": 1500,
+      "vertical_drop": 500,
+      "total_pistes_km": 18,
+      "lifts": 8,
       "region": "France"
     },
     {
       "name": "Jura-sur-Léman (Transfrontalier)",
+      "base_altitude": 1000,
+      "top_altitude": 1700,
+      "vertical_drop": 700,
+      "total_pistes_km": 40,
+      "lifts": 15,
       "region": "France/Switzerland"
     },
     {
       "name": "Monts Jura",
+      "base_altitude": 900,
+      "top_altitude": 1680,
+      "vertical_drop": 780,
+      "total_pistes_km": 60,
+      "lifts": 20,
       "region": "France"
     },
     {
       "name": "Thollon Les Mémises",
+      "base_altitude": 1370,
+      "top_altitude": 1874,
+      "vertical_drop": 504,
+      "total_pistes_km": 17,
+      "difficulty_breakdown": {
+        "easy_km": 6,
+        "intermediate_km": 10,
+        "difficult_km": 1
+      },
+      "lifts": 15,
       "region": "France"
     },
     {
       "name": "Saint-Cergue",
+      "base_altitude": 1041,
+      "top_altitude": 1500,
+      "vertical_drop": 459,
+      "total_pistes_km": 10,
+      "lifts": 5,
       "region": "Vaud"
     },
     {
