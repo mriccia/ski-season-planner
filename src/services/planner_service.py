@@ -112,6 +112,7 @@ class PlannerService:
             
             plan += "## Your Preferences\n"
             plan += f"- Selected criteria: {', '.join(preferences.criteria)}\n"
+            plan += f"- Mode of Transport: {preferences.transport_mode}\n"
             plan += "- Priorities:\n"
             for k, v in preferences.priorities.items():
                 plan += f"  * {k.replace('_', ' ').title()}: {v}/10\n"
@@ -171,12 +172,14 @@ class PlannerService:
             Their skiing preferences and priorities are:
             - Criteria: {', '.join(preferences.criteria)}
             - Priorities: {priorities_text}
+            - Mode of Transport: {preferences.transport_mode}
             
             Please create a detailed ski season plan that:
             1. Recommends specific resorts for each trip date
             2. Explains why each resort is a good match for their preferences
             3. Suggests any adjustments to their trip dates if it would improve their experience
             4. Provides tips for each resort (best runs, facilities to check out, etc.)
+            5. Includes transport recommendations based on their preferred mode of transport ({preferences.transport_mode})
             
             Ski Season Plan:
             """

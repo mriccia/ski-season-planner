@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 from ..models.station import Station
 from ..models.trip import Trip
-from ..config import CRITERIA_OPTIONS
+from ..config import CRITERIA_OPTIONS, AVAILABLE_MODELS
 from . import state
 
 def render_preferences_tab():
@@ -19,6 +19,14 @@ def render_preferences_tab():
     home_location = st.text_input(
         "Your Home Location (City, Country)", 
         value=st.session_state.preferences.home_location
+    )
+    
+    # Transport mode selection
+    transport_mode = st.radio(
+        "Mode of Transport",
+        options=["Car", "Public Transport"],
+        index=0 if st.session_state.preferences.transport_mode == "Car" else 1,
+        horizontal=True
     )
     
     st.header("Your Skiing Preferences")
@@ -68,7 +76,7 @@ def render_preferences_tab():
         )
     
     # Update preferences in session state
-    state.update_preferences(home_location, selected_criteria, priorities)
+    state.update_preferences(home_location, selected_criteria, priorities, transport_mode)
 
 def render_trip_form(on_add_trip):
     """Render the form for adding a new trip."""
@@ -79,14 +87,12 @@ def render_trip_form(on_add_trip):
             start_date = st.date_input(
                 "Start Date",
                 value=datetime.now(),
-                min_value=datetime.now(),
                 key='trip_start_date'
             )
         with col2:
             end_date = st.date_input(
                 "End Date",
                 value=datetime.now() + timedelta(days=7),
-                min_value=start_date,
                 key='trip_end_date'
             )
         
@@ -143,8 +149,8 @@ def render_plan_tab(planner_service):
     st.subheader("LLM Settings")
     selected_model = st.selectbox(
         "Select Ollama model", 
-        ["llama3", "mistral", "gemma", "phi"],
-        index=["llama3", "mistral", "gemma", "phi"].index(st.session_state.ollama_model)
+        AVAILABLE_MODELS,
+        index=AVAILABLE_MODELS.index(st.session_state.ollama_model)
     )
     
     if selected_model != st.session_state.ollama_model:

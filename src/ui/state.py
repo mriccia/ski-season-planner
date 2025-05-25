@@ -15,7 +15,8 @@ def initialize_session_state():
         st.session_state.preferences = UserPreferences(
             criteria=[],
             priorities=DEFAULT_PRIORITIES.copy(),
-            home_location=""
+            home_location="",
+            transport_mode="Car"
         )
     
     if 'plan_generated' not in st.session_state:
@@ -27,11 +28,12 @@ def initialize_session_state():
     if 'ollama_model' not in st.session_state:
         st.session_state.ollama_model = DEFAULT_MODEL
 
-def update_preferences(home_location: str, criteria: List[str], priorities: Dict[str, int]):
+def update_preferences(home_location: str, criteria: List[str], priorities: Dict[str, int], transport_mode: str = "Car"):
     """Update user preferences in session state."""
     st.session_state.preferences.home_location = home_location
     st.session_state.preferences.criteria = criteria
     st.session_state.preferences.priorities = priorities
+    st.session_state.preferences.transport_mode = transport_mode
 
 def add_trip(trip: Trip):
     """Add a new trip to session state."""

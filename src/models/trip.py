@@ -15,6 +15,7 @@ class UserPreferences:
         'vertical_drop': 5
     })
     home_location: str = ""
+    transport_mode: str = "Car"  # Default to Car
 
 @dataclass
 class Trip:
