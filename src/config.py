@@ -81,5 +81,6 @@ CRITERIA_OPTIONS: Dict[str, str] = {
 DEFAULT_PRIORITIES: Dict[str, int] = {
     'altitude': 5,
     'piste_length': 5,
-    'vertical_drop': 5
+    'vertical_drop': 5,
+    'resort_distance': 5
 }

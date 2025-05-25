@@ -12,7 +12,8 @@ class UserPreferences:
     priorities: Dict[str, int] = field(default_factory=lambda: {
         'altitude': 5,
         'piste_length': 5,
-        'vertical_drop': 5
+        'vertical_drop': 5,
+        'resort_distance': 5
     })
     home_location: str = ""
     transport_mode: str = "Car"  # Default to Car

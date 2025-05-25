@@ -61,6 +61,11 @@ def render_preferences_sidebar():
             value=st.session_state.preferences.priorities['vertical_drop'],
             help="Prioritize resorts with more vertical meters"
         )
+        priorities['resort_distance'] = st.slider(
+            "Resort Distance", 1, 10,
+            value=st.session_state.preferences.priorities['resort_distance'],
+            help="Prioritize resorts that are closer to your home location"
+        )
         
         # Update preferences in session state
         state.update_preferences(home_location, selected_criteria, priorities, transport_mode)
