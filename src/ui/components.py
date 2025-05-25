@@ -11,52 +11,41 @@ from ..models.trip import Trip
 from ..config import CRITERIA_OPTIONS, AVAILABLE_MODELS
 from . import state
 
-def render_preferences_tab():
-    """Render the user preferences tab."""
-    st.header("Your Profile")
-    
-    # Home location input
-    home_location = st.text_input(
-        "Your Home Location (City, Country)", 
-        value=st.session_state.preferences.home_location
-    )
-    
-    # Transport mode selection
-    transport_mode = st.radio(
-        "Mode of Transport",
-        options=["Car", "Public Transport"],
-        index=0 if st.session_state.preferences.transport_mode == "Car" else 1,
-        horizontal=True
-    )
-    
-    st.header("Your Skiing Preferences")
-    
-    # Criteria selection
-    selected_criteria = []
-    st.write("Select your skiing criteria:")
-    col1, col2 = st.columns(2)
-    
-    criteria_items = list(CRITERIA_OPTIONS.items())
-    mid_point = len(criteria_items) // 2 + 1
-    
-    with col1:
-        for key, label in criteria_items[:mid_point]:
+def render_preferences_sidebar():
+    """Render the user preferences in the sidebar."""
+    with st.sidebar:
+        st.header("Your Profile")
+        
+        # Home location input
+        home_location = st.text_input(
+            "Your Home Location (City, Country)", 
+            value=st.session_state.preferences.home_location
+        )
+        
+        # Transport mode selection
+        transport_mode = st.radio(
+            "Mode of Transport",
+            options=["Car", "Public Transport"],
+            index=0 if st.session_state.preferences.transport_mode == "Car" else 1,
+            horizontal=True
+        )
+        
+        st.header("Your Skiing Preferences")
+        
+        # Criteria selection
+        selected_criteria = []
+        st.write("Select your skiing criteria:")
+        
+        criteria_items = list(CRITERIA_OPTIONS.items())
+        for key, label in criteria_items:
             if st.checkbox(label, key=f"criteria_{key}", 
                          value=key in st.session_state.preferences.criteria):
                 selected_criteria.append(key)
-    
-    with col2:
-        for key, label in criteria_items[mid_point:]:
-            if st.checkbox(label, key=f"criteria_{key}", 
-                         value=key in st.session_state.preferences.criteria):
-                selected_criteria.append(key)
-    
-    # Priorities sliders
-    st.write("Set your priorities (1 = low, 10 = high):")
-    priorities = {}
-    
-    col1, col2 = st.columns(2)
-    with col1:
+        
+        # Priorities sliders
+        st.write("Set your priorities (1 = low, 10 = high):")
+        priorities = {}
+        
         priorities['altitude'] = st.slider(
             "High Altitude", 1, 10, 
             value=st.session_state.preferences.priorities['altitude'],
@@ -67,16 +56,14 @@ def render_preferences_tab():
             value=st.session_state.preferences.priorities['piste_length'],
             help="Prioritize resorts with more kilometers of pistes"
         )
-    
-    with col2:
         priorities['vertical_drop'] = st.slider(
             "Vertical Drop", 1, 10, 
             value=st.session_state.preferences.priorities['vertical_drop'],
             help="Prioritize resorts with more vertical meters"
         )
-    
-    # Update preferences in session state
-    state.update_preferences(home_location, selected_criteria, priorities, transport_mode)
+        
+        # Update preferences in session state
+        state.update_preferences(home_location, selected_criteria, priorities, transport_mode)
 
 def render_trip_form(on_add_trip):
     """Render the form for adding a new trip."""

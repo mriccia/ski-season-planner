@@ -39,16 +39,15 @@ def main():
         logger.debug("Initializing session state")
         state.initialize_session_state()
         
+        # Render preferences in sidebar
+        logger.debug("Rendering preferences sidebar")
+        components.render_preferences_sidebar()
+        
         # Create tabs for different sections
-        tab1, tab2, tab3 = st.tabs(["Profile & Preferences", "Plan Trips", "Generate Ski Plan"])
+        tab1, tab2 = st.tabs(["Plan Trips", "Generate Ski Plan"])
         
-        # Tab 1: User Profile and Preferences
+        # Tab 1: Trip Planning
         with tab1:
-            logger.debug("Rendering preferences tab")
-            components.render_preferences_tab()
-        
-        # Tab 2: Trip Planning
-        with tab2:
             logger.debug("Rendering trip planning tab")
             st.header("Plan Your Trips")
             
@@ -91,8 +90,8 @@ def main():
                 for i, trip in enumerate(st.session_state.trips):
                     components.render_trip_details(trip, i)
         
-        # Tab 3: Generate Plan
-        with tab3:
+        # Tab 2: Generate Plan
+        with tab2:
             logger.debug("Rendering plan generation tab")
             components.render_plan_tab(planner_service)
             
