@@ -918,10 +918,20 @@
     },
     {
       "name": "San Domenico",
+      "base_altitude": 1400,
+      "top_altitude": 2500,
+      "vertical_drop": 1100,
+      "total_pistes_km": 35,
+      "lifts": 7,
       "region": "Italy"
     },
     {
       "name": "Devero",
+      "base_altitude": 1600,
+      "top_altitude": 2200,
+      "vertical_drop": 600,
+      "total_pistes_km": 12,
+      "lifts": 4,
       "region": "Italy"
     },
     {
