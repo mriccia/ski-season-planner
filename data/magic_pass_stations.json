@@ -135,6 +135,11 @@
     },
     {
       "name": "Crêt-du-Puy",
+      "base_altitude": 1000,
+      "top_altitude": 1300,
+      "vertical_drop": 300,
+      "total_pistes_km": 7,
+      "lifts": 3,
       "region": "Neuchâtel"
     },
     {
@@ -934,22 +939,19 @@
       "lifts": 4,
       "region": "Italy"
     },
-    {
-      "name": "Macugnaga",
-      "base_altitude": 1347,
-      "top_altitude": 2900,
-      "vertical_drop": 1553,
-      "total_pistes_km": 32.1,
-      "difficulty_breakdown": {
-        "easy_km": 7,
-        "intermediate_km": 22.1,
-        "difficult_km": 3
-      },
-      "lifts": 9,
-      "region": "Italy"
-    },
+
     {
       "name": "Balmberg",
+      "base_altitude": 1062,
+      "top_altitude": 1270,
+      "vertical_drop": 208,
+      "total_pistes_km": 5,
+      "difficulty_breakdown": {
+        "easy_km": 2,
+        "intermediate_km": 3,
+        "difficult_km": 0
+      },
+      "lifts": 3,
       "region": "Solothurn"
     },
     {
