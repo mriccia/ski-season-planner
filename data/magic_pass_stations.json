@@ -935,43 +935,132 @@
       "region": "Italy"
     },
     {
+      "name": "Macugnaga",
+      "base_altitude": 1347,
+      "top_altitude": 2900,
+      "vertical_drop": 1553,
+      "total_pistes_km": 32.1,
+      "difficulty_breakdown": {
+        "easy_km": 7,
+        "intermediate_km": 22.1,
+        "difficult_km": 3
+      },
+      "lifts": 9,
+      "region": "Italy"
+    },
+    {
       "name": "Balmberg",
       "region": "Solothurn"
     },
     {
       "name": "Grenchenberg",
+      "base_altitude": 1000,
+      "top_altitude": 1400,
+      "vertical_drop": 400,
+      "total_pistes_km": 10,
+      "lifts": 3,
       "region": "Solothurn"
     },
     {
       "name": "Le Grand-Bornand",
+      "base_altitude": 1000,
+      "top_altitude": 2100,
+      "vertical_drop": 1100,
+      "total_pistes_km": 90,
+      "difficulty_breakdown": {
+        "easy_km": 57,
+        "intermediate_km": 24,
+        "difficult_km": 9
+      },
+      "lifts": 25,
       "region": "France"
     },
     {
       "name": "Linden",
+      "base_altitude": 900,
+      "top_altitude": 1200,
+      "vertical_drop": 300,
+      "total_pistes_km": 3,
+      "lifts": 1,
       "region": "Bern"
     },
     {
       "name": "Massif des Brasses",
+      "base_altitude": 900,
+      "top_altitude": 1500,
+      "vertical_drop": 600,
+      "total_pistes_km": 37,
+      "difficulty_breakdown": {
+        "easy_km": 18.5,
+        "intermediate_km": 15,
+        "difficult_km": 3.5
+      },
+      "lifts": 12,
       "region": "France"
     },
     {
       "name": "Meiringen-Hasliberg",
+      "base_altitude": 1065,
+      "top_altitude": 2433,
+      "vertical_drop": 1368,
+      "total_pistes_km": 60,
+      "difficulty_breakdown": {
+        "easy_km": 20,
+        "intermediate_km": 34,
+        "difficult_km": 6
+      },
+      "lifts": 13,
       "region": "Bern"
     },
     {
       "name": "Melchsee-Frutt",
+      "base_altitude": 1080,
+      "top_altitude": 2255,
+      "vertical_drop": 1175,
+      "total_pistes_km": 36,
+      "difficulty_breakdown": {
+        "easy_km": 20,
+        "intermediate_km": 6,
+        "difficult_km": 10
+      },
+      "lifts": 15,
       "region": "Obwalden"
     },
     {
       "name": "Mörlialp Giswil",
+      "base_altitude": 1355,
+      "top_altitude": 1837,
+      "vertical_drop": 482,
+      "total_pistes_km": 12,
+      "difficulty_breakdown": {
+        "easy_km": 2.8,
+        "intermediate_km": 7.2,
+        "difficult_km": 2
+      },
+      "lifts": 8,
       "region": "Obwalden"
     },
     {
       "name": "Praz de Lys – Sommand",
+      "base_altitude": 1240,
+      "top_altitude": 1966,
+      "vertical_drop": 726,
+      "total_pistes_km": 72,
+      "difficulty_breakdown": {
+        "easy_km": 38,
+        "intermediate_km": 26,
+        "difficult_km": 8
+      },
+      "lifts": 23,
       "region": "France"
     },
     {
       "name": "Sörenberg",
+      "base_altitude": 1166,
+      "top_altitude": 2350,
+      "vertical_drop": 1184,
+      "total_pistes_km": 53,
+      "lifts": 13,
       "region": "Lucerne"
     }
   ]
