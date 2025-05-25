@@ -127,14 +127,8 @@ def render_trip_details(trip: Trip, index: int):
 
 def render_plan_tab(planner_service):
     """Render the plan generation tab."""
-    st.header("Generate Your Ski Season Plan")
-    
-    if not st.session_state.trips:
-        st.warning("Please add at least one trip before generating a plan.")
-        return
-    
     if not st.session_state.preferences.home_location:
-        st.warning("Please enter your home location in the Profile tab.")
+        st.warning("Please enter your home location in the sidebar.")
         return
     
     # Ollama model selection
@@ -182,13 +176,16 @@ def render_generated_plan():
             state.update_ski_plan(modified_plan)
             st.success("Changes saved!")
     
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
+        if st.button("Edit Trips"):
+            state.set_app_step("trips")
+            st.rerun()
+    with col2:
         if st.button("Regenerate Plan"):
             state.reset_plan()
             st.rerun()
-    
-    with col2:
+    with col3:
         st.download_button(
             label="Download Plan",
             data=st.session_state.ski_plan,

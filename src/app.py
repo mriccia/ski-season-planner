@@ -43,13 +43,44 @@ def main():
         logger.debug("Rendering preferences sidebar")
         components.render_preferences_sidebar()
         
-        # Create tabs for different sections
-        tab1, tab2 = st.tabs(["Plan Trips", "Generate Ski Plan"])
+        # Guided experience main content
+        st.header("Ski Season Planning Guide")
         
-        # Tab 1: Trip Planning
-        with tab1:
-            logger.debug("Rendering trip planning tab")
-            st.header("Plan Your Trips")
+        # Step indicator
+        steps = ["1. Set Preferences", "2. Add Trips", "3. Generate Plan"]
+        current_step = 0
+        
+        if st.session_state.app_step == "preferences":
+            current_step = 0
+        elif st.session_state.app_step == "trips":
+            current_step = 1
+        elif st.session_state.app_step == "plan":
+            current_step = 2
+            
+        st.progress(float(current_step) / 2)
+        st.write(f"**Current step: {steps[current_step]}**")
+        
+        # Step 1: Preferences
+        if st.session_state.app_step == "preferences":
+            st.subheader("1. Set Your Preferences")
+            
+            # Check if preferences are set
+            preferences_complete = (
+                st.session_state.preferences.home_location != "" and
+                len(st.session_state.preferences.criteria) > 0
+            )
+            
+            if not preferences_complete:
+                st.info("Please complete your profile and preferences in the sidebar before continuing.")
+            else:
+                st.success("✅ Preferences set successfully!")
+                if st.button("Continue to Add Trips"):
+                    state.set_app_step("trips")
+                    st.rerun()
+        
+        # Step 2: Trip Planning
+        elif st.session_state.app_step == "trips":
+            st.subheader("2. Plan Your Trips")
             
             def on_add_trip(start_date: datetime, end_date: datetime):
                 """Callback for when a new trip is added."""
@@ -80,7 +111,7 @@ def main():
             components.render_trip_form(on_add_trip)
             
             # Display planned trips
-            st.header("Your Planned Trips")
+            st.subheader("Your Planned Trips")
             
             if not st.session_state.trips:
                 logger.debug("No trips found in session state")
@@ -89,11 +120,38 @@ def main():
                 logger.debug(f"Displaying {len(st.session_state.trips)} planned trips")
                 for i, trip in enumerate(st.session_state.trips):
                     components.render_trip_details(trip, i)
+                
+                col1, col2 = st.columns([1, 1])
+                with col1:
+                    if st.button("Back to Preferences"):
+                        state.set_app_step("preferences")
+                        st.rerun()
+                with col2:
+                    if st.button("Continue to Generate Plan"):
+                        state.set_app_step("plan")
+                        st.rerun()
         
-        # Tab 2: Generate Plan
-        with tab2:
-            logger.debug("Rendering plan generation tab")
-            components.render_plan_tab(planner_service)
+        # Step 3: Generate Plan
+        elif st.session_state.app_step == "plan":
+            st.subheader("3. Generate Your Ski Season Plan")
+            
+            if not st.session_state.trips:
+                st.warning("Please add at least one trip before generating a plan.")
+                if st.button("Back to Add Trips"):
+                    state.set_app_step("trips")
+                    st.rerun()
+            else:
+                # Display trip snapshot
+                with st.expander("Your Trips Summary", expanded=True):
+                    for i, trip in enumerate(st.session_state.trips):
+                        st.write(f"**Trip {i+1}:** {trip.start_date.strftime('%Y-%m-%d')} to {trip.end_date.strftime('%Y-%m-%d')} ({trip.duration_days} days)")
+                
+                components.render_plan_tab(planner_service)
+                
+                if not st.session_state.plan_generated:
+                    if st.button("Back to Trips"):
+                        state.set_app_step("trips")
+                        st.rerun()
             
     except Exception as e:
         logger.critical(f"Critical error in main application: {str(e)}", exc_info=True)
