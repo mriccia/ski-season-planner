@@ -75,16 +75,21 @@ def render_trip_form(on_add_trip):
     with st.expander("Add a New Trip", expanded=True):
         st.write("Select trip dates:")
         col1, col2 = st.columns(2)
+        
+        # Set default dates to December 12-15
+        default_start_date = datetime(2025, 12, 12)
+        default_end_date = datetime(2025, 12, 15)
+        
         with col1:
             start_date = st.date_input(
                 "Start Date",
-                value=datetime.now(),
+                value=default_start_date,
                 key='trip_start_date'
             )
         with col2:
             end_date = st.date_input(
                 "End Date",
-                value=datetime.now() + timedelta(days=7),
+                value=default_end_date,
                 key='trip_end_date'
             )
         
