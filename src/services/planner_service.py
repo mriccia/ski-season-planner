@@ -112,44 +112,54 @@ class PlannerService:
             priorities_text = ", ".join([f"{k} (weight: {v})" for k, v in preferences.priorities.items()])
             
             prompt = f"""
-            You are a ski trip planner. Create a personalized ski season plan for a person living in {preferences.home_location}.
-            
-            They have the following trips planned:
-            {trips_text}
-            
-            Here all the resorts that are part of the Magic Pass:
-            {stations}
-            
-            Their skiing preferences and priorities are:
-            - Criteria: {', '.join(preferences.criteria)}
-            - Priorities: {priorities_text}
-            - Mode of Transport: {preferences.transport_mode}
-            
-            Please create a detailed ski season plan that:
-            1. Recommends specific resorts for each trip date
-            2. Explains why each resort is a good match for their preferences
-            3. Suggests any adjustments to their trip dates if it would improve their experience
-            4. Provides tips for each resort (best runs, facilities to check out, etc.)
-            5. Includes transport recommendations based on their preferred mode of transport ({preferences.transport_mode})
-            
-            Please use the mcp_fetch tool to access direction information. In your suggestions include the distance and estimated travel time from their home location ({preferences.home_location}) to each resort.
-            Make sure to consider the altitude, piste length, vertical drop, and distance from home when making recommendations.
-            Format your response as a detailed ski season plan, including the following sections:
-            - Introduction
-            - Trip Overview
-            - Resort Recommendations
-            - Tips and Recommendations 
-            
-            Please provide the plan in a clear and structured format, suitable for a ski enthusiast to follow.
-            Only use the information provided in the trips and preferences. 
-            Do not make assumptions about other trips or resorts. Only use information from the context provided and from the tools.
-            If you need to access additional information, use the mcp_fetch tool.
-            - For magic pass resorts, use https://www.magicpass.ch/en/stations
-            - For directions, use the mcp_fetch tool to get the distance and estimated travel time from the home location to each resort. You can leverage the OpenRouteService API for this purpose. The API Key is {st.secrets.get("OPENROUTE_API_KEY")}, and the endpoint is https://api.openrouteservice.org/v2/directions/.
-            
-            Do not include any information about the Magic Pass or its benefits, as this is not relevant to the ski season plan. 
-            
-            Ski Season Plan:
+You are a ski trip planner. Create a personalized ski season plan for a person living in {preferences.home_location}.
+
+They have the following trips planned:
+{trips_text}
+
+Here are all the resorts that are part of the Magic Pass:
+{stations}
+
+Their skiing preferences and priorities are:
+
+Criteria: {', '.join(preferences.criteria)}
+Priorities: {priorities_text}
+Mode of Transport: {preferences.transport_mode}
+Please create a detailed ski season plan that:
+
+Recommends a specific resort for each trip date.
+Explains why each resort is a good match for their preferences.
+Suggests any adjustments to their trip dates if it would improve their experience.
+Provides tips for each resort (best runs, facilities to check out, etc.).
+Includes transport recommendations based on their preferred mode of transport ({preferences.transport_mode}).
+Please use the mcp_fetch tool to access direction information. In your suggestions, include the distance and estimated travel time from their home location ({preferences.home_location}) to each resort.
+
+Make sure to consider the altitude, piste length, vertical drop, and distance from home when making recommendations.
+
+Format your response as a detailed ski season plan, including the following sections:
+
+Introduction
+Trip Overview
+Resort Recommendations
+Tips and Recommendations
+Worklog
+Please provide the plan in a clear and structured format, suitable for a ski enthusiast to follow.
+
+Guidelines:
+
+Only use the information provided in the trips and preferences.
+Do not make assumptions about other trips or resorts.
+Only use information from the context provided and from the tools.
+If you need to access additional information, use the mcp_fetch tool.
+For Magic Pass resorts, use https://www.magicpass.ch/en/stations.
+For directions, use the mcp_fetch tool to get the distance and estimated travel time from the home location to each resort. You can leverage the OpenRouteService API for this purpose. The API Key is {st.secrets.get("OPENROUTE_API_KEY")}, and the endpoint is https://api.openrouteservice.org/v2/directions/.
+Do not include any information about the Magic Pass or its benefits, as this is not relevant to the ski season plan.
+Select only ONE destination for each trip.
+Do not make up numbers, facts, or information about the resort.
+The aim is to help the human decide which resort to go to on which trip, based on the criteria.
+Include a <worklog> section in the output, detailing all the steps taken, which tools were called, and why.
+
+Ski Season Plan:
             """
             
             logger.debug(f"Created prompt of length {len(prompt)}")
