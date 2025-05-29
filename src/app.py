@@ -7,21 +7,17 @@ import logging
 import logging.config
 from pathlib import Path
 
-# Add the project root directory to Python path
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
-
 import streamlit as st
 from datetime import datetime
 
-from src.models.trip import Trip
-from src.services.station_service import StationService
-from src.services.planner_service import PlannerService
-from src.ui import components, state
-from src.config import OLLAMA_URL, LOGGING_CONFIG
+from models.trip import Trip
+from services.station_service import StationService
+from services.planner_service import PlannerService
+from ui import components, state
+from config import OLLAMA_URL
 
 # Initialize logging
-logging.config.dictConfig(LOGGING_CONFIG)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 def main():
@@ -32,7 +28,6 @@ def main():
     try:
         # Initialize services
         logger.debug("Initializing services")
-        station_service = StationService()
         planner_service = PlannerService(OLLAMA_URL)
         
         # Initialize session state
@@ -42,9 +37,6 @@ def main():
         # Render preferences in sidebar
         logger.debug("Rendering preferences sidebar")
         components.render_preferences_sidebar()
-        
-        # Guided experience main content
-        st.header("Ski Season Planning Guide")
         
         # Step indicator
         steps = ["1. Set Preferences", "2. Add Trips", "3. Generate Plan"]
@@ -66,8 +58,7 @@ def main():
             
             # Check if preferences are set
             preferences_complete = (
-                st.session_state.preferences.home_location != "" and
-                len(st.session_state.preferences.criteria) > 0
+                st.session_state.preferences.home_location != "" and st.session_state.preferences.criteria
             )
             
             if not preferences_complete:
@@ -88,21 +79,16 @@ def main():
                 try:
                     # Filter stations based on current preferences
                     logger.debug("Filtering stations based on user preferences")
-                    matching_stations = station_service.filter_stations(
-                        st.session_state.preferences.criteria,
-                        st.session_state.preferences.priorities
-                    )
                     
                     # Create and add new trip
                     trip = Trip(
                         start_date=start_date,
                         end_date=end_date,
                         criteria=st.session_state.preferences.criteria.copy(),
-                        priorities=st.session_state.preferences.priorities.copy(),
-                        matching_stations=matching_stations
+                        priorities=st.session_state.preferences.priorities.copy()
                     )
                     state.add_trip(trip)
-                    logger.info(f"Successfully added trip with {len(matching_stations)} matching stations")
+                    logger.info(f"Successfully added trip matching stations")
                 except Exception as e:
                     logger.error(f"Error adding trip: {str(e)}", exc_info=True)
                     st.error("An error occurred while adding the trip. Please try again.")

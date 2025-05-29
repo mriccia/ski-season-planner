@@ -24,7 +24,6 @@ class Trip:
     end_date: datetime
     criteria: List[str]
     priorities: Dict[str, int]
-    matching_stations: List[Station] = field(default_factory=list)
     
     @property
     def duration_days(self) -> int:
@@ -37,6 +36,5 @@ class Trip:
             'start_date': self.start_date,
             'end_date': self.end_date,
             'criteria': self.criteria,
-            'priorities': self.priorities,
-            'matching_stations': [s.to_dict() for s in self.matching_stations]
+            'priorities': self.priorities
         }

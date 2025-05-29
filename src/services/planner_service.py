@@ -4,7 +4,7 @@ Service layer for handling ski plan generation using LLM.
 from typing import List, Dict, Any, Optional
 import logging
 import requests
-from ..models.trip import Trip, UserPreferences
+from models.trip import Trip, UserPreferences
 
 from strands.tools.mcp import MCPClient
 from mcp import stdio_client, StdioServerParameters
@@ -12,6 +12,7 @@ from strands.models.ollama import OllamaModel
 
 from strands import Agent
 from strands.tools.mcp import MCPClient
+import streamlit as st
 
 
 
@@ -44,11 +45,11 @@ class PlannerService:
         """Get the agent for the given model."""
         logger.debug(f"Getting agent for model {model_name}")
         
-        playwright = MCPClient(
+        mcp_fetch = MCPClient(
             lambda: stdio_client(
                 StdioServerParameters(
-                    command="npx",
-                    args=["@playwright/mcp@latest"]
+                    command="uvx",
+                    args=["mcp-server-fetch"]
                 )
             )
         )
@@ -57,9 +58,9 @@ class PlannerService:
             host=self.ollama_url,
             model_id=model_name
         )
-        with playwright:
+        with mcp_fetch:
             agent = Agent(
-                tools=playwright.list_tools_sync(),
+                tools=mcp_fetch.list_tools_sync(),
                 model=ollama_model
             )
             
@@ -70,7 +71,8 @@ class PlannerService:
         self,
         preferences: UserPreferences,
         trips: List[Trip],
-        model_name: str
+        model_name: str,
+        stations: List[object]
     ) -> str:
         """Generate a personalized ski season plan using Ollama."""
         logger.info(f"Generating ski plan for {len(trips)} trips using model {model_name}")
@@ -80,7 +82,7 @@ class PlannerService:
             logger.error("Cannot generate plan: Ollama service is not running")
             return "Ollama is not running. Please start Ollama service."
         
-        prompt = self._create_prompt(preferences, trips)
+        prompt = self._create_prompt(preferences, trips, stations)
         logger.debug(f"Generated prompt of length {len(prompt)}")
         
         try:
@@ -99,15 +101,13 @@ class PlannerService:
             logger.error(error_msg, exc_info=True)
             return error_msg
     
-    def _create_prompt(self, preferences: UserPreferences, trips: List[Trip]) -> str:
+    def _create_prompt(self, preferences: UserPreferences, trips: List[Trip], stations: List[object]) -> str:
         """Create the prompt for the LLM."""
         logger.debug("Creating LLM prompt")
         try:
             trips_text = ""
             for i, trip in enumerate(trips):
-                stations_text = ", ".join([s.name for s in trip.matching_stations[:5]])
                 trips_text += f"Trip {i+1}: {trip.start_date.strftime('%Y-%m-%d')} to {trip.end_date.strftime('%Y-%m-%d')}\n"
-                trips_text += f"Matching stations: {stations_text}\n\n"
             
             priorities_text = ", ".join([f"{k} (weight: {v})" for k, v in preferences.priorities.items()])
             
@@ -116,6 +116,9 @@ class PlannerService:
             
             They have the following trips planned:
             {trips_text}
+            
+            Here all the resorts that are part of the Magic Pass:
+            {stations}
             
             Their skiing preferences and priorities are:
             - Criteria: {', '.join(preferences.criteria)}
@@ -128,6 +131,23 @@ class PlannerService:
             3. Suggests any adjustments to their trip dates if it would improve their experience
             4. Provides tips for each resort (best runs, facilities to check out, etc.)
             5. Includes transport recommendations based on their preferred mode of transport ({preferences.transport_mode})
+            
+            Please use the mcp_fetch tool to access direction information. In your suggestions include the distance and estimated travel time from their home location ({preferences.home_location}) to each resort.
+            Make sure to consider the altitude, piste length, vertical drop, and distance from home when making recommendations.
+            Format your response as a detailed ski season plan, including the following sections:
+            - Introduction
+            - Trip Overview
+            - Resort Recommendations
+            - Tips and Recommendations 
+            
+            Please provide the plan in a clear and structured format, suitable for a ski enthusiast to follow.
+            Only use the information provided in the trips and preferences. 
+            Do not make assumptions about other trips or resorts. Only use information from the context provided and from the tools.
+            If you need to access additional information, use the mcp_fetch tool.
+            - For magic pass resorts, use https://www.magicpass.ch/en/stations
+            - For directions, use the mcp_fetch tool to get the distance and estimated travel time from the home location to each resort. You can leverage the OpenRouteService API for this purpose. The API Key is {st.secrets.get("OPENROUTE_API_KEY")}, and the endpoint is https://api.openrouteservice.org/v2/directions/.
+            
+            Do not include any information about the Magic Pass or its benefits, as this is not relevant to the ski season plan. 
             
             Ski Season Plan:
             """

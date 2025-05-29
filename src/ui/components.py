@@ -6,9 +6,9 @@ import streamlit as st
 from datetime import datetime, timedelta
 # Standard Streamlit imports are sufficient
 
-from ..models.station import Station
-from ..models.trip import Trip
-from ..config import CRITERIA_OPTIONS, AVAILABLE_MODELS
+from models.station import Station
+from models.trip import Trip
+from config import CRITERIA_OPTIONS, AVAILABLE_MODELS
 from . import state
 
 def render_preferences_sidebar():
@@ -107,20 +107,6 @@ def render_trip_details(trip: Trip, index: int):
         else:
             st.write("- No specific criteria selected")
         
-        st.write("**Top Matching Stations:**")
-        if trip.matching_stations:
-            for station in trip.matching_stations[:5]:  # Show top 5
-                st.write(f"- {station.name}")
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.write(f"  * Total pistes: {station.total_pistes_km} km")
-                    st.write(f"  * Base altitude: {station.base_altitude} m")
-                with col2:
-                    st.write(f"  * Top altitude: {station.top_altitude} m")
-                    st.write(f"  * Vertical drop: {station.vertical_drop} m")
-        else:
-            st.write("No stations match the selected criteria")
-        
         if st.button(f"Remove Trip {index+1}"):
             state.remove_trip(index)
             st.rerun()
@@ -147,7 +133,7 @@ def render_plan_tab(planner_service):
     if planner_service.is_llm_configured():
         st.success(f"Ollama is running and will use the {st.session_state.ollama_model} model.")
     else:
-        st.warning("Ollama integration is not available or not running. A simplified plan will be generated.")
+        st.warning("Ollama integration is not available. Please ensure Ollama is running and configured correctly.")
     
     if not st.session_state.plan_generated:
         if st.button("Generate Ski Plan"):
@@ -155,7 +141,8 @@ def render_plan_tab(planner_service):
                 plan = planner_service.generate_ski_plan(
                     st.session_state.preferences,
                     st.session_state.trips,
-                    model_name=st.session_state.ollama_model
+                    model_name=st.session_state.ollama_model,
+                    stations=st.session_state.stations
                 )
                 state.update_ski_plan(plan)
                 st.rerun()

@@ -5,65 +5,18 @@ import os
 import logging.config
 from typing import Dict, List
 from pathlib import Path
+import logging
 
+# Configure the root strands logger
+logging.getLogger("strands").setLevel(logging.DEBUG)
+
+# Add a handler to see the logs
+logging.basicConfig(
+    format="%(levelname)s | %(name)s | %(message)s", 
+    handlers=[logging.StreamHandler()]
+)
 # Paths
-PROJECT_ROOT = Path(__file__).parent.parent
-DATA_DIR = PROJECT_ROOT / "data"
-STATIONS_FILE = DATA_DIR / "magic_pass_stations.json"
-LOGS_DIR = PROJECT_ROOT / "logs"
-
-# Create logs directory if it doesn't exist
-LOGS_DIR.mkdir(exist_ok=True)
-
-# Logging Configuration
-LOGGING_CONFIG = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-        },
-        'detailed': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s:%(lineno)d: %(message)s'
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'level': 'INFO',
-            'formatter': 'standard',
-            'stream': 'ext://sys.stdout'
-        },
-        'file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'level': 'DEBUG',
-            'formatter': 'detailed',
-            'filename': LOGS_DIR / 'ski_planner.log',
-            'maxBytes': 10485760,  # 10MB
-            'backupCount': 5
-        },
-        'error_file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'level': 'ERROR',
-            'formatter': 'detailed',
-            'filename': LOGS_DIR / 'error.log',
-            'maxBytes': 10485760,  # 10MB
-            'backupCount': 5
-        }
-    },
-    'loggers': {
-        '': {  # Root logger
-            'handlers': ['console', 'file', 'error_file'],
-            'level': os.getenv('LOG_LEVEL', 'INFO'),
-            'propagate': True
-        },
-        'src.services': {  # Services logger
-            'handlers': ['console', 'file', 'error_file'],
-            'level': 'DEBUG',
-            'propagate': False
-        }
-    }
-}
+STATIONS_FILE = "./data/magic_pass_stations.json"
 
 # Ollama configuration
 OLLAMA_URL = "http://localhost:11434"

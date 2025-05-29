@@ -3,11 +3,16 @@ Streamlit session state management.
 """
 from typing import Dict, List, Optional
 import streamlit as st
-from ..models.trip import Trip, UserPreferences
-from ..config import DEFAULT_PRIORITIES, DEFAULT_MODEL
+from models.trip import Trip, UserPreferences
+from config import DEFAULT_PRIORITIES, DEFAULT_MODEL
+from services.station_service import StationService
 
 def initialize_session_state():
     """Initialize or get session state variables."""
+    if 'stations' not in st.session_state:
+        station_service = StationService() 
+        st.session_state.stations= station_service.load_stations()
+        
     if 'trips' not in st.session_state:
         st.session_state.trips: List[Trip] = []
     
