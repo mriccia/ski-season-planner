@@ -12,6 +12,8 @@ from strands.models.ollama import OllamaModel
 
 from strands import Agent
 from strands.tools.mcp import MCPClient
+
+from strands_tools import calculator, shell
 import streamlit as st
 
 
@@ -35,6 +37,11 @@ class PlannerService:
             is_running = response.status_code == 200
             if is_running:
                 logger.info("Ollama service is running")
+                # Update available models in session state if needed
+                if 'available_models' not in st.session_state or not st.session_state.available_models:
+                    models = [model["name"] for model in response.json().get("models", [])]
+                    st.session_state.available_models = models
+                    logger.info(f"Updated available models in session state: {models}")
             else:
                 logger.warning(f"Ollama service returned status code {response.status_code}")
             return is_running
@@ -60,7 +67,7 @@ class PlannerService:
         )
         with mcp_fetch:
             agent = Agent(
-                tools=mcp_fetch.list_tools_sync(),
+                tools=[calculator, shell] + mcp_fetch.list_tools_sync(),
                 model=ollama_model
             )
             
@@ -112,54 +119,53 @@ class PlannerService:
             priorities_text = ", ".join([f"{k} (weight: {v})" for k, v in preferences.priorities.items()])
             
             prompt = f"""
-You are a ski trip planner. Create a personalized ski season plan for a person living in {preferences.home_location}.
+            
+You are a ski trip planner. Your task is to create a personalized ski season plan for a person living in {preferences.home_location}.
 
-They have the following trips planned:
+**Trips Planned:**
+The user has {len(trips)} trips planned:
 {trips_text}
 
-Here are all the resorts that are part of the Magic Pass:
+**Available Resorts:**
 {stations}
 
-Their skiing preferences and priorities are:
+**Preferences:**
+- Criteria: {', '.join(preferences.criteria)}
+- Priorities: {priorities_text}
+- Mode of Transport: {preferences.transport_mode}
 
-Criteria: {', '.join(preferences.criteria)}
-Priorities: {priorities_text}
-Mode of Transport: {preferences.transport_mode}
-Please create a detailed ski season plan that:
+**Tasks:**
+1. Recommend one specific resort for each of the {len(trips)} trips based on the provided criteria and priorities.
+2. Explain why each resort matches their preferences.
+3. Suggest any adjustments to trip dates for a better experience.
+4. Provide tips for each resort (best runs, facilities, etc.).
+5. Include transport recommendations based on their preferred mode of transport.
 
-Recommends a specific resort for each trip date.
-Explains why each resort is a good match for their preferences.
-Suggests any adjustments to their trip dates if it would improve their experience.
-Provides tips for each resort (best runs, facilities to check out, etc.).
-Includes transport recommendations based on their preferred mode of transport ({preferences.transport_mode}).
-Please use the mcp_fetch tool to access direction information. In your suggestions, include the distance and estimated travel time from their home location ({preferences.home_location}) to each resort.
+**Guidelines:**
+- Use the `fetch` tool to access direction information, including distance and estimated travel time from {preferences.home_location} to each resort by {preferences.transport_mode}.
+- Consider the following factors when making recommendations: altitude, piste length, vertical drop, and distance from home.
+- Only use the information provided in the trips and preferences. Do not make assumptions.
+- Do not include information about the Magic Pass or its benefits.
+- Include a `<worklog>` section detailing the steps taken and tools used.
+- If you need to access additional information, use the fetch tool.
+-- For magic pass resorts, use https://www.magicpass.ch/en/stations
+-- For directions, use the fetch tool to get the distance and estimated travel time from the home location to each resort. You can leverage the OpenRouteService API for this purpose. The API Key is {st.secrets.get("OPENROUTE_API_KEY")}, and the endpoint is https://api.openrouteservice.org/v2/directions/.
 
-Make sure to consider the altitude, piste length, vertical drop, and distance from home when making recommendations.
+**Format:**
+1. Introduction
+2. Trip Overview
+3. Resort Recommendations
+4. Tips and Recommendations
+5. Worklog
 
-Format your response as a detailed ski season plan, including the following sections:
+**Steps to Follow:**
+1. **Parse the Data:** Start by parsing the given data about the resorts and trips.
+2. **Filter Resorts:** Filter the resorts based on the user's criteria and priorities.
+3. **Use Tools:** Use the `fetch` tool to get the distance and estimated travel time for each resort.
+4. **Recommend Resorts:** Recommend one specific resort for each of the {len(trips)} trips based on the filtered data and tool results.
+5. **Provide Details:** Explain why each resort is a good match, provide tips, and include transport recommendations.
+6. **Document Steps:** Document all the steps taken and tools used in the `<worklog>` section.
 
-Introduction
-Trip Overview
-Resort Recommendations
-Tips and Recommendations
-Worklog
-Please provide the plan in a clear and structured format, suitable for a ski enthusiast to follow.
-
-Guidelines:
-
-Only use the information provided in the trips and preferences.
-Do not make assumptions about other trips or resorts.
-Only use information from the context provided and from the tools.
-If you need to access additional information, use the mcp_fetch tool.
-For Magic Pass resorts, use https://www.magicpass.ch/en/stations.
-For directions, use the mcp_fetch tool to get the distance and estimated travel time from the home location to each resort. You can leverage the OpenRouteService API for this purpose. The API Key is {st.secrets.get("OPENROUTE_API_KEY")}, and the endpoint is https://api.openrouteservice.org/v2/directions/.
-Do not include any information about the Magic Pass or its benefits, as this is not relevant to the ski season plan.
-Select only ONE destination for each trip.
-Do not make up numbers, facts, or information about the resort.
-The aim is to help the human decide which resort to go to on which trip, based on the criteria.
-Include a <worklog> section in the output, detailing all the steps taken, which tools were called, and why.
-
-Ski Season Plan:
             """
             
             logger.debug(f"Created prompt of length {len(prompt)}")
