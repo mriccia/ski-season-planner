@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 from models.station import Station
 from models.trip import Trip
-from config import CRITERIA_OPTIONS, AVAILABLE_MODELS
+from config import CRITERIA_OPTIONS
 from . import state
 
 def render_preferences_sidebar():
@@ -119,10 +119,21 @@ def render_plan_tab(planner_service):
     
     # Ollama model selection
     st.subheader("LLM Settings")
+    
+    # Check if we have available models
+    if not st.session_state.available_models:
+        st.warning("No Ollama models found. Please ensure Ollama is running with at least one model installed.")
+        if st.button("Refresh Available Models"):
+            from config import get_available_ollama_models
+            st.session_state.available_models = get_available_ollama_models()
+            st.rerun()
+        return
+    
     selected_model = st.selectbox(
         "Select Ollama model", 
-        AVAILABLE_MODELS,
-        index=AVAILABLE_MODELS.index(st.session_state.ollama_model)
+        st.session_state.available_models,
+        index=st.session_state.available_models.index(st.session_state.ollama_model) 
+            if st.session_state.ollama_model in st.session_state.available_models else 0
     )
     
     if selected_model != st.session_state.ollama_model:

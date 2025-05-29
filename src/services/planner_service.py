@@ -9,14 +9,30 @@ from models.trip import Trip, UserPreferences
 from strands.tools.mcp import MCPClient
 from mcp import stdio_client, StdioServerParameters
 from strands.models.ollama import OllamaModel
+from strands.models.openai import OpenAIModel
 
 from strands import Agent
 from strands.tools.mcp import MCPClient
 
 from strands_tools import calculator, shell
 import streamlit as st
+from services.openrouteservice_tool import get_directions
 
+openai_model = OpenAIModel(
+    client_args={
+        "api_key": st.secrets.get("OPENAI_API_KEY"),
+    },
+    model_id="gpt-4o"
+)
 
+mcp_fetch = MCPClient(
+    lambda: stdio_client(
+        StdioServerParameters(
+            command="uvx",
+            args=["mcp-server-fetch"]
+        )
+    )
+)
 
 logger = logging.getLogger(__name__)
 
@@ -48,32 +64,7 @@ class PlannerService:
         except requests.exceptions.RequestException as e:
             logger.error(f"Failed to connect to Ollama service: {str(e)}")
             return False
-    def _get_agent(self, model_name: str) -> MCPClient:
-        """Get the agent for the given model."""
-        logger.debug(f"Getting agent for model {model_name}")
         
-        mcp_fetch = MCPClient(
-            lambda: stdio_client(
-                StdioServerParameters(
-                    command="uvx",
-                    args=["mcp-server-fetch"]
-                )
-            )
-        )
-        
-        ollama_model = OllamaModel(
-            host=self.ollama_url,
-            model_id=model_name
-        )
-        with mcp_fetch:
-            agent = Agent(
-                tools=[calculator, shell] + mcp_fetch.list_tools_sync(),
-                model=ollama_model
-            )
-            
-            logger.debug(f"Agent for model {model_name} retrieved")
-            return agent
-    
     def generate_ski_plan(
         self,
         preferences: UserPreferences,
@@ -94,8 +85,13 @@ class PlannerService:
         
         try:
             logger.debug(f"Sending request to Ollama API with model {model_name}")
-            agent = self._get_agent(model_name)
-            response = agent(prompt)
+            with mcp_fetch:
+                agent = Agent(
+                    tools=[calculator, get_directions] + mcp_fetch.list_tools_sync(),
+                    model=openai_model,
+                )
+                logger.debug(f"Agent for model {model_name} retrieved")
+                response = agent(prompt)
             logger.debug(f"Response: {response}")
             return response.__str__()
             
@@ -131,7 +127,7 @@ The user has {len(trips)} trips planned:
 
 **Preferences:**
 - Criteria: {', '.join(preferences.criteria)}
-- Priorities: {priorities_text}
+- Priorities (between 1 and 10): {priorities_text}
 - Mode of Transport: {preferences.transport_mode}
 
 **Tasks:**
@@ -149,11 +145,12 @@ The user has {len(trips)} trips planned:
 - Include a `<worklog>` section detailing the steps taken and tools used.
 - If you need to access additional information, use the fetch tool.
 -- For magic pass resorts, use https://www.magicpass.ch/en/stations
--- For directions, use the fetch tool to get the distance and estimated travel time from the home location to each resort. You can leverage the OpenRouteService API for this purpose. The API Key is {st.secrets.get("OPENROUTE_API_KEY")}, and the endpoint is https://api.openrouteservice.org/v2/directions/.
+-- For directions, you must use the `get_directions` tool to get the distance and estimated travel time from the home location to each resort.
 
 **Format:**
 1. Introduction
 2. Trip Overview
+2.a you MUST include the distance and estimated travel time for each trip using the get_directions tool. Limit the use of the get_directions to three calls per trip.
 3. Resort Recommendations
 4. Tips and Recommendations
 5. Worklog
@@ -166,6 +163,7 @@ The user has {len(trips)} trips planned:
 5. **Provide Details:** Explain why each resort is a good match, provide tips, and include transport recommendations.
 6. **Document Steps:** Document all the steps taken and tools used in the `<worklog>` section.
 
+Please ensure you have all the necessary tools and data available to complete this task. Only return your response once the plan is fully generated and all steps are completed. 
             """
             
             logger.debug(f"Created prompt of length {len(prompt)}")

@@ -16,8 +16,6 @@ from services.planner_service import PlannerService
 from ui import components, state
 from config import OLLAMA_URL
 
-# Initialize logging
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 def main():
