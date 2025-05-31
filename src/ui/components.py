@@ -127,22 +127,16 @@ def render_plan_tab(planner_service):
     
     # Check if we have available models
     if not st.session_state.available_models:
-        st.warning("No Ollama models found. Please ensure Ollama is running with at least one model installed.")
-        if st.button("Refresh Available Models"):
-            from config import get_available_ollama_models
-            st.session_state.available_models = get_available_ollama_models()
-            st.rerun()
+        st.warning("No Models found. Please ensure Ollama is running with at least one model installed, or the OpenAI key is configured.")
         return
     
     selected_model = st.selectbox(
-        "Select Ollama model", 
-        st.session_state.available_models,
-        index=st.session_state.available_models.index(st.session_state.ollama_model) 
-            if st.session_state.ollama_model in st.session_state.available_models else 0
+        "Select Model", 
+        st.session_state.available_models
     )
     
-    if selected_model != st.session_state.ollama_model:
-        st.session_state.ollama_model = selected_model
+    if selected_model != st.session_state.selected_model:
+        st.session_state.selected_model = selected_model
         state.reset_plan()
         
     if not st.session_state.plan_generated:
@@ -151,7 +145,7 @@ def render_plan_tab(planner_service):
                 plan = planner_service.generate_ski_plan(
                     st.session_state.preferences,
                     st.session_state.trips,
-                    model_name=st.session_state.ollama_model,
+                    model_name=st.session_state.selected_model,
                     stations=st.session_state.stations
                 )
                 state.update_ski_plan(plan)

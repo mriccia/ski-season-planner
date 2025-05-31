@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 import streamlit as st
 from models.trip import Trip, UserPreferences
 from services.station_service import StationService
-from config import DEFAULT_PRIORITIES, DEFAULT_MODEL, get_available_ollama_models
+from config import DEFAULT_PRIORITIES, DEFAULT_MODEL
 
 def initialize_session_state():
     """Initialize or get session state variables."""
@@ -30,19 +30,9 @@ def initialize_session_state():
     if 'ski_plan' not in st.session_state:
         st.session_state.ski_plan = ""
     
-    # Initialize available models
-    if 'available_models' not in st.session_state:
-        st.session_state.available_models = get_available_ollama_models()
-    
-    if 'ollama_model' not in st.session_state:
-        # Set default model if it's available, otherwise use the first available model
-        if st.session_state.available_models:
-            if DEFAULT_MODEL in st.session_state.available_models:
-                st.session_state.ollama_model = DEFAULT_MODEL
-            else:
-                st.session_state.ollama_model = st.session_state.available_models[0]
-        else:
-            st.session_state.ollama_model = DEFAULT_MODEL
+    # Initialize selected model
+    if 'selected_model' not in st.session_state:
+        st.session_state.selected_model = "gpt-4o"  # Default model
         
     # Add app flow state
     if 'app_step' not in st.session_state:
