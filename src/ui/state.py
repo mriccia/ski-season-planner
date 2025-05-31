@@ -4,15 +4,11 @@ Streamlit session state management.
 from typing import Dict, List, Optional
 import streamlit as st
 from models.trip import Trip, UserPreferences
-from services.station_service import StationService
+from services.station_service import get_station_service
 from config import DEFAULT_PRIORITIES, DEFAULT_MODEL
 
 def initialize_session_state():
     """Initialize or get session state variables."""
-    if 'stations' not in st.session_state:
-        station_service = StationService() 
-        st.session_state.stations= station_service.load_stations()
-        
     if 'trips' not in st.session_state:
         st.session_state.trips: List[Trip] = []
     
@@ -37,6 +33,10 @@ def initialize_session_state():
     # Add app flow state
     if 'app_step' not in st.session_state:
         st.session_state.app_step = "preferences"  # Options: preferences, trips, plan
+    
+    # Initialize available_models if not already set
+    if 'available_models' not in st.session_state:
+        st.session_state.available_models = ["gpt-4o", "gpt-3.5-turbo"]
 
 def update_preferences(home_location: str, criteria: List[str], priorities: Dict[str, int], transport_mode: str = "Car"):
     """Update user preferences in session state."""

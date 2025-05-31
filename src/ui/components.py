@@ -10,6 +10,7 @@ from models.station import Station
 from models.trip import Trip
 from config import CRITERIA_OPTIONS
 from . import state
+from services.station_service import get_station_service
 
 def render_preferences_sidebar():
     """Render the user preferences in the sidebar."""
@@ -142,11 +143,15 @@ def render_plan_tab(planner_service):
     if not st.session_state.plan_generated:
         if st.button("Generate Ski Plan"):
             with st.spinner("Generating your personalized ski plan..."):
+                # Get stations from the singleton service
+                station_service = get_station_service()
+                stations = station_service.load_stations()
+                
                 plan = planner_service.generate_ski_plan(
                     st.session_state.preferences,
                     st.session_state.trips,
                     model_name=st.session_state.selected_model,
-                    stations=st.session_state.stations
+                    stations=stations
                 )
                 state.update_ski_plan(plan)
                 st.rerun()

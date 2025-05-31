@@ -17,6 +17,7 @@ from strands_tools import calculator
 from src.services.tools.openrouteservice_tool import get_directions
 from models.trip import Trip, UserPreferences
 from services.prompt import format_prompt
+from services.singleton import singleton_session
 
 logger = logging.getLogger(__name__)
 
@@ -97,13 +98,14 @@ class OllamaAgent(BaseAgent):
         # Configure Ollama model
         ollama_model = OllamaModel(
             host=OLLAMA_URL,
-            model=self.model_id
+            model_id=self.model_id
         )
         
         logger.debug(f"Ollama model configured: {self.model_id}")
         self.model = ollama_model
         self.initialise()
 
+@singleton_session("service")
 class AgentService:
     """Service for managing Strands Agent interactions."""
     
@@ -213,7 +215,7 @@ class AgentService:
                         model_id=model_id
                     )
                 except Exception as e:
-                    logger.error(f"Failed to initialise Ollama agent for model {model_name}: {str(e)}")
+                    logger.error(f"Failed to initialise Ollama agent for model {model_id}: {str(e)}")
             
             logger.info(f"Ollama agents initialised successfully for models: {models}")
         except Exception as e:
@@ -227,7 +229,7 @@ class AgentService:
     def get_plan(self,
                  preferences: UserPreferences,
                  trips: List[Trip],
-                 model_name: str,   
+                 model_id: str,   
                  stations: List[object]
                  ) -> str:
         """
@@ -236,7 +238,7 @@ class AgentService:
         Args:
             preferences: User preferences including home location and criteria
             trips: List of planned trips
-            model_name: Name of the LLM model to use
+            model_id: Name of the LLM model to use
             stations: List of ski stations/resorts
             
         Returns:
@@ -244,21 +246,25 @@ class AgentService:
         """
         try:
             # Check if the requested model is available
-            if model_name not in self.agents:
+            if model_id not in self.agents:
                 available_models = self.get_available_models()
                 if not available_models:
                     raise ValueError("No AI models are available")
                     
-                logger.warning(f"Model {model_name} not available, falling back to {available_models[0]}")
-                model_name = available_models[0]
+                logger.warning(f"Model {model_id} not available, falling back to {available_models[0]}")
+                model_id = available_models[0]
             
             # Get the appropriate agent
-            agent = self.agents[model_name]
-            logger.info(f"Using agent for model: {model_name}")
+            agent = self.agents[model_id]
+            logger.info(f"Using agent for model: {model_id}")
             
             # Generate the plan using the selected agent
             return agent.get_plan(preferences, trips, stations)
         except Exception as e:
-            error_msg = f"Error executing agent prompt with model {model_name}: {str(e)}"
+            error_msg = f"Error executing agent prompt with model {model_id}: {str(e)}"
             logger.error(error_msg, exc_info=True)
             raise e
+
+# Function to get a singleton instance of AgentService
+def get_agent_service():
+    return AgentService()

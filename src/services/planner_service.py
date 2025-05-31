@@ -7,16 +7,18 @@ import requests
 from models.trip import Trip, UserPreferences
 
 import streamlit as st
-from services.agent_service import AgentService
+from services.agent_service import get_agent_service
+from services.singleton import singleton_session
 
 logger = logging.getLogger(__name__)
 
+@singleton_session("service")
 class PlannerService:
     def __init__(self):
         """
         Initialise the PlannerService.
         """
-        self.agent_service = AgentService()
+        self.agent_service = get_agent_service()
         
     def generate_ski_plan(
         self,
@@ -43,5 +45,8 @@ class PlannerService:
         # Use the agent service to execute the prompt
         response = self.agent_service.get_plan(preferences, trips, model_name, stations)
         return response
-        
+
+# Function to get a singleton instance of PlannerService
+def get_planner_service():
+    return PlannerService()
     

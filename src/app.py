@@ -11,8 +11,8 @@ import streamlit as st
 from datetime import datetime
 
 from models.trip import Trip
-from services.station_service import StationService
-from services.planner_service import PlannerService
+from services.station_service import get_station_service
+from services.planner_service import get_planner_service
 from ui import components, state
 
 logger = logging.getLogger(__name__)
@@ -23,9 +23,9 @@ def main():
     st.write("Plan your perfect ski season with personalized recommendations!")
     
     try:
-        # Initialize services
-        logger.debug("Initializing services")
-        planner_service = PlannerService()
+        # Initialize services using singleton pattern
+        logger.debug("Getting service instances")
+        planner_service = get_planner_service()
         
         # Initialize session state
         logger.debug("Initializing session state")

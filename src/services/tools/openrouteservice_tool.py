@@ -8,7 +8,9 @@ from requests.exceptions import RequestException, HTTPError, Timeout
 
 logger = logging.getLogger(__name__)
 
-api_key = st.secrets.get("OPENROUTE_API_KEY")
+# Use a function to get the API key to avoid issues with Streamlit's execution flow
+def get_api_key():
+    return st.secrets.get("OPENROUTE_API_KEY")
 
 def retry_with_backoff(func):
     """
@@ -139,6 +141,9 @@ def get_directions(start_location, end_location):
             - duration_minutes: Travel time in minutes (int)
             - error: Error message if any (or None if successful)
     """
+    # Get API key at runtime
+    api_key = get_api_key()
+    
     # First, geocode the locations to get coordinates
     start_coords = geocode_location(start_location, api_key)
     end_coords = geocode_location(end_location, api_key)

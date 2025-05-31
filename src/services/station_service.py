@@ -6,9 +6,12 @@ import logging
 from typing import List, Dict, Optional
 from pathlib import Path
 from models.station import Station
+import streamlit as st
+from services.singleton import singleton_session
 
 logger = logging.getLogger(__name__)
 
+@singleton_session("service")
 class StationService:
     def __init__(self):
         CURR_DIR = Path(__file__).parent
@@ -36,3 +39,7 @@ class StationService:
                 logger.error(f"Unexpected error loading stations: {str(e)}", exc_info=True)
                 raise RuntimeError(f"Error loading station data: {str(e)}")
         return self._stations
+
+# Function to get a singleton instance of StationService
+def get_station_service():
+    return StationService()
