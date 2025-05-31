@@ -14,7 +14,6 @@ from models.trip import Trip
 from services.station_service import StationService
 from services.planner_service import PlannerService
 from ui import components, state
-from config import OLLAMA_URL
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,7 @@ def main():
     try:
         # Initialize services
         logger.debug("Initializing services")
-        planner_service = PlannerService(OLLAMA_URL)
+        planner_service = PlannerService()
         
         # Initialize session state
         logger.debug("Initializing session state")

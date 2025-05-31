@@ -144,13 +144,7 @@ def render_plan_tab(planner_service):
     if selected_model != st.session_state.ollama_model:
         st.session_state.ollama_model = selected_model
         state.reset_plan()
-    
-    # Show LLM status
-    if planner_service.is_llm_configured():
-        st.success(f"Ollama is running and will use the {st.session_state.ollama_model} model.")
-    else:
-        st.warning("Ollama integration is not available. Please ensure Ollama is running and configured correctly.")
-    
+        
     if not st.session_state.plan_generated:
         if st.button("Generate Ski Plan"):
             with st.spinner("Generating your personalized ski plan..."):
