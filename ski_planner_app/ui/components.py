@@ -16,7 +16,7 @@ from ski_planner_app.config import (
 )
 from ski_planner_app.ui import state
 from ski_planner_app.services.station_service import StationService
-
+from ski_planner_app.services.distance_service import DistanceService
 
 def render_preferences_sidebar():
     """Render the user preferences in the sidebar."""
@@ -77,6 +77,11 @@ def render_preferences_sidebar():
         # Update preferences in session state
         state.update_preferences(
             home_location, selected_criteria, priorities, transport_mode)
+        
+        # If home location has changed, trigger distance calculation
+        if home_location and home_location != st.session_state.get('last_home_location', ''):
+            st.session_state['last_home_location'] = home_location
+            st.session_state['distances_calculated'] = False
 
 
 def render_trip_form(on_add_trip):
@@ -99,120 +104,177 @@ def render_trip_form(on_add_trip):
                 key='trip_end_date'
             )
 
-        if st.button("Add Trip"):
-            # Validate dates with clear, concise checks
-            current_date = datetime.now().date()
-            max_future_date = datetime(current_date.year + 3, 12, 31).date()
-
-            if not (start_date and end_date):
-                st.error("Both dates are required")
-            elif start_date > end_date:
-                st.error("End date must be after start date")
-            elif start_date < current_date:
-                st.error("Cannot plan trips in the past")
-            elif (end_date - start_date).days > 30:
-                st.error("Trip duration cannot exceed 30 days")
-            elif end_date > max_future_date:
-                st.error("Cannot plan trips more than 3 years ahead")
-            else:
-                # Check if outside typical ski season
-                month = start_date.month
-                if month > SKI_SEASON_END_MONTH and month < SKI_SEASON_START_MONTH:
-                    st.warning(
-                        "Note: Selected dates may be outside typical ski season")
-
-                on_add_trip(start_date, end_date)
-                st.success("Trip added successfully!")
-
-
-def render_trip_details(trip: Trip, index: int):
-    """Render the details of a single trip."""
-    with st.expander(f"Trip {index+1}: {trip.start_date.strftime('%Y-%m-%d')} to {trip.end_date.strftime('%Y-%m-%d')}"):
-        st.write(f"**Duration:** {trip.duration_days} days")
-
-        st.write("**Selected Criteria:**")
-        if trip.criteria:
-            for criterion in trip.criteria:
-                st.write(f"- {criterion}")
+        # Validate dates
+        if start_date > end_date:
+            st.error("End date must be after start date.")
         else:
-            st.write("- No specific criteria selected")
+            if st.button("Add Trip"):
+                on_add_trip(start_date, end_date)
 
-        if st.button(f"Remove Trip {index+1}"):
-            state.remove_trip(index)
-            st.rerun()
+
+def render_trip_details(trip, index):
+    """Render details for a single trip."""
+    with st.container():
+        col1, col2, col3 = st.columns([2, 2, 1])
+        with col1:
+            st.write(f"**Trip {index+1}**")
+            st.write(f"From: {trip.start_date.strftime('%Y-%m-%d')}")
+            st.write(f"To: {trip.end_date.strftime('%Y-%m-%d')}")
+        with col2:
+            st.write(f"**Duration: {trip.duration_days} days**")
+            criteria_labels = [CRITERIA_OPTIONS[c] for c in trip.criteria]
+            st.write(f"Criteria: {', '.join(criteria_labels)}")
+        with col3:
+            if st.button("Remove", key=f"remove_trip_{index}"):
+                state.remove_trip(index)
+                st.rerun()
+        st.divider()
 
 
 def render_plan_tab(planner_service):
     """Render the plan generation tab."""
-    if not st.session_state.preferences.home_location:
-        st.warning("Please enter your home location in the sidebar.")
-        return
-
-    # Ollama model selection
-    st.subheader("LLM Settings")
-
-    # Check if we have available models
-    if not st.session_state.available_models:
-        st.warning(
-            "No Models found. Please ensure Ollama is running with at least one model installed, or the OpenAI key is configured.")
-        return
-
-    selected_model = st.selectbox(
-        "Select Model",
-        st.session_state.available_models
-    )
-
-    if selected_model != st.session_state.selected_model:
-        st.session_state.selected_model = selected_model
-        state.reset_plan()
-
     if not st.session_state.plan_generated:
-        if st.button("Generate Ski Plan"):
-            with st.spinner("Generating your personalized ski plan..."):
-                # Get stations from the singleton service
-                station_service = StationService()
-                stations = station_service.load_stations()
-
-                plan = planner_service.generate_ski_plan(
-                    st.session_state.preferences,
-                    st.session_state.trips,
-                    model_name=st.session_state.selected_model,
-                    stations=stations
-                )
-                state.update_ski_plan(plan)
-                st.rerun()
+        st.write("Generate a personalized ski season plan based on your preferences and trips.")
+        
+        # Model selection
+        model_options = ["gpt-4", "gpt-3.5-turbo"]
+        model_name = st.selectbox("Select AI Model", model_options, index=0)
+        
+        if st.button("Generate Plan"):
+            with st.spinner("Generating your personalized ski season plan..."):
+                try:
+                    # Get station service
+                    station_service = StationService()
+                    stations = station_service.get_all_stations()
+                    
+                    # Generate plan
+                    plan = planner_service.generate_ski_plan(
+                        st.session_state.preferences,
+                        st.session_state.trips,
+                        model_name,
+                        stations
+                    )
+                    
+                    # Store plan in session state
+                    st.session_state.plan = plan
+                    st.session_state.plan_generated = True
+                    
+                    # Rerun to display the plan
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Error generating plan: {str(e)}")
     else:
-        render_generated_plan()
-
-
-def render_generated_plan():
-    """Render the generated ski plan and related controls."""
-    st.subheader("Your Personalized Ski Season Plan")
-    st.markdown(st.session_state.ski_plan)
-
-    # Allow user to modify the plan
-    st.subheader("Modify Your Plan")
-    modified_plan = st.text_area(
-        "Edit your plan", value=st.session_state.ski_plan, height=300)
-
-    if modified_plan != st.session_state.ski_plan:
-        if st.button("Save Changes"):
-            state.update_ski_plan(modified_plan)
-            st.success("Changes saved!")
-
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col1:
-        if st.button("Edit Trips"):
-            state.set_app_step("trips")
-            st.rerun()
-    with col2:
-        if st.button("Regenerate Plan"):
-            state.reset_plan()
-            st.rerun()
-    with col3:
+        # Display the generated plan
+        st.markdown(st.session_state.plan)
+        
+        # Download button
         st.download_button(
             label="Download Plan",
-            data=st.session_state.ski_plan,
+            data=st.session_state.plan,
             file_name=UI_DOWNLOAD_FILENAME,
             mime=UI_DOWNLOAD_MIME_TYPE
         )
+        
+        # Reset button
+        if st.button("Generate New Plan"):
+            st.session_state.plan_generated = False
+            st.session_state.plan = None
+            st.rerun()
+            
+def render_distances_table(distance_service):
+    """Render a table showing all resorts with their distances and travel times."""
+    st.subheader("Resort Distances")
+    
+    origin = st.session_state.preferences.home_location
+    transport_mode = "driving-car" if st.session_state.preferences.transport_mode == "Car" else "public-transport"
+    
+    # Get all distances
+    stations_with_distances = distance_service.get_all_distances(origin, transport_mode)
+    
+    if stations_with_distances:
+        # Display the table directly using Streamlit's built-in functionality
+        st.dataframe(stations_with_distances)
+    else:
+        st.info("No distance data available.")
+
+def render_distances_table(distance_service):
+    """
+    Render a table showing all resorts with their distances and travel times.
+    
+    Args:
+        distance_service: The distance service instance
+    """
+    st.subheader("Resort Distances")
+    
+    if not st.session_state.preferences.home_location:
+        st.info("Please set your home location in the preferences to see distances.")
+        return
+    
+    origin = st.session_state.preferences.home_location
+    transport_mode = "driving-car" if st.session_state.preferences.transport_mode == "Car" else "public-transport"
+    
+    # Check if distances have been calculated
+    if not distance_service.is_origin_calculated(origin, transport_mode):
+        st.warning("Distances have not been calculated yet. Please complete the preferences step.")
+        return
+    
+    # Get all distances
+    stations_with_distances = distance_service.get_all_distances(origin, transport_mode)
+    
+    if not stations_with_distances:
+        st.info("No distance data available.")
+        return
+    
+    # Create a DataFrame for better display
+    import pandas as pd
+    
+    df = pd.DataFrame(stations_with_distances)
+    
+    # Select and rename columns for display
+    display_columns = ['name', 'region', 'total_pistes_km', 'base_altitude', 'top_altitude', 'distance', 'duration']
+    available_columns = [col for col in display_columns if col in df.columns]
+    
+    if not available_columns:
+        st.error("No valid data columns found.")
+        return
+        
+    display_df = df[available_columns].copy()
+    
+    # Create a mapping for column renaming
+    column_names = {
+        'name': 'Resort',
+        'region': 'Region',
+        'total_pistes_km': 'Total Pistes (km)',
+        'base_altitude': 'Base Altitude (m)',
+        'top_altitude': 'Top Altitude (m)',
+        'distance': 'Distance (km)',
+        'duration': 'Travel Time (min)'
+    }
+    
+    # Rename only the columns that exist
+    rename_map = {col: column_names[col] for col in available_columns if col in column_names}
+    display_df = display_df.rename(columns=rename_map)
+    
+    # Add sorting options
+    sort_options = [column_names[col] for col in available_columns if col in column_names]
+    if sort_options:
+        sort_by = st.selectbox(
+            "Sort by:",
+            options=sort_options,
+            index=sort_options.index('Distance (km)') if 'Distance (km)' in sort_options else 0
+        )
+        
+        # Sort the DataFrame
+        display_df = display_df.sort_values(by=sort_by)
+    
+    # Display the table
+    st.dataframe(display_df, use_container_width=True)
+    
+    # Add download button
+    csv = display_df.to_csv(index=False)
+    st.download_button(
+        label="Download as CSV",
+        data=csv,
+        file_name="resort_distances.csv",
+        mime="text/csv",
+    )

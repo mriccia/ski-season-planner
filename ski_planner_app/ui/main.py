@@ -6,6 +6,8 @@ from datetime import datetime
 
 from ski_planner_app.models.trip import Trip
 from ski_planner_app.services.planner_service import PlannerService
+from ski_planner_app.services.station_service import StationService
+from ski_planner_app.services.distance_service import DistanceService
 from ski_planner_app.ui import components, state
 
 logger = logging.getLogger(__name__)
@@ -20,6 +22,8 @@ def main():
         # Initialize services using singleton pattern
         logger.debug("Getting service instances")
         planner_service = PlannerService()
+        station_service = StationService()
+        distance_service = DistanceService()
 
         # Initialize session state
         logger.debug("Initializing session state")
@@ -56,6 +60,33 @@ def main():
                 st.info(
                     "Please complete your profile and preferences in the sidebar before continuing.")
             else:
+                # Check if we need to calculate distances
+                if not st.session_state.get('distances_calculated', False):
+                    home_location = st.session_state.preferences.home_location
+                    transport_mode = "driving-car" if st.session_state.preferences.transport_mode == "Car" else "public-transport"
+                    
+                    # Get all station locations
+                    all_stations = station_service.get_all_locations()
+                    
+                    # Show progress for distance calculations
+                    with st.spinner(f"Calculating distances from {home_location} to all ski resorts..."):
+                        result = distance_service.prefetch_all_distances(
+                            home_location, 
+                            all_stations, 
+                            transport_mode
+                        )
+                        
+                        if result["status"] == "completed":
+                            st.success(f"✅ Calculated distances to {result['newly_calculated']} new resorts!")
+                        elif result["status"] == "already_calculated":
+                            st.success("✅ Distances already calculated!")
+                        
+                        # Mark as calculated
+                        st.session_state['distances_calculated'] = True
+                
+                # Display the distances table
+                components.render_distances_table(distance_service)
+                
                 st.success("✅ Preferences set successfully!")
                 if st.button("Continue to Add Trips"):
                     state.set_app_step("trips")

@@ -109,6 +109,7 @@ def geocode_location(location_name, api_key):
         # Extract coordinates from the first feature
         if data.get('features') and len(data['features']) > 0:
             coordinates = data['features'][0]['geometry']['coordinates']
+            logger.info(f"Successfully geocoded {location_name} to coordinates {coordinates}")
             return coordinates  # [longitude, latitude]
         else:
             logger.warning(f"Could not find coordinates for {location_name}")
