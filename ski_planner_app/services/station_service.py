@@ -13,7 +13,17 @@ logger = logging.getLogger(__name__)
 
 @singleton_session("service")
 class StationService:
+    """
+    Service for managing ski station data.
+    
+    This service handles loading and caching ski station data from a JSON file.
+    It uses the singleton pattern to ensure only one instance exists per session.
+    """
+    
     def __init__(self):
+        """
+        Initialize the StationService with the path to the stations data file.
+        """
         CURR_DIR = Path(__file__).parent
         STATIONS_FILE = f"{CURR_DIR}/data/magic_pass_stations.json"
         logger.debug(
@@ -22,7 +32,18 @@ class StationService:
         self._stations: Optional[List[Station]] = None
 
     def load_stations(self) -> List[Station]:
-        """Load stations from the JSON data file."""
+        """
+        Load stations from the JSON data file.
+        
+        This method loads the station data from the JSON file and caches it
+        for future use. If the data is already loaded, it returns the cached data.
+        
+        Returns:
+            List[Station]: List of Station objects
+            
+        Raises:
+            RuntimeError: If there's an error loading the station data
+        """
         if self._stations is None:
             logger.info(f"Loading stations data from {self.data_file}")
             try:
@@ -45,9 +66,3 @@ class StationService:
                     f"Unexpected error loading stations: {str(e)}", exc_info=True)
                 raise RuntimeError(f"Error loading station data: {str(e)}")
         return self._stations
-
-# Function to get a singleton instance of StationService
-
-
-def get_station_service():
-    return StationService()

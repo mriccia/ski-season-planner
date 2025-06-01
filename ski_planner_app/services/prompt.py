@@ -1,4 +1,7 @@
 
+"""
+Module for generating prompts for the LLM-based planner.
+"""
 from typing import List
 import logging
 from ski_planner_app.models.trip import Trip, UserPreferences
@@ -8,15 +11,19 @@ logger = logging.getLogger(__name__)
 
 def format_prompt(preferences: UserPreferences, trips: List[Trip], stations: List[object]) -> str:
     """
-    Create the prompt for the LLM.
+    Create the prompt for the LLM to generate a ski plan.
+
+    This function formats all the user preferences, trip details, and available
+    ski stations into a structured prompt for the LLM to generate personalized
+    ski trip recommendations.
 
     Args:
-        preferences: User preferences
-        trips: List of planned trips
-        stations: List of ski stations/resorts
+        preferences (UserPreferences): User's skiing preferences and priorities
+        trips (List[Trip]): List of planned trips with dates
+        stations (List[object]): List of available ski stations/resorts
 
     Returns:
-        str: Formatted prompt for the LLM
+        str: Formatted prompt for the LLM with detailed instructions
     """
     logger.debug("Creating LLM prompt")
     trips_text = ""

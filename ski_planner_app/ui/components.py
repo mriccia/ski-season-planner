@@ -5,9 +5,17 @@ import streamlit as st
 from datetime import datetime
 
 from ski_planner_app.models.trip import Trip
-from ski_planner_app.config import CRITERIA_OPTIONS
+from ski_planner_app.config import (
+    CRITERIA_OPTIONS, 
+    DEFAULT_TRIP_START_DATE, 
+    DEFAULT_TRIP_END_DATE,
+    UI_DOWNLOAD_FILENAME,
+    UI_DOWNLOAD_MIME_TYPE,
+    SKI_SEASON_START_MONTH,
+    SKI_SEASON_END_MONTH
+)
 from ski_planner_app.ui import state
-from ski_planner_app.services.station_service import get_station_service
+from ski_planner_app.services.station_service import StationService
 
 
 def render_preferences_sidebar():
@@ -77,20 +85,17 @@ def render_trip_form(on_add_trip):
         st.write("Select trip dates:")
         col1, col2 = st.columns(2)
 
-        # Set default dates to December 12-15
-        default_start_date = datetime(2025, 12, 12)
-        default_end_date = datetime(2025, 12, 15)
-
+        # Set default dates from config
         with col1:
             start_date = st.date_input(
                 "Start Date",
-                value=default_start_date,
+                value=DEFAULT_TRIP_START_DATE,
                 key='trip_start_date'
             )
         with col2:
             end_date = st.date_input(
                 "End Date",
-                value=default_end_date,
+                value=DEFAULT_TRIP_END_DATE,
                 key='trip_end_date'
             )
 
@@ -110,9 +115,9 @@ def render_trip_form(on_add_trip):
             elif end_date > max_future_date:
                 st.error("Cannot plan trips more than 3 years ahead")
             else:
-                # Check if outside typical ski season (Nov-Apr)
+                # Check if outside typical ski season
                 month = start_date.month
-                if month > 4 and month < 11:
+                if month > SKI_SEASON_END_MONTH and month < SKI_SEASON_START_MONTH:
                     st.warning(
                         "Note: Selected dates may be outside typical ski season")
 
@@ -165,7 +170,7 @@ def render_plan_tab(planner_service):
         if st.button("Generate Ski Plan"):
             with st.spinner("Generating your personalized ski plan..."):
                 # Get stations from the singleton service
-                station_service = get_station_service()
+                station_service = StationService()
                 stations = station_service.load_stations()
 
                 plan = planner_service.generate_ski_plan(
@@ -208,6 +213,6 @@ def render_generated_plan():
         st.download_button(
             label="Download Plan",
             data=st.session_state.ski_plan,
-            file_name="ski_season_plan.txt",
-            mime="text/plain"
+            file_name=UI_DOWNLOAD_FILENAME,
+            mime=UI_DOWNLOAD_MIME_TYPE
         )

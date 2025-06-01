@@ -3,9 +3,9 @@ Streamlit session state management.
 """
 from typing import Dict, List
 import streamlit as st
-from models.trip import Trip, UserPreferences
-from services.agent_service import AgentService
-from config import DEFAULT_PRIORITIES
+from ski_planner_app.models.trip import Trip, UserPreferences
+from ski_planner_app.services.agent_service import AgentService
+from ski_planner_app.config import DEFAULT_PRIORITIES
 
 
 def initialize_session_state():

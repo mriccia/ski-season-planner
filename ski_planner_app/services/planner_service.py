@@ -5,7 +5,7 @@ from typing import List
 import logging
 from ski_planner_app.models.trip import Trip, UserPreferences
 
-from ski_planner_app.services.agent_service import get_agent_service
+from ski_planner_app.services.agent_service import AgentService
 from ski_planner_app.services.singleton import singleton_session
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ class PlannerService:
         """
         Initialise the PlannerService.
         """
-        self.agent_service = get_agent_service()
+        self.agent_service = AgentService()
 
     def generate_ski_plan(
         self,

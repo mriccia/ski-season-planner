@@ -5,6 +5,7 @@ import random
 from strands import tool
 import logging
 from requests.exceptions import HTTPError, Timeout
+from ski_planner_app.config import MAX_API_RETRIES, INITIAL_RETRY_DELAY, RETRY_JITTER_FACTOR
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +47,9 @@ def retry_with_backoff(func):
                 - duration_minutes: Travel time in minutes (int)
                 - error: Error message if any (or None if successful)
         """
-        max_retries = 5
-        retry_delay = 10  # Initial delay in seconds
+        max_retries = MAX_API_RETRIES
+        retry_delay = INITIAL_RETRY_DELAY  # Initial delay in seconds
+        jitter_factor = RETRY_JITTER_FACTOR  # Add randomness to avoid thundering herd
         jitter_factor = 0.1  # Add randomness to avoid thundering herd
         
         for attempt in range(max_retries):

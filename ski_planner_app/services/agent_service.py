@@ -18,10 +18,12 @@ from ski_planner_app.services.tools.openrouteservice_tool import get_directions
 from ski_planner_app.models.trip import Trip, UserPreferences
 from ski_planner_app.services.prompt import format_prompt
 from ski_planner_app.services.singleton import singleton_session
+from ski_planner_app.config import OLLAMA_DEFAULT_URL, DEFAULT_OPENAI_MODELS
 
 logger = logging.getLogger(__name__)
 
-OLLAMA_URL = st.secrets.get("OLLLAMA_URL", "http://localhost:11434")
+# Fix typo in secrets key and use config default
+OLLAMA_URL = st.secrets.get("OLLAMA_URL", OLLAMA_DEFAULT_URL)
 
 
 class BaseAgent(ABC):
@@ -155,8 +157,7 @@ class AgentService:
                     "OpenAI API key not found, skipping OpenAI agent setup")
                 return
 
-            models = ["gpt-4o", "gpt-3.5-turbo"]
-            for model in models:
+            for model in DEFAULT_OPENAI_MODELS:
                 self.agents[model] = OpenAIAgent(
                     mcp_client=self.mcp_client,
                     model_id=model
@@ -255,9 +256,3 @@ class AgentService:
             error_msg = f"Error executing agent prompt with model {model_id}: {str(e)}"
             logger.error(error_msg, exc_info=True)
             raise e
-
-# Function to get a singleton instance of AgentService
-
-
-def get_agent_service():
-    return AgentService()
