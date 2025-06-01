@@ -50,7 +50,6 @@ def retry_with_backoff(func):
         max_retries = MAX_API_RETRIES
         retry_delay = INITIAL_RETRY_DELAY  # Initial delay in seconds
         jitter_factor = RETRY_JITTER_FACTOR  # Add randomness to avoid thundering herd
-        jitter_factor = 0.1  # Add randomness to avoid thundering herd
         
         for attempt in range(max_retries):
             try:
