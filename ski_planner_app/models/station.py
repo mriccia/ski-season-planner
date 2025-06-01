@@ -2,7 +2,7 @@
 Models for representing ski stations and related data structures.
 """
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Dict
 
 @dataclass
 class DifficultyBreakdown:

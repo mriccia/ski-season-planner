@@ -2,9 +2,9 @@ import streamlit as st
 import requests
 import time
 import random
-from strands import Agent, tool
+from strands import tool
 import logging
-from requests.exceptions import RequestException, HTTPError, Timeout
+from requests.exceptions import HTTPError, Timeout
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ def retry_with_backoff(func):
                 - error: Error message if any (or None if successful)
         """
         max_retries = 5
-        retry_delay = 1  # Initial delay in seconds
+        retry_delay = 10  # Initial delay in seconds
         jitter_factor = 0.1  # Add randomness to avoid thundering herd
         
         for attempt in range(max_retries):

@@ -3,8 +3,7 @@ Models for representing ski trips and user preferences.
 """
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Dict, Optional
-from .station import Station
+from typing import List, Dict
 
 @dataclass
 class UserPreferences:

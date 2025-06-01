@@ -1,7 +1,7 @@
 
 from typing import List
 import logging
-from models.trip import Trip, UserPreferences
+from ski_planner_app.models.trip import Trip, UserPreferences
 
 logger = logging.getLogger(__name__)
 
@@ -9,12 +9,12 @@ logger = logging.getLogger(__name__)
 def format_prompt(preferences: UserPreferences, trips: List[Trip], stations: List[object]) -> str:
     """
     Create the prompt for the LLM.
-    
+
     Args:
         preferences: User preferences
         trips: List of planned trips
         stations: List of ski stations/resorts
-        
+
     Returns:
         str: Formatted prompt for the LLM
     """
@@ -22,9 +22,10 @@ def format_prompt(preferences: UserPreferences, trips: List[Trip], stations: Lis
     trips_text = ""
     for i, trip in enumerate(trips):
         trips_text += f"Trip {i+1}: {trip.start_date.strftime('%Y-%m-%d')} to {trip.end_date.strftime('%Y-%m-%d')}\n"
-    
-    priorities_text = ", ".join([f"{k} (weight: {v})" for k, v in preferences.priorities.items()])
-    
+
+    priorities_text = ", ".join(
+        [f"{k} (weight: {v})" for k, v in preferences.priorities.items()])
+
     prompt = f"""
         
 You are a ski trip planner. Your task is to create a personalised ski season plan for a person living in {preferences.home_location}.
@@ -80,7 +81,6 @@ You MUST calculate the distance and travel time from {preferences.home_location}
 
 Please ensure you have all the necessary tools and data available to complete this task. Only return your response once the plan is fully generated and all steps are completed.
         """
-        
+
     logger.debug(f"Created prompt of length {len(prompt)}")
     return prompt
-        
