@@ -18,10 +18,18 @@
         "length_km": 7,
         "vertical_drop": 1280
       },
-      "region": "Val d'Anniviers, Valais"
+      "region": "Val d'Anniviers, Valais",
+      "coordinates": {
+        "longitude": 7.5744806137686265,
+        "latitude": 46.17679980063583
+      }
     },
     {
       "name": "Belalp - Blatten",
+      "coordinates": {
+        "longitude": 7.984297547031418,
+        "latitude": 46.35905672485628
+      },
       "base_altitude": 1322,
       "top_altitude": 3118,
       "vertical_drop": 1796,
@@ -36,6 +44,10 @@
     },
     {
       "name": "Villars-Gryon-Les Diablerets",
+      "coordinates": { 
+        "longitude": 7.056569250212579,
+        "latitude": 46.2967200240667
+      },
       "base_altitude": 1224,
       "top_altitude": 2120,
       "vertical_drop": 896,
@@ -50,6 +62,10 @@
     },
     {
       "name": "Saas-Fee / Saas-Almagell",
+      "coordinates": {
+        "longitude": 7.9328470847300965,
+        "latitude": 46.11113950647706
+      },
       "base_altitude": 1800,
       "top_altitude": 3573,
       "vertical_drop": 1773,
@@ -64,6 +80,10 @@
     },
     {
       "name": "Bergbahnen Gstaad",
+      "coordinates": {
+        "longitude": 7.282579232857604,
+        "latitude": 46.467778704794604
+      },
       "base_altitude": 948,
       "top_altitude": 2011,
       "vertical_drop": 1063,
@@ -82,10 +102,18 @@
       "top_altitude": 3091,
       "vertical_drop": 1688,
       "total_pistes_km": 38,
-      "region": "Lötschental, Valais"
+      "region": "Lötschental, Valais",
+      "coordinates": {
+        "longitude": 7.779113186627259,
+        "latitude": 46.403695582450545
+      }
     },
     {
       "name": "Anzère",
+      "coordinates": {
+        "longitude": 7.398798166025691,
+        "latitude": 46.29717209648414
+      },
       "base_altitude": 1516,
       "top_altitude": 2420,
       "vertical_drop": 904,
@@ -107,6 +135,10 @@
     },
     {
       "name": "Bugnenets-Savagnières",
+      "coordinates": {
+        "longitude": 7.007205401957905,
+        "latitude": 47.12729216204707
+      },
       "base_altitude": 1078,
       "top_altitude": 1449,
       "vertical_drop": 371,
@@ -121,6 +153,10 @@
     },
     {
       "name": "Charmey",
+      "coordinates": { 
+        "longitude": 7.168400152999689,
+        "latitude": 46.6182528777703
+      },
       "base_altitude": 875,
       "top_altitude": 1626,
       "vertical_drop": 751,
@@ -135,6 +171,10 @@
     },
     {
       "name": "Crêt-du-Puy",
+      "coordinates": {
+        "longitude": 6.9826233313158035,
+        "latitude": 47.09321557278646
+      },
       "base_altitude": 1000,
       "top_altitude": 1300,
       "vertical_drop": 300,
@@ -144,6 +184,10 @@
     },
     {
       "name": "Jaun",
+      "coordinates": {
+        "longitude": 7.291677411267542,
+        "latitude": 46.60826250328726
+      },
       "base_altitude": 1023,
       "top_altitude": 1571,
       "vertical_drop": 548,
@@ -158,6 +202,10 @@
     },
     {
       "name": "La Berra",
+      "coordinates": {
+        "longitude": 7.155661502025447,
+        "latitude": 46.687492574649546
+      },
       "base_altitude": 1040,
       "top_altitude": 1636,
       "vertical_drop": 596,
@@ -172,6 +220,10 @@
     },
     {
       "name": "La Lécherette",
+      "coordinates": {
+        "longitude": 7.111136913000476,
+        "latitude": 46.42037913047577
+      },
       "base_altitude": 1379,
       "top_altitude": 1874,
       "vertical_drop": 495,
@@ -187,6 +239,10 @@
     },
     {
       "name": "Les Marécottes",
+      "coordinates": {
+        "longitude": 7.0068532279006215,
+        "latitude": 46.111549603766555
+      },
       "base_altitude": 1110,
       "top_altitude": 2220,
       "vertical_drop": 1110,
@@ -202,6 +258,10 @@
     },
     {
       "name": "Les Mosses",
+      "coordinates": {
+        "longitude": 7.096117784649296,
+        "latitude": 46.39180534790281
+      },
       "base_altitude": 1379,
       "top_altitude": 1874,
       "vertical_drop": 495,
@@ -217,6 +277,10 @@
     },
     {
       "name": "Les Paccots",
+      "coordinates": {
+        "longitude": 6.946521337507198,
+        "latitude": 46.52276650517671
+      },
       "base_altitude": 1185,
       "top_altitude": 1500,
       "vertical_drop": 360,
@@ -231,6 +295,10 @@
     },
     {
       "name": "Leysin",
+      "coordinates": {
+        "longitude": 7.019105071395185,
+        "latitude": 46.34781193205882
+      },
       "base_altitude": 1250,
       "top_altitude": 2198,
       "vertical_drop": 948,
@@ -246,6 +314,10 @@
     },
     {
       "name": "Mayens de Conthey",
+      "coordinates": {
+        "longitude": 7.2853090192870855,
+        "latitude": 46.252276153347864
+      },
       "base_altitude": 1281,
       "top_altitude": 1439,
       "vertical_drop": 158,
@@ -260,6 +332,10 @@
     },
     {
       "name": "Moléson",
+      "coordinates": {
+        "longitude": 7.038398705358019,
+        "latitude": 46.5601823178564
+      },
       "base_altitude": 1109,
       "top_altitude": 1978,
       "vertical_drop": 869,
@@ -274,6 +350,10 @@
     },
     {
       "name": "Nax - Mt-Noble",
+      "coordinates": {
+        "longitude": 7.462498044989972,
+        "latitude": 46.22529292045039
+      },
       "base_altitude": 1495,
       "top_altitude": 2640,
       "vertical_drop": 1145,
@@ -288,6 +368,10 @@
     },
     {
       "name": "Ovronnaz",
+      "coordinates": {
+        "longitude": 7.160779151880754,
+        "latitude": 46.204730045940906
+      },
       "base_altitude": 1400,
       "top_altitude": 2427,
       "vertical_drop": 1027,
@@ -302,6 +386,10 @@
     },
     {
       "name": "Rathvel",
+      "coordinates": {
+        "longitude": 6.980290807151173,
+        "latitude": 46.542813807344736
+      },
       "base_altitude": 1200,
       "top_altitude": 1500,
       "vertical_drop": 300,
@@ -311,6 +399,10 @@
     },
     {
       "name": "Schwarzsee",
+      "coordinates": { 
+        "longitude": 7.29186785540081,
+        "latitude": 46.671614755067665
+      },
       "base_altitude": 1050,
       "top_altitude": 1750,
       "vertical_drop": 700,
@@ -321,6 +413,10 @@
     },
     {
       "name": "St-Luc / Chandolin",
+      "coordinates": {
+        "longitude": 7.60255664004766,
+        "latitude": 46.22027298109393
+      },
       "base_altitude": 1650,
       "top_altitude": 2980,
       "vertical_drop": 1330,
@@ -336,6 +432,10 @@
     },
     {
       "name": "Tramelan",
+      "coordinates": {
+        "longitude": 7.085732928189592,
+        "latitude": 47.21979893640261
+      },
       "base_altitude": 920,
       "top_altitude": 1228,
       "vertical_drop": 308,
@@ -350,6 +450,10 @@
     },
     {
       "name": "Vercorin",
+      "coordinates": { 
+        "longitude": 7.534187790967095,
+        "latitude": 46.254106179532414
+      },
       "base_altitude": 1340,
       "top_altitude": 2374,
       "vertical_drop": 1034,
@@ -365,6 +469,10 @@
     },
     {
       "name": "Glacier 3000",
+      "coordinates": {
+        "longitude": 7.2052656939964494,
+        "latitude": 46.353951236806175
+      },
       "base_altitude": 1800,
       "top_altitude": 3000,
       "vertical_drop": 1200,
@@ -383,6 +491,10 @@
     },
     {
       "name": "Vallée de Joux",
+      "coordinates": {
+        "longitude": 6.2179459091681615,
+        "latitude": 46.58009523342686
+      },
       "base_altitude": 1010,
       "top_altitude": 1445,
       "vertical_drop": 435,
@@ -392,6 +504,10 @@
     },
     {
       "name": "Espace Dent-Blanche (Evolène)",
+      "coordinates": {
+        "longitude": 7.479179981661317,
+        "latitude": 46.12202699025095
+      },
       "base_altitude": 1404,
       "top_altitude": 2632,
       "vertical_drop": 1228,
@@ -407,6 +523,10 @@
     },
     {
       "name": "Les Pléiades",
+      "coordinates": {
+        "longitude": 6.913848304191754,
+        "latitude": 46.485467484843724
+      },
       "base_altitude": 1080,
       "top_altitude": 1360,
       "vertical_drop": 280,
@@ -421,6 +541,10 @@
     },
     {
       "name": "Les Rochers - de - Naye",
+      "coordinates": {
+        "longitude": 6.947966204409186,
+        "latitude": 46.43438594998082
+      },
       "base_altitude": 1050,
       "top_altitude": 2045,
       "vertical_drop": 995,
@@ -430,6 +554,10 @@
     },
     {
       "name": "Espace Dent-Blanche (La Forclaz)",
+      "coordinates": {
+        "longitude": 7.522107357134711,
+        "latitude": 46.08556622285488
+      },
       "base_altitude": 1730,
       "top_altitude": 2200,
       "vertical_drop": 470,
@@ -444,6 +572,10 @@
     },
     {
       "name": "Espace Dent-Blanche (Arolla)",
+      "coordinates": {
+        "longitude": 7.481427424673634,
+        "latitude": 46.021648420417456
+      },
       "base_altitude": 1984,
       "top_altitude": 2877,
       "vertical_drop": 893,
@@ -459,6 +591,10 @@
     },
     {
       "name": "Prés-d'Orvin",
+      "coordinates": {
+        "longitude": 7.176382239919043,
+        "latitude": 47.15572616788173
+      },
       "base_altitude": 1000,
       "top_altitude": 1300,
       "vertical_drop": 300,
@@ -468,6 +604,10 @@
     },
     {
       "name": "Leukerbad (Torrent & Gemmi)",
+      "coordinates": {
+        "longitude": 7.62543440140486,
+        "latitude": 46.38389498303766
+      },
       "base_altitude": 1411,
       "top_altitude": 2610,
       "vertical_drop": 1199,
@@ -488,6 +628,10 @@
     },
     {
       "name": "Robella Val-de-Travers",
+      "coordinates": {
+        "longitude": 6.55138268861228,
+        "latitude": 46.88616586226736
+      },
       "base_altitude": 770,
       "top_altitude": 1457,
       "vertical_drop": 687,
@@ -502,6 +646,10 @@
     },
     {
       "name": "Springenboden",
+      "coordinates": {
+        "longitude": 7.57652948897846,
+        "latitude": 46.61886855926571
+      },
       "base_altitude": 1207,
       "top_altitude": 1525,
       "vertical_drop": 318,
@@ -516,6 +664,10 @@
     },
     {
       "name": "Jeizinen",
+      "coordinates": {
+        "longitude": 7.7223122842073035,
+        "latitude": 46.32950529662316
+      },
       "base_altitude": 1500,
       "top_altitude": 2200,
       "vertical_drop": 700,
@@ -525,6 +677,10 @@
     },
     {
       "name": "Grimmialp",
+      "coordinates": {
+        "longitude": 7.4840357831569095,
+        "latitude": 46.56808914585159
+      },
       "base_altitude": 1233,
       "top_altitude": 1833,
       "vertical_drop": 600,
@@ -540,6 +696,10 @@
     },
     {
       "name": "Wiriehorn",
+      "coordinates": {
+        "longitude": 7.5325803582942035,
+        "latitude": 46.61252901034902
+      },
       "base_altitude": 984,
       "top_altitude": 1868,
       "vertical_drop": 884,
@@ -554,6 +714,10 @@
     },
     {
       "name": "Métabief",
+      "coordinates": {
+        "longitude": 6.356785137984372,
+        "latitude": 46.76819341181181
+      },
       "base_altitude": 1000,
       "top_altitude": 1463,
       "vertical_drop": 463,
@@ -568,6 +732,10 @@
     },
     {
       "name": "Heimenschwand",
+      "coordinates": {
+        "longitude": 7.682016440043427,
+        "latitude": 46.82587250228796
+      },
       "base_altitude": 900,
       "top_altitude": 1200,
       "vertical_drop": 300,
@@ -577,6 +745,10 @@
     },
     {
       "name": "Niederhorn",
+      "coordinates": {
+        "longitude": 7.7657496890212085,
+        "latitude": 46.69088660780959
+      },
       "base_altitude": 1100,
       "top_altitude": 1950,
       "vertical_drop": 850,
@@ -586,6 +758,10 @@
     },
     {
       "name": "Eriz",
+      "coordinates": {
+        "longitude": 7.8269260255131,
+        "latitude": 46.784517474297665
+      },
       "base_altitude": 1044,
       "top_altitude": 1378,
       "vertical_drop": 334,
@@ -600,6 +776,10 @@
     },
     {
       "name": "Habkern",
+      "coordinates": {
+        "longitude": 7.86272033342666,
+        "latitude": 46.731880132067644
+      },
       "base_altitude": 1137,
       "top_altitude": 1500,
       "vertical_drop": 363,
@@ -609,6 +789,10 @@
     },
     {
       "name": "Beatenberg-Hohwald",
+      "coordinates": {
+        "longitude": 7.816372607499774,
+        "latitude": 46.70502657551941
+      },
       "base_altitude": 1100,
       "top_altitude": 1800,
       "vertical_drop": 700,
@@ -618,6 +802,10 @@
     },
     {
       "name": "Axalp",
+      "coordinates": {
+        "longitude": 8.037253647808717,
+        "latitude": 46.7186670279118
+      },
       "base_altitude": 1400,
       "top_altitude": 2000,
       "vertical_drop": 600,
@@ -627,6 +815,10 @@
     },
     {
       "name": "Rossberg",
+      "coordinates": {46.63787110202527, 7.445543490301837
+        "longitude": 7.445543490301837,
+        "latitude": 46.63787110202527
+      },
       "base_altitude": 1000,
       "top_altitude": 1580,
       "vertical_drop": 580,
@@ -636,15 +828,23 @@
     },
     {
       "name": "Jaunpass",
+      "coordinates": {
+        "longitude": 7.336747734696657,
+        "latitude": 46.59128900579244
+      },
       "base_altitude": 850,
       "top_altitude": 1700,
       "vertical_drop": 850,
       "total_pistes_km": 12.5,
       "lifts": 4,
-      "region": "Bern/Fribourg"
+      "region": "Bern"
     },
     {
       "name": "Rosswald",
+      "coordinates": {
+        "longitude": 8.042697042499132,
+        "latitude": 46.30418953623298
+      },
       "base_altitude": 1036,
       "top_altitude": 2536,
       "vertical_drop": 1500,
@@ -654,6 +854,10 @@
     },
     {
       "name": "Faltschen",
+      "coordinates": {
+        "longitude": 7.719865889035955,
+        "latitude": 46.6309195466475
+      },
       "base_altitude": 1200,
       "top_altitude": 1800,
       "vertical_drop": 600,
@@ -663,6 +867,10 @@
     },
     {
       "name": "Aeschiallmend",
+      "coordinates": {
+        "longitude": 7.7271129824733205,
+        "latitude": 46.647512270457185
+      },
       "base_altitude": 1000,
       "top_altitude": 1400,
       "vertical_drop": 400,
@@ -672,6 +880,10 @@
     },
     {
       "name": "Bumbach Schangnau",
+      "coordinates": {
+        "longitude": 7.891206355837492,
+        "latitude": 46.813433950646036
+      },
       "base_altitude": 920,
       "top_altitude": 1365,
       "vertical_drop": 445,
@@ -686,6 +898,10 @@
     },
     {
       "name": "Eischoll",
+      "coordinates": {
+        "longitude": 7.780841811807964,
+        "latitude": 46.29277565138114 
+      },
       "base_altitude": 1260,
       "top_altitude": 2200,
       "vertical_drop": 940,
@@ -700,6 +916,10 @@
     },
     {
       "name": "Gantrisch Gurnigel",
+      "coordinates": {
+        "longitude": 7.446287520177475,
+        "latitude": 46.7242719793097 
+      },
       "base_altitude": 1340,
       "top_altitude": 1590,
       "vertical_drop": 250,
@@ -714,6 +934,10 @@
     },
     {
       "name": "Gspon",
+      "coordinates": {
+        "longitude": 7.905446600794134,
+        "latitude": 46.22597736144049
+      },
       "base_altitude": 1900,
       "top_altitude": 2200,
       "vertical_drop": 300,
@@ -723,6 +947,10 @@
     },
     {
       "name": "Gurnigelbad",
+      "coordinates": {
+        "longitude": 7.450451660540231,
+        "latitude": 46.75988160723069
+      },
       "base_altitude": 1150,
       "top_altitude": 1250,
       "vertical_drop": 100,
@@ -737,6 +965,10 @@
     },
     {
       "name": "Kiental",
+      "coordinates": {
+        "longitude": 7.771890701350116,
+        "latitude": 46.60146929633275
+      },
       "base_altitude": 926,
       "top_altitude": 1490,
       "vertical_drop": 564,
@@ -751,6 +983,10 @@
     },
     {
       "name": "Ste-Croix/Les Rasses",
+      "coordinates": {
+        "longitude": 6.541234622902881,
+        "latitude": 46.830841759572465
+      },
       "base_altitude": 1100,
       "top_altitude": 1580,
       "vertical_drop": 480,
@@ -760,6 +996,10 @@
     },
     {
       "name": "Marbachegg",
+      "coordinates": {
+        "longitude": 7.896084391752267,
+        "latitude": 46.84999848429507 
+      },
       "base_altitude": 900,
       "top_altitude": 1500,
       "vertical_drop": 600,
@@ -769,6 +1009,10 @@
     },
     {
       "name": "Moosalp",
+      "coordinates": {
+        "longitude": 7.827340818715531,
+        "latitude": 46.27122916145885
+      },
       "base_altitude": 1500,
       "top_altitude": 2000,
       "vertical_drop": 500,
@@ -778,6 +1022,10 @@
     },
     {
       "name": "Ottenleue",
+      "coordinates": {
+        "longitude": 7.365524934075745,
+        "latitude": 46.73198020575114
+      },
       "base_altitude": 1000,
       "top_altitude": 1400,
       "vertical_drop": 400,
@@ -787,6 +1035,10 @@
     },
     {
       "name": "Riffenmatt",
+      "coordinates": {
+        "longitude": 7.354398821930542,
+        "latitude": 46.76355537386148
+      },
       "base_altitude": 1000,
       "top_altitude": 1400,
       "vertical_drop": 400,
@@ -796,6 +1048,10 @@
     },
     {
       "name": "Rüschegg",
+      "coordinates": {
+        "longitude": 7.421135203385842,
+        "latitude": 46.76022316893306 
+      },
       "base_altitude": 1000,
       "top_altitude": 1500,
       "vertical_drop": 500,
@@ -805,6 +1061,10 @@
     },
     {
       "name": "Selital",
+      "coordinates": {
+        "longitude": 7.391487981966824,
+        "latitude": 46.74106393630991 
+      },
       "base_altitude": 1200,
       "top_altitude": 1700,
       "vertical_drop": 500,
@@ -814,6 +1074,10 @@
     },
     {
       "name": "Unterbäch",
+      "coordinates": {
+        "longitude": 7.801307927153058,
+        "latitude": 46.284095061517014
+      },
       "base_altitude": 1200,
       "top_altitude": 2500,
       "vertical_drop": 1300,
@@ -823,6 +1087,10 @@
     },
     {
       "name": "Visperterminen",
+      "coordinates": {
+        "longitude": 7.9082947980938005,
+        "latitude": 46.258966141419734
+      },
       "base_altitude": 1370,
       "top_altitude": 2338,
       "vertical_drop": 968,
@@ -832,6 +1100,10 @@
     },
     {
       "name": "Schwanden",
+      "coordinates": {
+        "longitude": 7.731701782397368,
+        "latitude": 46.73315477442338
+      },
       "base_altitude": 1000,
       "top_altitude": 1400,
       "vertical_drop": 400,
@@ -841,6 +1113,10 @@
     },
     {
       "name": "Wilerallmi",
+      "coordinates": {
+        "longitude": 7.7394430536394605,
+        "latitude": 46.724501791507016 
+      },
       "base_altitude": 1000,
       "top_altitude": 1400,
       "vertical_drop": 400,
@@ -850,6 +1126,10 @@
     },
     {
       "name": "Homberg",
+      "coordinates": {
+        "longitude": 7.677867575059558,
+        "latitude": 46.77274679281021
+      },
       "base_altitude": 940,
       "top_altitude": 1093,
       "vertical_drop": 153,
@@ -864,6 +1144,10 @@
     },
     {
       "name": "Hirmentaz",
+      "coordinates": {
+        "longitude": 6.505831361324095,
+        "latitude": 46.244893410774466
+      },
       "base_altitude": 1100,
       "top_altitude": 1610,
       "vertical_drop": 510,
@@ -873,6 +1157,10 @@
     },
     {
       "name": "Les Habères",
+      "coordinates": {
+        "longitude": 6.479924130994449,
+        "latitude": 46.239820344792356
+      },
       "base_altitude": 1000,
       "top_altitude": 1500,
       "vertical_drop": 500,
@@ -882,6 +1170,10 @@
     },
     {
       "name": "Jura-sur-Léman (Transfrontalier)",
+      "coordinates": {
+        "longitude": 6.083164632197836,
+        "latitude": 46.44107424696443
+      },
       "base_altitude": 1000,
       "top_altitude": 1700,
       "vertical_drop": 700,
@@ -891,6 +1183,10 @@
     },
     {
       "name": "Monts Jura",
+      "coordinates": {
+        "longitude": 6.007458301516019,
+        "latitude": 46.28278674737834 
+      },
       "base_altitude": 900,
       "top_altitude": 1680,
       "vertical_drop": 780,
@@ -900,6 +1196,10 @@
     },
     {
       "name": "Thollon Les Mémises",
+      "coordinates": {
+        "longitude": 6.717127921284948,
+        "latitude": 46.39057276009724
+      },
       "base_altitude": 1370,
       "top_altitude": 1874,
       "vertical_drop": 504,
@@ -914,6 +1214,10 @@
     },
     {
       "name": "Saint-Cergue",
+      "coordinates": {
+        "longitude": 6.155524835072194,
+        "latitude": 46.44583574475864 
+      },
       "base_altitude": 1041,
       "top_altitude": 1500,
       "vertical_drop": 459,
@@ -923,6 +1227,10 @@
     },
     {
       "name": "San Domenico",
+      "coordinates": {
+        "longitude": 8.188886053624275,
+        "latitude": 46.24990903906886
+      },
       "base_altitude": 1400,
       "top_altitude": 2500,
       "vertical_drop": 1100,
@@ -932,6 +1240,10 @@
     },
     {
       "name": "Devero",
+      "coordinates": {
+        "longitude": 8.255122160082493,
+        "latitude": 46.31477423646774
+      },
       "base_altitude": 1600,
       "top_altitude": 2200,
       "vertical_drop": 600,
@@ -942,6 +1254,10 @@
 
     {
       "name": "Balmberg",
+      "coordinates": {
+        "longitude": 7.543731020116581,
+        "latitude": 47.26655077895426
+      },
       "base_altitude": 1062,
       "top_altitude": 1270,
       "vertical_drop": 208,
@@ -956,6 +1272,10 @@
     },
     {
       "name": "Grenchenberg",
+      "coordinates": {
+        "longitude": 7.385460711838013,
+        "latitude": 47.22382662984919
+      },
       "base_altitude": 1000,
       "top_altitude": 1400,
       "vertical_drop": 400,
@@ -965,6 +1285,10 @@
     },
     {
       "name": "Le Grand-Bornand",
+      "coordinates": {
+        "longitude": 6.451529047489896,
+        "latitude": 45.97020099571824 
+      },
       "base_altitude": 1000,
       "top_altitude": 2100,
       "vertical_drop": 1100,
@@ -979,6 +1303,10 @@
     },
     {
       "name": "Linden",
+      "coordinates": {
+        "longitude": 7.678181680625299,
+        "latitude": 46.84510382114145
+      },
       "base_altitude": 900,
       "top_altitude": 1200,
       "vertical_drop": 300,
@@ -988,6 +1316,10 @@
     },
     {
       "name": "Massif des Brasses",
+      "coordinates": {
+        "longitude": 6.450852256640347,
+        "latitude": 46.176490365604295
+      },
       "base_altitude": 900,
       "top_altitude": 1500,
       "vertical_drop": 600,
@@ -1002,6 +1334,10 @@
     },
     {
       "name": "Meiringen-Hasliberg",
+      "coordinates": {
+        "longitude": 8.197250324581125,
+        "latitude": 46.74568904336333 
+      },
       "base_altitude": 1065,
       "top_altitude": 2433,
       "vertical_drop": 1368,
@@ -1016,6 +1352,10 @@
     },
     {
       "name": "Melchsee-Frutt",
+      "coordinates": {
+        "longitude": 8.269084728420161,
+        "latitude": 46.77636399756147
+      },
       "base_altitude": 1080,
       "top_altitude": 2255,
       "vertical_drop": 1175,
@@ -1030,6 +1370,10 @@
     },
     {
       "name": "Mörlialp Giswil",
+      "coordinates": {
+        "longitude": 8.109592089897003,
+        "latitude": 46.82552410290639 
+      },
       "base_altitude": 1355,
       "top_altitude": 1837,
       "vertical_drop": 482,
@@ -1044,6 +1388,10 @@
     },
     {
       "name": "Praz de Lys – Sommand",
+      "coordinates": {
+        "longitude": 6.593153526341044,
+        "latitude": 46.14929034668601
+      },
       "base_altitude": 1240,
       "top_altitude": 1966,
       "vertical_drop": 726,
@@ -1058,6 +1406,10 @@
     },
     {
       "name": "Sörenberg",
+      "coordinates": {
+        "longitude": 8.032216810631517,
+        "latitude": 46.823930873991756 
+      },
       "base_altitude": 1166,
       "top_altitude": 2350,
       "vertical_drop": 1184,
