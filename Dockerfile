@@ -9,6 +9,8 @@ COPY pyproject.toml poetry.lock* /app/
 # Install Poetry
 RUN pip install poetry
 
+# Create data directory for SQLite database
+RUN mkdir -p /app/data
 
 # Copy the rest of the application code
 COPY . /app
@@ -16,8 +18,11 @@ COPY . /app
 # Install dependencies
 RUN poetry install --no-root
 
+# Create volume for database persistence
+VOLUME ["/app/data"]
+
 # Expose the port the app runs on
 EXPOSE 8501
 
 # Command to run the application
-CMD ["poetry", "run", "streamlit", "run", "src/app.py"]
+CMD ["poetry", "run", "streamlit", "run", "ski_planner_app/app.py"]

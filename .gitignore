@@ -10,6 +10,7 @@ poetry.lock
 *.whl
 *.db
 *.sqlite3
+data/ski_planner.db
 *.log
 *.coverage
 *.DS_Store
