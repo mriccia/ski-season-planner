@@ -2,7 +2,7 @@
 Models for representing ski stations and related data structures.
 """
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Optional, List
 
 @dataclass
 class DifficultyBreakdown:
@@ -19,6 +19,22 @@ class DifficultyBreakdown:
     difficult_km: float = 0
 
 @dataclass
+class Coordinates:
+    """
+    Represents geographic coordinates.
+    
+    Attributes:
+        longitude (float): Longitude coordinate
+        latitude (float): Latitude coordinate
+    """
+    longitude: float
+    latitude: float
+    
+    def to_list(self) -> List[float]:
+        """Convert coordinates to [longitude, latitude] list format for API calls."""
+        return [self.longitude, self.latitude]
+
+@dataclass
 class Station:
     """
     Represents a ski resort/station with its key characteristics.
@@ -31,6 +47,7 @@ class Station:
         vertical_drop (int): Vertical distance between top and base in meters
         total_pistes_km (float): Total length of all ski slopes in kilometers
         difficulty_breakdown (DifficultyBreakdown): Breakdown of slopes by difficulty
+        coordinates (Optional[Coordinates]): Geographic coordinates of the resort
     """
     name: str
     region: str
@@ -39,6 +56,7 @@ class Station:
     vertical_drop: int
     total_pistes_km: float
     difficulty_breakdown: DifficultyBreakdown
+    coordinates: Optional[Coordinates] = None
     
     @classmethod
     def from_dict(cls, data: Dict) -> 'Station':
@@ -51,11 +69,22 @@ class Station:
         Returns:
             Station: A new Station instance populated with the data
         """
+        # Create difficulty breakdown
         difficulty = DifficultyBreakdown(
             easy_km=data.get('difficulty_breakdown', {}).get('easy_km', 0),
             intermediate_km=data.get('difficulty_breakdown', {}).get('intermediate_km', 0),
             difficult_km=data.get('difficulty_breakdown', {}).get('difficult_km', 0)
         )
+        
+        # Extract coordinates if available
+        coordinates = None
+        if 'coordinates' in data and data['coordinates']:
+            coords = data['coordinates']
+            if all(k in coords for k in ('longitude', 'latitude')):
+                coordinates = Coordinates(
+                    longitude=coords['longitude'],
+                    latitude=coords['latitude']
+                )
         
         return cls(
             name=data['name'],
@@ -64,7 +93,8 @@ class Station:
             top_altitude=data.get('top_altitude', 0),
             vertical_drop=data.get('vertical_drop', 0),
             total_pistes_km=data.get('total_pistes_km', 0),
-            difficulty_breakdown=difficulty
+            difficulty_breakdown=difficulty,
+            coordinates=coordinates
         )
     
     def to_dict(self) -> Dict:
@@ -74,7 +104,7 @@ class Station:
         Returns:
             Dict: Dictionary representation of the Station
         """
-        return {
+        result = {
             'name': self.name,
             'region': self.region,
             'base_altitude': self.base_altitude,
@@ -87,3 +117,12 @@ class Station:
                 'difficult_km': self.difficulty_breakdown.difficult_km
             }
         }
+        
+        # Add coordinates if available
+        if self.coordinates:
+            result['coordinates'] = {
+                'longitude': self.coordinates.longitude,
+                'latitude': self.coordinates.latitude
+            }
+            
+        return result

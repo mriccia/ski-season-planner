@@ -14,7 +14,7 @@ from strands.tools.mcp import MCPClient
 from mcp import stdio_client, StdioServerParameters
 from strands_tools import calculator
 
-from ski_planner_app.services.tools.openrouteservice_tool import get_directions
+# Removed the import for get_directions since we're not using it anymore
 from ski_planner_app.models.trip import Trip, UserPreferences
 from ski_planner_app.services.prompt import format_prompt
 from ski_planner_app.services.singleton import singleton_session
@@ -36,15 +36,20 @@ class BaseAgent(ABC):
         self._agent = None
 
     def initialise(self):
-        """Initialise the OpenAI agent with tools."""
+        """
+        Initialise the agent with tools.
+        
+        Note: The get_directions tool is intentionally excluded as we pre-calculate
+        all distances between the user's home location and ski resorts.
+        """
         try:
             # Get the tools list
             with self.mcp_client:
                 mcp_tools = self.mcp_client.list_tools_sync()
 
-            # Create the agent with all tools
+            # Create the agent with tools, excluding get_directions
             self._agent = Agent(
-                tools=[calculator, get_directions] + mcp_tools,
+                tools=[calculator] + mcp_tools,
                 model=self.model,
             )
             logger.debug(f"Agent successfully initialised: {self.model_id}")
@@ -54,7 +59,17 @@ class BaseAgent(ABC):
             raise e
 
     def get_plan(self, preferences: UserPreferences, trips: List[Trip], stations: List[object]) -> str:
-        """Generate a plan using the agent."""
+        """
+        Generate a plan using the agent.
+        
+        Args:
+            preferences: User preferences including home location and criteria
+            trips: List of planned trips
+            stations: List of ski stations/resorts with pre-calculated distance data
+            
+        Returns:
+            str: The generated plan
+        """
         try:
             # Format the prompt
             prompt = format_prompt(preferences, trips, stations)

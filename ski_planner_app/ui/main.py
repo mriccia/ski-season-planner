@@ -65,8 +65,8 @@ def main():
                     home_location = st.session_state.preferences.home_location
                     transport_mode = "driving-car" if st.session_state.preferences.transport_mode == "Car" else "public-transport"
                     
-                    # Get all station locations
-                    all_stations = station_service.get_all_locations()
+                    # Get all station locations with coordinates
+                    all_stations = station_service.get_all_locations_with_coordinates()
                     
                     # Show progress for distance calculations
                     with st.spinner(f"Calculating distances from {home_location} to all ski resorts..."):
@@ -80,8 +80,11 @@ def main():
                             st.success(f"✅ Calculated distances to {result['newly_calculated']} new resorts!")
                         elif result["status"] == "already_calculated":
                             st.success("✅ Distances already calculated!")
+                        else:
+                            st.error(f"❌ Error calculating distances: {result.get('error', 'Unknown error')}")
+                            logger.error(f"Distance calculation failed: {result}")
                         
-                        # Mark as calculated
+                        # Mark as calculated regardless of result to avoid repeated failures
                         st.session_state['distances_calculated'] = True
                 
                 # Display the distances table
@@ -99,24 +102,16 @@ def main():
             def on_add_trip(start_date: datetime, end_date: datetime):
                 """Callback for when a new trip is added."""
                 logger.info(f"Adding new trip from {start_date} to {end_date}")
-                try:
-                    # Filter stations based on current preferences
-                    logger.debug(
-                        "Filtering stations based on user preferences")
-
-                    # Create and add new trip
-                    trip = Trip(
-                        start_date=start_date,
-                        end_date=end_date,
-                        criteria=st.session_state.preferences.criteria.copy(),
-                        priorities=st.session_state.preferences.priorities.copy()
-                    )
-                    state.add_trip(trip)
-                    logger.info(f"Successfully added trip matching stations")
-                except Exception as e:
-                    logger.error(f"Error adding trip: {str(e)}", exc_info=True)
-                    st.error(
-                        "An error occurred while adding the trip. Please try again.")
+                
+                # Create and add new trip
+                trip = Trip(
+                    start_date=start_date,
+                    end_date=end_date,
+                    criteria=st.session_state.preferences.criteria.copy(),
+                    priorities=st.session_state.preferences.priorities.copy()
+                )
+                state.add_trip(trip)
+                logger.info(f"Successfully added trip matching stations")
 
             # Add new trip form
             components.render_trip_form(on_add_trip)

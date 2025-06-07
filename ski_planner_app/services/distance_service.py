@@ -196,13 +196,134 @@ class DistanceService:
                 "duration_minutes": None
             }
     
-    def prefetch_all_distances(self, origin: str, destinations: List[str], transport_mode: str = "driving-car") -> Dict[str, Any]:
+    def _geocode_origin_with_retry(self, origin: str) -> Optional[List[float]]:
+        """
+        Geocode the origin location with retry logic.
+        
+        Args:
+            origin: Origin location to geocode
+            
+        Returns:
+            List[float]: Coordinates as [longitude, latitude] or None if geocoding failed
+        """
+        @retry_with_backoff(max_retries=3, initial_delay=60)
+        def geocode_origin():
+            return geocode_location(origin, self.api_key)
+        
+        try:
+            origin_coords = geocode_origin()
+            if not origin_coords:
+                logger.error(f"Could not geocode origin: {origin}")
+                return None
+            return origin_coords
+        except Exception as e:
+            logger.error(f"Failed to geocode origin after retries: {e}")
+            return None
+            
+    def _process_destinations_in_parallel(
+        self, 
+        origin: str, 
+        origin_coords: List[float], 
+        destinations: List[Dict[str, Any]], 
+        transport_mode: str,
+        results: Dict[str, Any]
+    ) -> None:
+        """
+        Process destinations in parallel using ThreadPoolExecutor.
+        
+        Args:
+            origin: Origin location
+            origin_coords: Origin coordinates [longitude, latitude]
+            destinations: List of dictionaries with station name and coordinates
+            transport_mode: Mode of transport
+            results: Dictionary to update with results
+        """
+        def process_destination(station_data: Dict[str, Any]) -> Dict[str, Any]:
+            """Process a single destination."""
+            station_name = station_data['name']
+            station_coords = station_data['coordinates']
+            
+            # Skip if no coordinates available
+            if not station_coords:
+                return {
+                    "success": False, 
+                    "destination": station_name, 
+                    "error": "No coordinates available for station"
+                }
+            
+            try:
+                # Calculate route using coordinates
+                route_result = self._calculate_route_with_retry(origin_coords, station_coords, transport_mode)
+                
+                # Save to database
+                self.db_service.save_distance(
+                    origin, 
+                    station_name,
+                    transport_mode, 
+                    route_result["distance_km"], 
+                    route_result["duration_minutes"]
+                )
+                
+                return {
+                    "success": True, 
+                    "destination": station_name,
+                    "distance_km": route_result["distance_km"],
+                    "duration_minutes": route_result["duration_minutes"]
+                }
+            except Exception as e:
+                logger.error(f"Error calculating route to {station_name}: {e}")
+                return {"success": False, "destination": station_name, "error": str(e)}
+        
+        # Use ThreadPoolExecutor to process destinations in parallel
+        # Limit concurrency to avoid overwhelming the API
+        max_workers = min(10, len(destinations))
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all tasks
+            future_to_station = {
+                executor.submit(process_destination, station): station 
+                for station in destinations
+            }
+            
+            # Process results as they complete
+            for future in as_completed(future_to_station):
+                station = future_to_station[future]
+                try:
+                    result = future.result()
+                    if result["success"]:
+                        results["newly_calculated"] += 1
+                        logger.info(f"Successfully calculated distance to {station['name']}: {result.get('distance_km')} km, {result.get('duration_minutes')} min")
+                    else:
+                        results["failed"] += 1
+                        logger.warning(f"Failed to calculate distance to {station['name']}: {result.get('error')}")
+                except Exception as e:
+                    logger.error(f"Exception processing {station['name']}: {str(e)}")
+                    results["failed"] += 1
+                    
+    def _calculate_route_with_retry(self, origin_coords: List[float], dest_coords: List[float], transport_mode: str) -> Dict[str, Any]:
+        """
+        Calculate route between two sets of coordinates with retry logic.
+        
+        Args:
+            origin_coords: Origin coordinates [longitude, latitude]
+            dest_coords: Destination coordinates [longitude, latitude]
+            transport_mode: Mode of transport
+            
+        Returns:
+            Dict with distance and duration information
+        """
+        @retry_with_backoff(max_retries=3, initial_delay=60)
+        def calculate_with_retry():
+            return self._calculate_route(origin_coords, dest_coords, transport_mode)
+            
+        return calculate_with_retry()
+    
+    def prefetch_all_distances(self, origin: str, stations_with_coords: List[Dict[str, Any]], transport_mode: str = "driving-car") -> Dict[str, Any]:
         """
         Prefetch distances for all destinations from a given origin using parallel processing.
         
         Args:
             origin: Origin location
-            destinations: List of destination locations
+            stations_with_coords: List of dictionaries with station name and coordinates
             transport_mode: Mode of transport
             
         Returns:
@@ -221,7 +342,22 @@ class DistanceService:
         existing_destinations = self.db_service.get_all_destinations_with_distances(origin, transport_mode)
         
         # Filter out destinations that need to be fetched
-        destinations_to_fetch = [d for d in destinations if d not in existing_destinations]
+        destinations_to_fetch = [
+            station for station in stations_with_coords 
+            if station['name'] not in existing_destinations and station['coordinates']
+        ]
+        
+        if not destinations_to_fetch:
+            logger.info(f"No new destinations to fetch for {origin}")
+            return {
+                "status": "completed",
+                "origin": origin,
+                "transport_mode": transport_mode,
+                "total_destinations": len(stations_with_coords),
+                "already_cached": len(existing_destinations),
+                "newly_calculated": 0,
+                "failed": 0
+            }
         
         logger.info(f"Prefetching distances from {origin} to {len(destinations_to_fetch)} destinations in parallel")
         
@@ -229,111 +365,26 @@ class DistanceService:
             "status": "completed",
             "origin": origin,
             "transport_mode": transport_mode,
-            "total_destinations": len(destinations),
+            "total_destinations": len(stations_with_coords),
             "already_cached": len(existing_destinations),
             "newly_calculated": 0,
             "failed": 0
         }
         
-        # Get station details to access region information
-        stations = self.db_service.get_all_stations()
-        station_regions = {station['name']: station.get('region', '') for station in stations}
-        
         # Geocode origin once with retry
-        @retry_with_backoff(max_retries=3, initial_delay=60)
-        def geocode_origin():
-            return geocode_location(origin, self.api_key)
-        
-        try:
-            origin_coords = geocode_origin()
-            if not origin_coords:
-                logger.error(f"Could not geocode origin: {origin}")
-                return {
-                    "status": "failed",
-                    "error": "Could not geocode origin location",
-                    "origin": origin,
-                    "transport_mode": transport_mode
-                }
-        except Exception as e:
-            logger.error(f"Failed to geocode origin after retries: {e}")
+        origin_coords = self._geocode_origin_with_retry(origin)
+        if not origin_coords:
             return {
                 "status": "failed",
-                "error": f"Failed to geocode origin: {str(e)}",
+                "error": "Could not geocode origin location",
                 "origin": origin,
                 "transport_mode": transport_mode
             }
         
-        # Function to process a single destination
-        def process_destination(destination):
-            # Apply retry with backoff to the destination processing
-            @retry_with_backoff(max_retries=3, initial_delay=60)
-            def process_with_retry(dest):
-                # Try with just the station name first
-                dest_coords = geocode_location(dest, self.api_key)
-                
-                # If that fails, try with region appended
-                if not dest_coords and dest in station_regions and station_regions[dest]:
-                    region = station_regions[dest]
-                    enhanced_dest = f"{dest}, {region}"
-                    logger.info(f"Trying with region: {enhanced_dest}")
-                    dest_coords = geocode_location(enhanced_dest, self.api_key)
-                
-                if not dest_coords:
-                    return {"success": False, "destination": dest, "error": "Could not geocode destination"}
-                
-                # Calculate route using already geocoded coordinates
-                try:
-                    route_result = self._calculate_route(origin_coords, dest_coords, transport_mode)
-                    
-                    # Save to database
-                    self.db_service.save_distance(
-                        origin, 
-                        dest,  # Use original name in database
-                        transport_mode, 
-                        route_result["distance_km"], 
-                        route_result["duration_minutes"]
-                    )
-                    
-                    return {
-                        "success": True, 
-                        "destination": dest,
-                        "distance_km": route_result["distance_km"],
-                        "duration_minutes": route_result["duration_minutes"]
-                    }
-                except Exception as e:
-                    logger.error(f"Error calculating route to {dest}: {e}")
-                    return {"success": False, "destination": dest, "error": str(e)}
-            
-            try:
-                return process_with_retry(destination)
-            except Exception as e:
-                logger.error(f"All retries failed for {destination}: {str(e)}")
-                return {"success": False, "destination": destination, "error": str(e)}
-        
-        # Use ThreadPoolExecutor to process destinations in parallel
-        # Limit concurrency to avoid overwhelming the API
-        max_workers = min(10, len(destinations_to_fetch))
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # Submit all tasks
-            future_to_destination = {
-                executor.submit(process_destination, dest): dest 
-                for dest in destinations_to_fetch
-            }
-            
-            # Process results as they complete
-            for future in as_completed(future_to_destination):
-                destination = future_to_destination[future]
-                try:
-                    result = future.result()
-                    if result["success"]:
-                        results["newly_calculated"] += 1
-                        logger.info(f"Successfully calculated distance to {destination}: {result.get('distance_km')} km, {result.get('duration_minutes')} min")
-                    else:
-                        results["failed"] += 1
-                        logger.warning(f"Failed to calculate distance to {destination}: {result.get('error')}")
-                except Exception as e:
-                    logger.error(f"Exception processing {destination}: {str(e)}")
-                    results["failed"] += 1
+        # Process destinations in parallel
+        self._process_destinations_in_parallel(
+            origin, origin_coords, destinations_to_fetch, transport_mode, results
+        )
         
         # Mark origin as calculated if we have at least some successful calculations
         if results["newly_calculated"] > 0:

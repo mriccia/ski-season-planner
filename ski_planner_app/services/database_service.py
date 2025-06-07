@@ -95,6 +95,43 @@ class DatabaseService:
         """Get a connection to the SQLite database."""
         return sqlite3.connect(self.db_path)
     
+    def _process_station_result(self, station):
+        """
+        Process a station result from the database query.
+        
+        Args:
+            station: Dictionary containing station data from the database
+            
+        Returns:
+            Dict: Processed station dictionary
+        """
+        # Parse additional_info JSON
+        if station['additional_info']:
+            additional_info = json.loads(station['additional_info'])
+            
+            # Extract coordinates if available
+            if 'coordinates' in additional_info:
+                station['coordinates'] = additional_info['coordinates']
+                # Remove coordinates from additional_info to avoid duplication
+                additional_info_without_coords = {k: v for k, v in additional_info.items() if k != 'coordinates'}
+                station.update(additional_info_without_coords)
+            else:
+                station.update(additional_info)
+        
+        # Format difficulty breakdown for Station model
+        station['difficulty_breakdown'] = {
+            'easy_km': station.get('easy_km', 0),
+            'intermediate_km': station.get('intermediate_km', 0),
+            'difficult_km': station.get('difficult_km', 0)
+        }
+        
+        # Remove individual difficulty fields to avoid duplication
+        station.pop('easy_km', None)
+        station.pop('intermediate_km', None)
+        station.pop('difficult_km', None)
+        
+        return station
+    
     def import_stations_from_json(self, json_path):
         """
         Import stations data from JSON file to SQLite database.
@@ -150,7 +187,10 @@ class DatabaseService:
                     difficulty.get('difficult_km'),
                     station.get('lifts'),
                     location,
-                    json.dumps(additional_info)
+                    json.dumps({
+                        **additional_info,
+                        'coordinates': station.get('coordinates')  # Store coordinates in additional_info
+                    })
                 ))
                 count += 1
             
@@ -202,6 +242,7 @@ class DatabaseService:
             (origin, destination, transport_mode)
         )
         result = cursor.fetchone()
+        
         conn.close()
         
         if result:
@@ -227,12 +268,35 @@ class DatabaseService:
         
         cursor.execute(
             """
-            INSERT INTO distances (origin, destination, transport_mode, distance, duration)
+            INSERT OR REPLACE INTO distances 
+            (origin, destination, transport_mode, distance, duration) 
             VALUES (?, ?, ?, ?, ?)
-            ON CONFLICT(origin, destination, transport_mode) 
-            DO UPDATE SET distance = ?, duration = ?, timestamp = CURRENT_TIMESTAMP
             """,
-            (origin, destination, transport_mode, distance, duration, distance, duration)
+            (origin, destination, transport_mode, distance, duration)
+        )
+        
+        conn.commit()
+        conn.close()
+    
+    def mark_origin_calculated(self, origin: str, transport_mode: str, complete: bool = True):
+        """
+        Mark an origin as having all its distances calculated.
+        
+        Args:
+            origin: Origin location
+            transport_mode: Mode of transport
+            complete: Whether all destinations have been calculated
+        """
+        conn = self._get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute(
+            """
+            INSERT OR REPLACE INTO calculated_origins 
+            (origin, transport_modes, complete) 
+            VALUES (?, ?, ?)
+            """,
+            (origin, transport_mode, complete)
         )
         
         conn.commit()
@@ -240,79 +304,38 @@ class DatabaseService:
     
     def check_origin_calculated(self, origin: str, transport_mode: str) -> bool:
         """
-        Check if distances from this origin have been calculated.
+        Check if an origin has been marked as calculated.
         
         Args:
             origin: Origin location
             transport_mode: Mode of transport
             
         Returns:
-            bool: True if the origin has been fully calculated, False otherwise
+            bool: True if the origin has been calculated, False otherwise
         """
         conn = self._get_connection()
         cursor = conn.cursor()
         
         cursor.execute(
-            "SELECT transport_modes, complete FROM calculated_origins WHERE origin = ?",
-            (origin,)
+            "SELECT complete FROM calculated_origins WHERE origin = ? AND transport_modes = ?",
+            (origin, transport_mode)
         )
         result = cursor.fetchone()
+        
         conn.close()
         
-        if not result:
-            return False
-        
-        transport_modes = result[0].split(',')
-        is_complete = result[1]
-        
-        return transport_mode in transport_modes and is_complete
-    
-    def mark_origin_calculated(self, origin: str, transport_mode: str, complete: bool = True):
-        """
-        Mark an origin as having calculated distances.
-        
-        Args:
-            origin: Origin location
-            transport_mode: Mode of transport
-            complete: Whether all stations have been calculated
-        """
-        conn = self._get_connection()
-        cursor = conn.cursor()
-        
-        # Check if entry exists
-        cursor.execute("SELECT transport_modes FROM calculated_origins WHERE origin = ?", (origin,))
-        result = cursor.fetchone()
-        
-        if result:
-            # Update existing entry
-            current_modes = set(result[0].split(','))
-            current_modes.add(transport_mode)
-            modes_str = ','.join(current_modes)
-            
-            cursor.execute(
-                "UPDATE calculated_origins SET transport_modes = ?, complete = ?, last_updated = CURRENT_TIMESTAMP WHERE origin = ?",
-                (modes_str, complete, origin)
-            )
-        else:
-            # Create new entry
-            cursor.execute(
-                "INSERT INTO calculated_origins (origin, transport_modes, complete) VALUES (?, ?, ?)",
-                (origin, transport_mode, complete)
-            )
-        
-        conn.commit()
-        conn.close()
+        return result is not None and result[0] == 1
     
     def get_all_destinations_with_distances(self, origin: str, transport_mode: str) -> List[str]:
         """
-        Get all destinations that have distance data for a given origin and transport mode.
+        Get all destinations that have distances calculated from an origin.
         
         Args:
             origin: Origin location
             transport_mode: Mode of transport
             
         Returns:
-            List of destination locations
+            List[str]: List of destination names
         """
         conn = self._get_connection()
         cursor = conn.cursor()
@@ -321,19 +344,18 @@ class DatabaseService:
             "SELECT destination FROM distances WHERE origin = ? AND transport_mode = ?",
             (origin, transport_mode)
         )
-        results = [row[0] for row in cursor.fetchall()]
+        results = cursor.fetchall()
+        
         conn.close()
         
-        return results
-    
-    # Station query methods
+        return [result[0] for result in results]
     
     def get_all_stations(self) -> List[Dict[str, Any]]:
         """
         Get all stations from the database.
         
         Returns:
-            List of station dictionaries
+            List[Dict]: List of station dictionaries
         """
         conn = self._get_connection()
         conn.row_factory = sqlite3.Row
@@ -342,26 +364,48 @@ class DatabaseService:
         cursor.execute("SELECT * FROM stations")
         results = [dict(row) for row in cursor.fetchall()]
         
-        # Parse additional_info JSON and format for Station model
+        # Process each station result
+        processed_results = []
         for station in results:
-            if station['additional_info']:
-                additional_info = json.loads(station['additional_info'])
-                station.update(additional_info)
-            
-            # Format difficulty breakdown for Station model
-            station['difficulty_breakdown'] = {
-                'easy_km': station.get('easy_km', 0),
-                'intermediate_km': station.get('intermediate_km', 0),
-                'difficult_km': station.get('difficult_km', 0)
-            }
-            
-            # Remove individual difficulty fields to avoid duplication
-            station.pop('easy_km', None)
-            station.pop('intermediate_km', None)
-            station.pop('difficult_km', None)
+            processed_results.append(self._process_station_result(station))
         
         conn.close()
-        return results
+        return processed_results
+    
+    def get_all_stations_with_distances(self, origin: str, transport_mode: str) -> List[Dict[str, Any]]:
+        """
+        Get all stations with their distances from an origin.
+        
+        Args:
+            origin: Origin location
+            transport_mode: Mode of transport
+            
+        Returns:
+            List[Dict]: List of station dictionaries with distance information
+        """
+        conn = self._get_connection()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        cursor.execute(
+            """
+            SELECT s.*, d.distance, d.duration 
+            FROM stations s
+            JOIN distances d ON s.name = d.destination
+            WHERE d.origin = ? AND d.transport_mode = ?
+            ORDER BY d.distance ASC
+            """,
+            (origin, transport_mode)
+        )
+        results = [dict(row) for row in cursor.fetchall()]
+        
+        # Process each station result
+        processed_results = []
+        for station in results:
+            processed_results.append(self._process_station_result(station))
+        
+        conn.close()
+        return processed_results
     
     def get_closest_stations(self, origin: str, transport_mode: str, limit: int = 10) -> List[Dict[str, Any]]:
         """
@@ -392,26 +436,13 @@ class DatabaseService:
         )
         results = [dict(row) for row in cursor.fetchall()]
         
-        # Parse additional_info JSON and format for Station model
+        # Process each station result
+        processed_results = []
         for station in results:
-            if station['additional_info']:
-                additional_info = json.loads(station['additional_info'])
-                station.update(additional_info)
-            
-            # Format difficulty breakdown for Station model
-            station['difficulty_breakdown'] = {
-                'easy_km': station.get('easy_km', 0),
-                'intermediate_km': station.get('intermediate_km', 0),
-                'difficult_km': station.get('difficult_km', 0)
-            }
-            
-            # Remove individual difficulty fields to avoid duplication
-            station.pop('easy_km', None)
-            station.pop('intermediate_km', None)
-            station.pop('difficult_km', None)
+            processed_results.append(self._process_station_result(station))
         
         conn.close()
-        return results
+        return processed_results
     
     def get_stations_by_date(self, origin: str, transport_mode: str, date: str, limit: int = 10) -> List[Dict[str, Any]]:
         """
@@ -445,26 +476,13 @@ class DatabaseService:
         )
         results = [dict(row) for row in cursor.fetchall()]
         
-        # Parse additional_info JSON and format for Station model
+        # Process each station result
+        processed_results = []
         for station in results:
-            if station['additional_info']:
-                additional_info = json.loads(station['additional_info'])
-                station.update(additional_info)
-            
-            # Format difficulty breakdown for Station model
-            station['difficulty_breakdown'] = {
-                'easy_km': station.get('easy_km', 0),
-                'intermediate_km': station.get('intermediate_km', 0),
-                'difficult_km': station.get('difficult_km', 0)
-            }
-            
-            # Remove individual difficulty fields to avoid duplication
-            station.pop('easy_km', None)
-            station.pop('intermediate_km', None)
-            station.pop('difficult_km', None)
+            processed_results.append(self._process_station_result(station))
         
         conn.close()
-        return results
+        return processed_results
     
     def get_stations_by_piste_length(self, origin: str, transport_mode: str, limit: int = 10) -> List[Dict[str, Any]]:
         """
@@ -495,60 +513,10 @@ class DatabaseService:
         )
         results = [dict(row) for row in cursor.fetchall()]
         
-        # Parse additional_info JSON and format for Station model
+        # Process each station result
+        processed_results = []
         for station in results:
-            if station['additional_info']:
-                additional_info = json.loads(station['additional_info'])
-                station.update(additional_info)
-            
-            # Format difficulty breakdown for Station model
-            station['difficulty_breakdown'] = {
-                'easy_km': station.get('easy_km', 0),
-                'intermediate_km': station.get('intermediate_km', 0),
-                'difficult_km': station.get('difficult_km', 0)
-            }
-            
-            # Remove individual difficulty fields to avoid duplication
-            station.pop('easy_km', None)
-            station.pop('intermediate_km', None)
-            station.pop('difficult_km', None)
+            processed_results.append(self._process_station_result(station))
         
         conn.close()
-        return results
-        
-    def get_all_stations_with_distances(self, origin: str, transport_mode: str) -> List[Dict[str, Any]]:
-        """
-        Get all stations with their distances from an origin.
-        
-        Args:
-            origin: Origin location
-            transport_mode: Mode of transport
-            
-        Returns:
-            List of station dictionaries with distance information
-        """
-        conn = self._get_connection()
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        
-        cursor.execute(
-            """
-            SELECT s.name, s.region, s.total_pistes_km, s.base_altitude, s.top_altitude,
-                   d.distance, d.duration 
-            FROM stations s
-            JOIN distances d ON s.name = d.destination
-            WHERE d.origin = ? AND d.transport_mode = ?
-            ORDER BY d.distance ASC
-            """,
-            (origin, transport_mode)
-        )
-        results = [dict(row) for row in cursor.fetchall()]
-        
-        # Parse additional_info JSON and format for Station model
-        for station in results:
-            if 'additional_info' in station and station['additional_info']:
-                additional_info = json.loads(station['additional_info'])
-                station.update(additional_info)
-        
-        conn.close()
-        return results
+        return processed_results

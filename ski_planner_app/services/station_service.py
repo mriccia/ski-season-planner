@@ -6,7 +6,7 @@ import logging
 import os
 from typing import List, Optional, Dict, Any
 from pathlib import Path
-from ski_planner_app.models.station import Station, DifficultyBreakdown
+from ski_planner_app.models.station import Station, DifficultyBreakdown, Coordinates
 from ski_planner_app.services.singleton import singleton_session
 from ski_planner_app.services.database_service import DatabaseService
 
@@ -117,6 +117,16 @@ class StationService:
             difficult_km=station_dict.get('difficulty_breakdown', {}).get('difficult_km', 0)
         )
         
+        # Extract coordinates if available
+        coordinates = None
+        if 'coordinates' in station_dict and station_dict['coordinates']:
+            coords = station_dict['coordinates']
+            if isinstance(coords, dict) and all(k in coords for k in ('longitude', 'latitude')):
+                coordinates = Coordinates(
+                    longitude=coords['longitude'],
+                    latitude=coords['latitude']
+                )
+        
         # Create station object
         return Station(
             name=station_dict.get('name', ''),
@@ -125,7 +135,8 @@ class StationService:
             top_altitude=station_dict.get('top_altitude', 0),
             vertical_drop=station_dict.get('vertical_drop', 0),
             total_pistes_km=station_dict.get('total_pistes_km', 0),
-            difficulty_breakdown=difficulty
+            difficulty_breakdown=difficulty,
+            coordinates=coordinates
         )
     
     def get_all_stations(self) -> List[Station]:
@@ -137,12 +148,29 @@ class StationService:
         """
         return self.load_stations()
     
-    def get_all_locations(self) -> List[str]:
+    def get_all_locations_with_coordinates(self) -> List[Dict[str, Any]]:
         """
-        Get all station locations.
+        Get all station locations with their coordinates.
         
         Returns:
-            List[str]: List of all station names for geocoding
+            List[Dict]: List of dictionaries with station name and coordinates
         """
         stations = self.load_stations()
-        return [station.name for station in stations]
+        result = []
+        
+        for station in stations:
+            station_data = {
+                'name': station.name,
+                'coordinates': station.coordinates.to_list() if station.coordinates else None
+            }
+            
+            # Only include stations that have valid coordinates
+            if station_data['coordinates']:
+                result.append(station_data)
+            else:
+                logger.warning(f"Station {station.name} has no coordinates and will be skipped for distance calculations")
+                
+        if not result:
+            logger.error("No stations with valid coordinates found")
+            
+        return result
