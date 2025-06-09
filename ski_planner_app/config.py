@@ -9,7 +9,8 @@ from typing import Dict
 from datetime import datetime
 
 # File paths
-STATIONS_FILE = "./data/magic_pass_stations.json"
+STATIONS_FILE_PATH = "data/magic_pass_stations.json"
+DB_FILE_PATH = "data/ski_planner.db"
 
 # Skiing criteria options
 CRITERIA_OPTIONS: Dict[str, str] = {

@@ -137,22 +137,18 @@ def render_plan_tab(planner_service):
         st.write("Generate a personalized ski season plan based on your preferences and trips.")
         
         # Model selection
-        model_options = ["gpt-4", "gpt-3.5-turbo"]
+        model_options = st.session_state.available_models
         model_name = st.selectbox("Select AI Model", model_options, index=0)
         
         if st.button("Generate Plan"):
             with st.spinner("Generating your personalized ski season plan..."):
                 try:
-                    # Get station service
-                    station_service = StationService()
-                    stations = station_service.get_all_stations()
                     
                     # Generate plan
                     plan = planner_service.generate_ski_plan(
                         st.session_state.preferences,
                         st.session_state.trips,
-                        model_name,
-                        stations
+                        model_name
                     )
                     
                     # Store plan in session state

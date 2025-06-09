@@ -6,9 +6,10 @@ import logging
 import os
 from typing import List, Optional, Dict, Any
 from pathlib import Path
-from ski_planner_app.models.station import Station, DifficultyBreakdown, Coordinates
+from ski_planner_app.models.station import Station
 from ski_planner_app.services.singleton import singleton_session
 from ski_planner_app.services.database_service import DatabaseService
+from ski_planner_app.config import STATIONS_FILE_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -27,11 +28,9 @@ class StationService:
         """
         Initialize the StationService with the path to the stations data file.
         """
-        CURR_DIR = Path(__file__).parent
-        STATIONS_FILE = f"{CURR_DIR}/data/magic_pass_stations.json"
+        self.data_file = STATIONS_FILE_PATH
         logger.debug(
-            f"Initializing StationService with data file: {STATIONS_FILE}")
-        self.data_file = STATIONS_FILE
+            f"Initializing StationService with data file: {self.data_file}")
         self._stations: Optional[List[Station]] = None
         self.db_service = DatabaseService()
         
@@ -110,24 +109,7 @@ class StationService:
         Returns:
             Station: A Station object
         """
-        # Create difficulty breakdown
-        difficulty = DifficultyBreakdown(
-            easy_km=station_dict.get('difficulty_breakdown', {}).get('easy_km', 0),
-            intermediate_km=station_dict.get('difficulty_breakdown', {}).get('intermediate_km', 0),
-            difficult_km=station_dict.get('difficulty_breakdown', {}).get('difficult_km', 0)
-        )
-        
-        # Extract coordinates if available
-        coordinates = None
-        if 'coordinates' in station_dict and station_dict['coordinates']:
-            coords = station_dict['coordinates']
-            if isinstance(coords, dict) and all(k in coords for k in ('longitude', 'latitude')):
-                coordinates = Coordinates(
-                    longitude=coords['longitude'],
-                    latitude=coords['latitude']
-                )
-        
-        # Create station object
+        # Create station object with flattened structure
         return Station(
             name=station_dict.get('name', ''),
             region=station_dict.get('region', ''),
@@ -135,8 +117,8 @@ class StationService:
             top_altitude=station_dict.get('top_altitude', 0),
             vertical_drop=station_dict.get('vertical_drop', 0),
             total_pistes_km=station_dict.get('total_pistes_km', 0),
-            difficulty_breakdown=difficulty,
-            coordinates=coordinates
+            longitude=station_dict.get('longitude', 0.0),
+            latitude=station_dict.get('latitude', 0.0)
         )
     
     def get_all_stations(self) -> List[Station]:
@@ -161,11 +143,11 @@ class StationService:
         for station in stations:
             station_data = {
                 'name': station.name,
-                'coordinates': station.coordinates.to_list() if station.coordinates else None
+                'coordinates': station.get_coordinates()
             }
             
             # Only include stations that have valid coordinates
-            if station_data['coordinates']:
+            if station.longitude != 0.0 and station.latitude != 0.0:
                 result.append(station_data)
             else:
                 logger.warning(f"Station {station.name} has no coordinates and will be skipped for distance calculations")

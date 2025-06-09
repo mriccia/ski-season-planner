@@ -9,7 +9,7 @@ from ski_planner_app.models.trip import Trip, UserPreferences
 logger = logging.getLogger(__name__)
 
 
-def format_prompt(preferences: UserPreferences, trips: List[Trip], stations: List[object]) -> str:
+def format_prompt(preferences: UserPreferences, trips: List[Trip]) -> str:
     """
     Create the prompt for the LLM to generate a ski plan.
 
@@ -20,7 +20,6 @@ def format_prompt(preferences: UserPreferences, trips: List[Trip], stations: Lis
     Args:
         preferences (UserPreferences): User's skiing preferences and priorities
         trips (List[Trip]): List of planned trips with dates
-        stations (List[object]): List of available ski stations/resorts with distance data
 
     Returns:
         str: Formatted prompt for the LLM with detailed instructions
@@ -36,52 +35,6 @@ def format_prompt(preferences: UserPreferences, trips: List[Trip], stations: Lis
     priorities_text = ", ".join(
         [f"{k} (weight: {v})" for k, v in preferences.priorities.items()])
     
-    # Format stations with their pre-calculated distances
-    # Create a more compact representation to avoid token limits
-    stations_data = []
-    for station in stations:
-        try:
-            station_dict = {
-                'name': getattr(station, 'name', 'Unknown'),
-                'region': getattr(station, 'region', ''),
-                'base_altitude': getattr(station, 'base_altitude', 0),
-                'top_altitude': getattr(station, 'top_altitude', 0),
-                'vertical_drop': getattr(station, 'vertical_drop', 0),
-                'total_pistes_km': getattr(station, 'total_pistes_km', 0),
-            }
-            
-            # Add difficulty breakdown if available
-            if hasattr(station, 'difficulty_breakdown'):
-                difficulty = station.difficulty_breakdown
-                station_dict['easy_km'] = getattr(difficulty, 'easy_km', 0)
-                station_dict['intermediate_km'] = getattr(difficulty, 'intermediate_km', 0)
-                station_dict['difficult_km'] = getattr(difficulty, 'difficult_km', 0)
-            
-            # Add distance and duration if available
-            if hasattr(station, 'distance') and station.distance is not None:
-                station_dict['distance_km'] = station.distance
-            if hasattr(station, 'duration') and station.duration is not None:
-                station_dict['duration_minutes'] = station.duration
-                
-            stations_data.append(station_dict)
-        except Exception as e:
-            logger.warning(f"Error formatting station data for {getattr(station, 'name', 'Unknown')}: {str(e)}")
-    
-    # Count stations with distance data
-    stations_with_distance = sum(1 for s in stations_data if 'distance_km' in s)
-    logger.info(f"{stations_with_distance} out of {len(stations_data)} stations have distance data")
-    
-    # Create a more compact representation of stations
-    # For very large datasets, we might need to limit the number of stations
-    MAX_STATIONS = 50  # Limit to avoid token limits
-    if len(stations_data) > MAX_STATIONS:
-        logger.warning(f"Limiting stations in prompt from {len(stations_data)} to {MAX_STATIONS}")
-        stations_data = stations_data[:MAX_STATIONS]
-        stations_text = json.dumps(stations_data, indent=2)
-        stations_text += f"\n\n(Note: Only showing {MAX_STATIONS} out of {len(stations)} stations due to size constraints)"
-    else:
-        stations_text = json.dumps(stations_data, indent=2)
-
     prompt = f"""
 You are a ski trip planner. Your task is to create a personalised ski season plan for a person living in {preferences.home_location}.
 
@@ -90,8 +43,8 @@ The user has {len(trips)} trips planned:
 {trips_text}
 
 **Available Resorts with Pre-calculated Distances:**
-The following resorts are available, with distances and travel times already calculated from {preferences.home_location}:
-{stations_text}
+The resorts and distances from {preferences.home_location} are calculated and provided in the data in the SQLite Database.
+Use the SQLite MCP to access the resort data, as well as the pre-calculated distances and travel times.
 
 **Preferences:**
 - Criteria: {', '.join(preferences.criteria)}
@@ -99,30 +52,23 @@ The following resorts are available, with distances and travel times already cal
 - Mode of Transport: {preferences.transport_mode}
 
 **Tasks:**
-1. Create a comprehensive comparison table of ALL resorts with their distances, travel times, and key features.
-2. Based on this data, recommend one specific resort for each of the {len(trips)} trips.
+1. Recommend one specific resort for each of the {len(trips)} trips.
 3. Explain why each resort matches their preferences.
 4. Suggest any adjustments to trip dates for a better experience.
 5. Provide tips for each resort (best runs, facilities, etc.).
 6. Include transport recommendations based on their preferred mode of transport.
 
 **Guidelines:**
-- Use the pre-calculated distances and travel times provided in the resort data.
+- Use the pre-calculated distances and travel times provided in the SQLite database.
+- Use the SQLite MCP to access the resort data, slope information, etc.
 - Consider the following factors when making recommendations: altitude, piste length, vertical drop, and distance from home.
 - Only use the information provided in the trips and preferences. Do not make assumptions.
-- Do not include information about the Magic Pass or its benefits.
+- If you want to include additional information, find the resort using the Fetch MCP tool at https://www.magicpass.ch/en/stations and include relevant details.
 
 **Format:**
 1. Introduction
-2. Complete Resort Comparison Table (including ALL resorts with distances and travel times)
-3. Trip Overview with Recommendations
-4. Tips and Recommendations
-
-**Steps to Follow:**
-1. **Create Comparison Table:** Compile all data into a comprehensive comparison table.
-2. **Filter Resorts:** Filter the resorts based on the user's criteria and priorities.
-3. **Recommend Resorts:** Recommend one specific resort for each of the {len(trips)} trips based on the complete data.
-4. **Provide Details:** Explain why each resort is a good match, provide tips, and include transport recommendations.
+2. Trip Overview with Recommendations
+3. Tips and Recommendations
 
 Please ensure you have all the necessary data available to complete this task. Only return your response once the plan is fully generated and all steps are completed.
 """

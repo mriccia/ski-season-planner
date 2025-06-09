@@ -16,9 +16,10 @@ from strands_tools import calculator
 
 # Removed the import for get_directions since we're not using it anymore
 from ski_planner_app.models.trip import Trip, UserPreferences
-from ski_planner_app.services.prompt import format_prompt
+# from ski_planner_app.services.prompt import format_prompt
 from ski_planner_app.services.singleton import singleton_session
-from ski_planner_app.config import OLLAMA_DEFAULT_URL, DEFAULT_OPENAI_MODELS
+from ski_planner_app.config import OLLAMA_DEFAULT_URL, DEFAULT_OPENAI_MODELS, DB_FILE_PATH
+from ski_planner_app.services.improved_prompt import format_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -29,9 +30,9 @@ OLLAMA_URL = st.secrets.get("OLLAMA_URL", OLLAMA_DEFAULT_URL)
 class BaseAgent(ABC):
     """Base class for all agent implementations."""
 
-    def __init__(self, mcp_client, model_id: str):
+    def __init__(self, mcp_clients, model_id: str):
         """Initialise the base agent with MCP client."""
-        self.mcp_client = mcp_client
+        self.mcp_clients = mcp_clients
         self.model_id = model_id
         self._agent = None
 
@@ -44,9 +45,10 @@ class BaseAgent(ABC):
         """
         try:
             # Get the tools list
-            with self.mcp_client:
-                mcp_tools = self.mcp_client.list_tools_sync()
-
+            mcp_tools = []
+            for client in self.mcp_clients:
+                mcp_tools += client.list_tools_sync()
+            
             # Create the agent with tools, excluding get_directions
             self._agent = Agent(
                 tools=[calculator] + mcp_tools,
@@ -58,7 +60,7 @@ class BaseAgent(ABC):
                 f"Failed to initialise {self.model_id} agent: {str(e)}")
             raise e
 
-    def get_plan(self, preferences: UserPreferences, trips: List[Trip], stations: List[object]) -> str:
+    def get_plan(self, preferences: UserPreferences, trips: List[Trip]) -> str:
         """
         Generate a plan using the agent.
         
@@ -72,12 +74,10 @@ class BaseAgent(ABC):
         """
         try:
             # Format the prompt
-            prompt = format_prompt(preferences, trips, stations)
+            prompt = format_prompt(preferences, trips)
             logger.debug(f"Executing prompt of length {len(prompt)}")
 
-            # Use the MCP client within a context manager only for the execution
-            with self.mcp_client:
-                response = self._agent(prompt)
+            response = self._agent(prompt)
 
             logger.debug("Agent response received")
             return response.__str__()
@@ -90,9 +90,9 @@ class BaseAgent(ABC):
 class OpenAIAgent(BaseAgent):
     """Agent implementation using OpenAI models."""
 
-    def __init__(self, mcp_client, model_id):
+    def __init__(self, mcp_clients, model_id):
         """Initialise the OpenAI agent."""
-        super().__init__(mcp_client, model_id)
+        super().__init__(mcp_clients, model_id)
 
         if not st.secrets.get("OPENAI_API_KEY"):
             logger.warning("OPENAI_API_KEY not found in secrets")
@@ -113,9 +113,9 @@ class OpenAIAgent(BaseAgent):
 class OllamaAgent(BaseAgent):
     """Agent implementation using Ollama models."""
 
-    def __init__(self, mcp_client, model_id):
+    def __init__(self, mcp_clients, model_id):
         """Initialise the Ollama agent."""
-        super().__init__(mcp_client, model_id)
+        super().__init__(mcp_clients, model_id)
 
         # Configure Ollama model
         ollama_model = OllamaModel(
@@ -138,22 +138,35 @@ class AgentService:
         self.agents = {}
 
         # Setup MCP client (shared across agents)
-        self._setup_mcp_client()
+        self._setup_mcp_clients()
 
         # Initialise agents
         self._initialise_agents()
 
-    def _setup_mcp_client(self):
+    def _setup_mcp_clients(self):
         """Set up the MCP client for additional tools."""
-        self.mcp_client = MCPClient(
+        self.mcp_clients = [MCPClient(
             lambda: stdio_client(
                 StdioServerParameters(
                     command="uvx",
                     args=["mcp-server-fetch"]
                 )
             )
-        )
-        logger.debug("MCP client configured")
+        ), MCPClient(
+            lambda: stdio_client(
+                StdioServerParameters(
+                    command="uvx",
+                    args=[
+                        "mcp-server-sqlite", 
+                        "--db", 
+                        DB_FILE_PATH]
+                )
+            )
+        )]
+        for client in self.mcp_clients:
+            client.start()
+                
+        logger.debug("MCP clients configured")
 
     def _initialise_agents(self):
         """Initialise all available agents."""
@@ -174,7 +187,7 @@ class AgentService:
 
             for model in DEFAULT_OPENAI_MODELS:
                 self.agents[model] = OpenAIAgent(
-                    mcp_client=self.mcp_client,
+                    mcp_clients=self.mcp_clients,
                     model_id=model
                 )
 
@@ -215,7 +228,7 @@ class AgentService:
             for model_id in models:
                 try:
                     self.agents[model_id] = OllamaAgent(
-                        mcp_client=self.mcp_client,
+                        mcp_clients=self.mcp_clients,
                         model_id=model_id
                     )
                 except Exception as e:
@@ -235,8 +248,7 @@ class AgentService:
     def get_plan(self,
                  preferences: UserPreferences,
                  trips: List[Trip],
-                 model_id: str,
-                 stations: List[object]
+                 model_id: str
                  ) -> str:
         """
         Execute a prompt using the specified agent.
@@ -245,7 +257,6 @@ class AgentService:
             preferences: User preferences including home location and criteria
             trips: List of planned trips
             model_id: Name of the LLM model to use
-            stations: List of ski stations/resorts
 
         Returns:
             str: The agent's response
@@ -266,7 +277,7 @@ class AgentService:
             logger.info(f"Using agent for model: {model_id}")
 
             # Generate the plan using the selected agent
-            return agent.get_plan(preferences, trips, stations)
+            return agent.get_plan(preferences, trips)
         except Exception as e:
             error_msg = f"Error executing agent prompt with model {model_id}: {str(e)}"
             logger.error(error_msg, exc_info=True)

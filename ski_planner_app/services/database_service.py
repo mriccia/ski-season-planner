@@ -7,23 +7,24 @@ import sqlite3
 import json
 from typing import Dict, List, Any, Optional, Tuple
 import logging
+from ski_planner_app.config import DB_FILE_PATH
 
 logger = logging.getLogger(__name__)
 
 class DatabaseService:
     """Service for handling SQLite database operations."""
     
-    def __init__(self, db_path="data/ski_planner.db"):
+    def __init__(self):
         """
         Initialize the database service.
         
         Args:
             db_path: Path to the SQLite database file
         """
-        self.db_path = db_path
+        self.db_path = DB_FILE_PATH
         
         # Ensure the directory exists
-        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+        os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
         
         # Initialize the database
         self.initialize_db()
@@ -33,7 +34,7 @@ class DatabaseService:
         conn = self._get_connection()
         cursor = conn.cursor()
         
-        # Create stations table
+        # Create stations table with flattened structure
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS stations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,12 +44,8 @@ class DatabaseService:
             top_altitude INTEGER,
             vertical_drop INTEGER,
             total_pistes_km REAL,
-            easy_km REAL,
-            intermediate_km REAL,
-            difficult_km REAL,
-            lifts INTEGER,
-            location TEXT,
-            additional_info TEXT,
+            longitude REAL,
+            latitude REAL,
             UNIQUE(name)
         )
         ''')
@@ -81,10 +78,10 @@ class DatabaseService:
         # Create indexes for performance
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_distances_origin ON distances(origin, transport_mode)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_distances_destination ON distances(destination)')
-        cursor.execute('CREATE INDEX IF NOT EXISTS idx_stations_location ON stations(location)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_stations_name ON stations(name)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_stations_region ON stations(region)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_stations_pistes ON stations(total_pistes_km)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_stations_coordinates ON stations(longitude, latitude)')
         
         conn.commit()
         conn.close()
@@ -155,26 +152,11 @@ class DatabaseService:
             
             count = 0
             for station in data.get('stations', []):
-                # Extract difficulty breakdown
-                difficulty = station.get('difficulty_breakdown', {})
-                
-                # Convert any additional fields to JSON string
-                additional_info = {}
-                for key, value in station.items():
-                    if key not in ['name', 'region', 'base_altitude', 'top_altitude', 
-                                  'vertical_drop', 'total_pistes_km', 'difficulty_breakdown',
-                                  'lifts', 'location']:
-                        additional_info[key] = value
-                
-                # Use the region as location if location is not provided
-                location = station.get('region', '')
-                
                 cursor.execute('''
                 INSERT OR REPLACE INTO stations 
                 (name, region, base_altitude, top_altitude, vertical_drop, 
-                total_pistes_km, easy_km, intermediate_km, difficult_km, 
-                lifts, location, additional_info)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                total_pistes_km, longitude, latitude)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     station.get('name'),  # Name is required
                     station.get('region'),
@@ -182,15 +164,8 @@ class DatabaseService:
                     station.get('top_altitude'),
                     station.get('vertical_drop'),
                     station.get('total_pistes_km'),
-                    difficulty.get('easy_km'),
-                    difficulty.get('intermediate_km'),
-                    difficulty.get('difficult_km'),
-                    station.get('lifts'),
-                    location,
-                    json.dumps({
-                        **additional_info,
-                        'coordinates': station.get('coordinates')  # Store coordinates in additional_info
-                    })
+                    station.get('longitude'),
+                    station.get('latitude')
                 ))
                 count += 1
             
@@ -364,13 +339,8 @@ class DatabaseService:
         cursor.execute("SELECT * FROM stations")
         results = [dict(row) for row in cursor.fetchall()]
         
-        # Process each station result
-        processed_results = []
-        for station in results:
-            processed_results.append(self._process_station_result(station))
-        
         conn.close()
-        return processed_results
+        return results
     
     def get_all_stations_with_distances(self, origin: str, transport_mode: str) -> List[Dict[str, Any]]:
         """
@@ -399,13 +369,8 @@ class DatabaseService:
         )
         results = [dict(row) for row in cursor.fetchall()]
         
-        # Process each station result
-        processed_results = []
-        for station in results:
-            processed_results.append(self._process_station_result(station))
-        
         conn.close()
-        return processed_results
+        return results
     
     def get_closest_stations(self, origin: str, transport_mode: str, limit: int = 10) -> List[Dict[str, Any]]:
         """
@@ -436,13 +401,8 @@ class DatabaseService:
         )
         results = [dict(row) for row in cursor.fetchall()]
         
-        # Process each station result
-        processed_results = []
-        for station in results:
-            processed_results.append(self._process_station_result(station))
-        
         conn.close()
-        return processed_results
+        return results
     
     def get_stations_by_date(self, origin: str, transport_mode: str, date: str, limit: int = 10) -> List[Dict[str, Any]]:
         """
@@ -461,8 +421,8 @@ class DatabaseService:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         
-        # Note: Since we don't have season_start and season_end in our new schema,
-        # we'll just return all stations sorted by distance for now
+        # Note: Since we don't have season_start and season_end in our schema,
+        # we'll just return all stations sorted by distance
         cursor.execute(
             """
             SELECT s.*, d.distance, d.duration 
@@ -476,13 +436,8 @@ class DatabaseService:
         )
         results = [dict(row) for row in cursor.fetchall()]
         
-        # Process each station result
-        processed_results = []
-        for station in results:
-            processed_results.append(self._process_station_result(station))
-        
         conn.close()
-        return processed_results
+        return results
     
     def get_stations_by_piste_length(self, origin: str, transport_mode: str, limit: int = 10) -> List[Dict[str, Any]]:
         """
@@ -513,10 +468,5 @@ class DatabaseService:
         )
         results = [dict(row) for row in cursor.fetchall()]
         
-        # Process each station result
-        processed_results = []
-        for station in results:
-            processed_results.append(self._process_station_result(station))
-        
         conn.close()
-        return processed_results
+        return results
