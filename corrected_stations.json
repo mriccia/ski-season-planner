@@ -1,0 +1,884 @@
+{
+  "stations": [
+    {
+      "name": "Grimentz-Zinal",
+      "base_altitude": 1570,
+      "top_altitude": 2900,
+      "vertical_drop": 1330,
+      "total_pistes_km": 115,
+      "region": "Val d'Anniviers, Valais",
+      "longitude": 7.5744806137686265,
+      "latitude": 46.17679980063583
+    },
+    {
+      "name": "Les Mosses",
+      "base_altitude": 1379,
+      "top_altitude": 1874,
+      "vertical_drop": 495,
+      "total_pistes_km": 40,
+      "region": "Vaud",
+      "longitude": 7.096117784649296,
+      "latitude": 46.39180534790281
+    },
+    {
+      "name": "Belalp - Blatten",
+      "base_altitude": 1322,
+      "top_altitude": 3118,
+      "vertical_drop": 1796,
+      "total_pistes_km": 38.5,
+      "region": "Valais",
+      "longitude": 7.984297547031418,
+      "latitude": 46.35905672485628
+    },
+    {
+      "name": "Villars-Gryon-Les Diablerets",
+      "base_altitude": 1224,
+      "top_altitude": 2120,
+      "vertical_drop": 896,
+      "total_pistes_km": 87,
+      "region": "Vaud",
+      "longitude": 7.056569250212579,
+      "latitude": 46.2967200240667
+    },
+    {
+      "name": "Saas-Fee / Saas-Almagell",
+      "base_altitude": 1800,
+      "top_altitude": 3573,
+      "vertical_drop": 1773,
+      "total_pistes_km": 100,
+      "region": "Valais",
+      "longitude": 7.9328470847300965,
+      "latitude": 46.11113950647706
+    },
+    {
+      "name": "Bergbahnen Gstaad",
+      "base_altitude": 1000,
+      "top_altitude": 3000,
+      "vertical_drop": 2000,
+      "total_pistes_km": 200,
+      "region": "Bern",
+      "longitude": 7.282579232857604,
+      "latitude": 46.467778704794604
+    },
+    {
+      "name": "Lauchernalp",
+      "base_altitude": 1403,
+      "top_altitude": 3100,
+      "vertical_drop": 1697,
+      "total_pistes_km": 40,
+      "region": "Lötschental, Valais",
+      "longitude": 7.779113186627259,
+      "latitude": 46.403695582450545
+    },
+    {
+      "name": "Anzère",
+      "base_altitude": 1516,
+      "top_altitude": 2420,
+      "vertical_drop": 904,
+      "total_pistes_km": 58,
+      "region": "Valais",
+      "longitude": 7.398798166025691,
+      "latitude": 46.29717209648414
+    },
+    {
+      "name": "Bugnenets-Savagnières",
+      "base_altitude": 1078,
+      "top_altitude": 1449,
+      "vertical_drop": 371,
+      "total_pistes_km": 30,
+      "region": "Neuchâtel/Bern",
+      "longitude": 7.007205401957905,
+      "latitude": 47.12729216204707
+    },
+    {
+      "name": "Charmey",
+      "base_altitude": 900,
+      "top_altitude": 1630,
+      "vertical_drop": 730,
+      "total_pistes_km": 30,
+      "region": "Fribourg",
+      "longitude": 7.168400152999689,
+      "latitude": 46.6182528777703
+    },
+    {
+      "name": "Crêt-du-Puy",
+      "base_altitude": 1000,
+      "top_altitude": 1300,
+      "vertical_drop": 300,
+      "total_pistes_km": 7,
+      "region": "Neuchâtel",
+      "longitude": 6.9826233313158035,
+      "latitude": 47.09321557278646
+    },
+    {
+      "name": "Jaun",
+      "base_altitude": 1023,
+      "top_altitude": 1571,
+      "vertical_drop": 548,
+      "total_pistes_km": 20,
+      "region": "Fribourg",
+      "longitude": 7.291677411267542,
+      "latitude": 46.60826250328726
+    },
+    {
+      "name": "La Berra",
+      "base_altitude": 1040,
+      "top_altitude": 1636,
+      "vertical_drop": 596,
+      "total_pistes_km": 25,
+      "region": "Fribourg",
+      "longitude": 7.155661502025447,
+      "latitude": 46.687492574649546
+    },
+    {
+      "name": "La Lécherette",
+      "base_altitude": 1379,
+      "top_altitude": 1874,
+      "vertical_drop": 495,
+      "total_pistes_km": 40,
+      "region": "Vaud",
+      "longitude": 7.111136913000476,
+      "latitude": 46.42037913047577
+    },
+    {
+      "name": "Les Marécottes",
+      "base_altitude": 1110,
+      "top_altitude": 2220,
+      "vertical_drop": 1110,
+      "total_pistes_km": 25,
+      "region": "Valais",
+      "longitude": 7.0126,
+      "latitude": 46.1119
+    },
+    {
+      "name": "Les Paccots",
+      "base_altitude": 1000,
+      "top_altitude": 1500,
+      "vertical_drop": 500,
+      "total_pistes_km": 20,
+      "region": "Fribourg",
+      "longitude": 6.9472,
+      "latitude": 46.5167
+    },
+    {
+      "name": "Leysin",
+      "base_altitude": 1250,
+      "top_altitude": 2198,
+      "vertical_drop": 948,
+      "total_pistes_km": 60,
+      "region": "Vaud",
+      "longitude": 7.0123,
+      "latitude": 46.3439
+    },
+    {
+      "name": "Moléson",
+      "base_altitude": 1100,
+      "top_altitude": 2002,
+      "vertical_drop": 902,
+      "total_pistes_km": 30,
+      "region": "Fribourg",
+      "longitude": 7.0387,
+      "latitude": 46.5553
+    },
+    {
+      "name": "Nax Mont-Noble",
+      "base_altitude": 1495,
+      "top_altitude": 2640,
+      "vertical_drop": 1145,
+      "total_pistes_km": 35,
+      "region": "Val d'Hérens, Valais",
+      "longitude": 7.4297,
+      "latitude": 46.2361
+    },
+    {
+      "name": "Ovronnaz",
+      "base_altitude": 1400,
+      "top_altitude": 2427,
+      "vertical_drop": 1027,
+      "total_pistes_km": 30,
+      "region": "Valais",
+      "longitude": 7.1743,
+      "latitude": 46.1985
+    },
+    {
+      "name": "Mayens de Conthey",
+      "base_altitude": 1281,
+      "top_altitude": 1439,
+      "vertical_drop": 158,
+      "total_pistes_km": 1,
+      "region": "Valais",
+      "longitude": 7.2853090192870855,
+      "latitude": 46.252276153347864
+    },
+    {
+      "name": "Rathvel",
+      "base_altitude": 1200,
+      "top_altitude": 1500,
+      "vertical_drop": 300,
+      "total_pistes_km": 8,
+      "region": "Fribourg",
+      "longitude": 6.980290807151173,
+      "latitude": 46.542813807344736
+    },
+    {
+      "name": "Schwarzsee",
+      "base_altitude": 1050,
+      "top_altitude": 1750,
+      "vertical_drop": 700,
+      "total_pistes_km": 20,
+      "region": "Fribourg",
+      "longitude": 7.29186785540081,
+      "latitude": 46.671614755067665
+    },
+    {
+      "name": "St-Luc / Chandolin",
+      "base_altitude": 1650,
+      "top_altitude": 2980,
+      "vertical_drop": 1330,
+      "total_pistes_km": 60,
+      "region": "Valais",
+      "longitude": 7.60255664004766,
+      "latitude": 46.22027298109393
+    },
+    {
+      "name": "Tramelan",
+      "base_altitude": 920,
+      "top_altitude": 1228,
+      "vertical_drop": 308,
+      "total_pistes_km": 14,
+      "region": "Bern",
+      "longitude": 7.085732928189592,
+      "latitude": 47.21979893640261
+    },
+    {
+      "name": "Vercorin",
+      "base_altitude": 1340,
+      "top_altitude": 2374,
+      "vertical_drop": 1034,
+      "total_pistes_km": 35,
+      "region": "Valais",
+      "longitude": 7.534187790967095,
+      "latitude": 46.254106179532414
+    },
+    {
+      "name": "Glacier 3000",
+      "base_altitude": 1800,
+      "top_altitude": 3000,
+      "vertical_drop": 1200,
+      "total_pistes_km": 31,
+      "region": "Vaud",
+      "longitude": 7.2052656939964494,
+      "latitude": 46.353951236806175
+    },
+    {
+      "name": "Vallée de Joux",
+      "base_altitude": 1010,
+      "top_altitude": 1445,
+      "vertical_drop": 435,
+      "total_pistes_km": 42,
+      "region": "Vaud",
+      "longitude": 6.2179459091681615,
+      "latitude": 46.58009523342686
+    },
+    {
+      "name": "Espace Dent-Blanche (Evolène)",
+      "base_altitude": 1404,
+      "top_altitude": 2632,
+      "vertical_drop": 1228,
+      "total_pistes_km": 41.1,
+      "region": "Valais",
+      "longitude": 7.479179981661317,
+      "latitude": 46.12202699025095
+    },
+    {
+      "name": "Les Pléiades",
+      "base_altitude": 1080,
+      "top_altitude": 1360,
+      "vertical_drop": 280,
+      "total_pistes_km": 8,
+      "region": "Vaud",
+      "longitude": 6.913848304191754,
+      "latitude": 46.485467484843724
+    },
+    {
+      "name": "Les Rochers - de - Naye",
+      "base_altitude": 1050,
+      "top_altitude": 2045,
+      "vertical_drop": 995,
+      "total_pistes_km": 10,
+      "region": "Vaud",
+      "longitude": 6.947966204409186,
+      "latitude": 46.43438594998082
+    },
+    {
+      "name": "Espace Dent-Blanche (La Forclaz)",
+      "base_altitude": 1730,
+      "top_altitude": 2200,
+      "vertical_drop": 470,
+      "total_pistes_km": 5.3,
+      "region": "Valais",
+      "longitude": 7.522107357134711,
+      "latitude": 46.08556622285488
+    },
+    {
+      "name": "Espace Dent-Blanche (Arolla)",
+      "base_altitude": 1984,
+      "top_altitude": 2877,
+      "vertical_drop": 893,
+      "total_pistes_km": 26.7,
+      "region": "Valais",
+      "longitude": 7.481427424673634,
+      "latitude": 46.021648420417456
+    },
+    {
+      "name": "Prés-d'Orvin",
+      "base_altitude": 1000,
+      "top_altitude": 1300,
+      "vertical_drop": 300,
+      "total_pistes_km": 15,
+      "region": "Bern",
+      "longitude": 7.176382239919043,
+      "latitude": 47.15572616788173
+    },
+    {
+      "name": "Leukerbad (Torrent & Gemmi)",
+      "base_altitude": 1411,
+      "top_altitude": 2610,
+      "vertical_drop": 1199,
+      "total_pistes_km": 47.5,
+      "region": "Valais",
+      "longitude": 7.62543440140486,
+      "latitude": 46.38389498303766
+    },
+    {
+      "name": "Robella Val-de-Travers",
+      "base_altitude": 770,
+      "top_altitude": 1457,
+      "vertical_drop": 687,
+      "total_pistes_km": 20,
+      "region": "Neuchâtel",
+      "longitude": 6.55138268861228,
+      "latitude": 46.88616586226736
+    },
+    {
+      "name": "Springenboden",
+      "base_altitude": 1207,
+      "top_altitude": 1525,
+      "vertical_drop": 318,
+      "total_pistes_km": 6,
+      "region": "Bern",
+      "longitude": 7.57652948897846,
+      "latitude": 46.61886855926571
+    },
+    {
+      "name": "Jeizinen",
+      "base_altitude": 1500,
+      "top_altitude": 2200,
+      "vertical_drop": 700,
+      "total_pistes_km": 10,
+      "region": "Valais",
+      "longitude": 7.7223122842073035,
+      "latitude": 46.32950529662316
+    },
+    {
+      "name": "Grimmialp",
+      "base_altitude": 1233,
+      "top_altitude": 1833,
+      "vertical_drop": 600,
+      "total_pistes_km": 7.2,
+      "region": "Bern",
+      "longitude": 7.4840357831569095,
+      "latitude": 46.56808914585159
+    },
+    {
+      "name": "Wiriehorn",
+      "base_altitude": 984,
+      "top_altitude": 1868,
+      "vertical_drop": 884,
+      "total_pistes_km": 11.2,
+      "region": "Bern",
+      "longitude": 7.5325803582942035,
+      "latitude": 46.61252901034902
+    },
+    {
+      "name": "Métabief",
+      "base_altitude": 1000,
+      "top_altitude": 1463,
+      "vertical_drop": 463,
+      "total_pistes_km": 26,
+      "region": "France",
+      "longitude": 6.356785137984372,
+      "latitude": 46.76819341181181
+    },
+    {
+      "name": "Heimenschwand",
+      "base_altitude": 900,
+      "top_altitude": 1200,
+      "vertical_drop": 300,
+      "total_pistes_km": 5,
+      "region": "Bern",
+      "longitude": 7.682016440043427,
+      "latitude": 46.82587250228796
+    },
+    {
+      "name": "Niederhorn",
+      "base_altitude": 1100,
+      "top_altitude": 1950,
+      "vertical_drop": 850,
+      "total_pistes_km": 12,
+      "region": "Bern",
+      "longitude": 7.7657496890212085,
+      "latitude": 46.69088660780959
+    },
+    {
+      "name": "Eriz",
+      "base_altitude": 1044,
+      "top_altitude": 1378,
+      "vertical_drop": 334,
+      "total_pistes_km": 6,
+      "region": "Bern",
+      "longitude": 7.8269260255131,
+      "latitude": 46.784517474297665
+    },
+    {
+      "name": "Habkern",
+      "base_altitude": 1137,
+      "top_altitude": 1500,
+      "vertical_drop": 363,
+      "total_pistes_km": 3,
+      "region": "Bern",
+      "longitude": 7.86272033342666,
+      "latitude": 46.731880132067644
+    },
+    {
+      "name": "Beatenberg-Hohwald",
+      "base_altitude": 1100,
+      "top_altitude": 1800,
+      "vertical_drop": 700,
+      "total_pistes_km": 8,
+      "region": "Bern",
+      "longitude": 7.816372607499774,
+      "latitude": 46.70502657551941
+    },
+    {
+      "name": "Axalp",
+      "base_altitude": 1400,
+      "top_altitude": 2000,
+      "vertical_drop": 600,
+      "total_pistes_km": 15,
+      "region": "Bern",
+      "longitude": 8.037253647808717,
+      "latitude": 46.7186670279118
+    },
+    {
+      "name": "Rossberg",
+      "base_altitude": 1000,
+      "top_altitude": 1580,
+      "vertical_drop": 580,
+      "total_pistes_km": 5,
+      "region": "Bern",
+      "longitude": 7.445543490301837,
+      "latitude": 46.63787110202527
+    },
+    {
+      "name": "Jaunpass",
+      "base_altitude": 850,
+      "top_altitude": 1700,
+      "vertical_drop": 850,
+      "total_pistes_km": 12.5,
+      "region": "Bern",
+      "longitude": 7.336747734696657,
+      "latitude": 46.59128900579244
+    },
+    {
+      "name": "Rosswald",
+      "base_altitude": 1036,
+      "top_altitude": 2536,
+      "vertical_drop": 1500,
+      "total_pistes_km": 25,
+      "region": "Valais",
+      "longitude": 8.042697042499132,
+      "latitude": 46.30418953623298
+    },
+    {
+      "name": "Faltschen",
+      "base_altitude": 1032,
+      "top_altitude": 1359,
+      "vertical_drop": 327,
+      "total_pistes_km": 2.2,
+      "region": "Bern",
+      "longitude": 7.719865889035955,
+      "latitude": 46.6309195466475
+    },
+    {
+      "name": "Aeschiallmend",
+      "base_altitude": 1000,
+      "top_altitude": 1400,
+      "vertical_drop": 400,
+      "total_pistes_km": 4,
+      "region": "Bern",
+      "longitude": 7.7271129824733205,
+      "latitude": 46.647512270457185
+    },
+    {
+      "name": "Bumbach Schangnau",
+      "base_altitude": 920,
+      "top_altitude": 1365,
+      "vertical_drop": 445,
+      "total_pistes_km": 10,
+      "region": "Bern",
+      "longitude": 7.891206355837492,
+      "latitude": 46.813433950646036
+    },
+    {
+      "name": "Eischoll",
+      "base_altitude": 1260,
+      "top_altitude": 2200,
+      "vertical_drop": 940,
+      "total_pistes_km": 15,
+      "region": "Valais",
+      "longitude": 7.780841811807964,
+      "latitude": 46.29277565138114
+    },
+    {
+      "name": "Gantrisch Gurnigel",
+      "base_altitude": 1340,
+      "top_altitude": 1590,
+      "vertical_drop": 250,
+      "total_pistes_km": 6,
+      "region": "Bern",
+      "longitude": 7.446287520177475,
+      "latitude": 46.7242719793097
+    },
+    {
+      "name": "Gspon",
+      "base_altitude": 1900,
+      "top_altitude": 2200,
+      "vertical_drop": 300,
+      "total_pistes_km": 5,
+      "region": "Valais",
+      "longitude": 7.905446600794134,
+      "latitude": 46.22597736144049
+    },
+    {
+      "name": "Gurnigelbad",
+      "base_altitude": 1150,
+      "top_altitude": 1250,
+      "vertical_drop": 100,
+      "total_pistes_km": 0.7,
+      "region": "Bern",
+      "longitude": 7.450451660540231,
+      "latitude": 46.75988160723069
+    },
+    {
+      "name": "Kiental",
+      "base_altitude": 926,
+      "top_altitude": 1490,
+      "vertical_drop": 564,
+      "total_pistes_km": 7,
+      "region": "Bern",
+      "longitude": 7.771890701350116,
+      "latitude": 46.60146929633275
+    },
+    {
+      "name": "Ste-Croix/Les Rasses",
+      "base_altitude": 1100,
+      "top_altitude": 1580,
+      "vertical_drop": 480,
+      "total_pistes_km": 20,
+      "region": "Vaud",
+      "longitude": 6.541234622902881,
+      "latitude": 46.830841759572465
+    },
+    {
+      "name": "Marbachegg",
+      "base_altitude": 900,
+      "top_altitude": 1500,
+      "vertical_drop": 600,
+      "total_pistes_km": 15,
+      "region": "Lucerne",
+      "longitude": 7.896084391752267,
+      "latitude": 46.84999848429507
+    },
+    {
+      "name": "Moosalp",
+      "base_altitude": 1500,
+      "top_altitude": 2000,
+      "vertical_drop": 500,
+      "total_pistes_km": 25,
+      "region": "Valais",
+      "longitude": 7.827340818715531,
+      "latitude": 46.27122916145885
+    },
+    {
+      "name": "Ottenleue",
+      "base_altitude": 1450,
+      "top_altitude": 1600,
+      "vertical_drop": 150,
+      "total_pistes_km": 5,
+      "region": "Bern",
+      "longitude": 7.365524934075745,
+      "latitude": 46.73198020575114
+    },
+    {
+      "name": "Riffenmatt",
+      "base_altitude": 1080,
+      "top_altitude": 1140,
+      "vertical_drop": 60,
+      "total_pistes_km": 0.3,
+      "region": "Bern",
+      "longitude": 7.354398821930542,
+      "latitude": 46.76355537386148
+    },
+    {
+      "name": "Rüschegg",
+      "base_altitude": 1000,
+      "top_altitude": 1500,
+      "vertical_drop": 500,
+      "total_pistes_km": 13,
+      "region": "Bern",
+      "longitude": 7.421135203385842,
+      "latitude": 46.76022316893306
+    },
+    {
+      "name": "Selital",
+      "base_altitude": 1300,
+      "top_altitude": 1600,
+      "vertical_drop": 300,
+      "total_pistes_km": 10,
+      "region": "Bern",
+      "longitude": 7.391487981966824,
+      "latitude": 46.74106393630991
+    },
+    {
+      "name": "Unterbäch",
+      "base_altitude": 1200,
+      "top_altitude": 2500,
+      "vertical_drop": 1300,
+      "total_pistes_km": 20,
+      "region": "Valais",
+      "longitude": 7.801307927153058,
+      "latitude": 46.284095061517014
+    },
+    {
+      "name": "Visperterminen",
+      "base_altitude": 1370,
+      "top_altitude": 2338,
+      "vertical_drop": 968,
+      "total_pistes_km": 20,
+      "region": "Valais",
+      "longitude": 7.9082947980938005,
+      "latitude": 46.258966141419734
+    },
+    {
+      "name": "Schwanden",
+      "base_altitude": 1000,
+      "top_altitude": 1400,
+      "vertical_drop": 400,
+      "total_pistes_km": 5,
+      "region": "Bern",
+      "longitude": 7.731701782397368,
+      "latitude": 46.73315477442338
+    },
+    {
+      "name": "Wilerallmi",
+      "base_altitude": 1000,
+      "top_altitude": 1400,
+      "vertical_drop": 400,
+      "total_pistes_km": 5,
+      "region": "Obwalden",
+      "longitude": 7.7394430536394605,
+      "latitude": 46.724501791507016
+    },
+    {
+      "name": "Homberg",
+      "base_altitude": 940,
+      "top_altitude": 1093,
+      "vertical_drop": 153,
+      "total_pistes_km": 3,
+      "region": "Bern",
+      "longitude": 7.677867575059558,
+      "latitude": 46.77274679281021
+    },
+    {
+      "name": "Hirmentaz",
+      "base_altitude": 1100,
+      "top_altitude": 1610,
+      "vertical_drop": 510,
+      "total_pistes_km": 25,
+      "region": "France",
+      "longitude": 6.505831361324095,
+      "latitude": 46.244893410774466
+    },
+    {
+      "name": "Les Habères",
+      "base_altitude": 1000,
+      "top_altitude": 1500,
+      "vertical_drop": 500,
+      "total_pistes_km": 18,
+      "region": "France",
+      "longitude": 6.479924130994449,
+      "latitude": 46.239820344792356
+    },
+    {
+      "name": "Jura-sur-Léman (Transfrontalier)",
+      "base_altitude": 1000,
+      "top_altitude": 1700,
+      "vertical_drop": 700,
+      "total_pistes_km": 40,
+      "region": "France/Switzerland",
+      "longitude": 6.083164632197836,
+      "latitude": 46.44107424696443
+    },
+    {
+      "name": "Monts Jura",
+      "base_altitude": 900,
+      "top_altitude": 1680,
+      "vertical_drop": 780,
+      "total_pistes_km": 19.5,
+      "region": "France",
+      "longitude": 6.007458301516019,
+      "latitude": 46.28278674737834
+    },
+    {
+      "name": "Thollon Les Mémises",
+      "base_altitude": 1370,
+      "top_altitude": 1874,
+      "vertical_drop": 504,
+      "total_pistes_km": 17,
+      "region": "France",
+      "longitude": 6.717127921284948,
+      "latitude": 46.39057276009724
+    },
+    {
+      "name": "Saint-Cergue",
+      "base_altitude": 1041,
+      "top_altitude": 1500,
+      "vertical_drop": 459,
+      "total_pistes_km": 10,
+      "region": "Vaud",
+      "longitude": 6.155524835072194,
+      "latitude": 46.44583574475864
+    },
+    {
+      "name": "San Domenico",
+      "base_altitude": 1420,
+      "top_altitude": 2500,
+      "vertical_drop": 1080,
+      "total_pistes_km": 32.6,
+      "region": "Italy",
+      "longitude": 8.188886053624275,
+      "latitude": 46.24990903906886
+    },
+    {
+      "name": "Devero",
+      "base_altitude": 1600,
+      "top_altitude": 2200,
+      "vertical_drop": 600,
+      "total_pistes_km": 9,
+      "region": "Italy",
+      "longitude": 8.255122160082493,
+      "latitude": 46.31477423646774
+    },
+    {
+      "name": "Balmberg",
+      "base_altitude": 1062,
+      "top_altitude": 1270,
+      "vertical_drop": 208,
+      "total_pistes_km": 5,
+      "region": "Solothurn",
+      "longitude": 7.543731020116581,
+      "latitude": 47.26655077895426
+    },
+    {
+      "name": "Grenchenberg",
+      "base_altitude": 1000,
+      "top_altitude": 1400,
+      "vertical_drop": 400,
+      "total_pistes_km": 10,
+      "region": "Solothurn",
+      "longitude": 7.385460711838013,
+      "latitude": 47.22382662984919
+    },
+    {
+      "name": "Le Grand-Bornand",
+      "base_altitude": 1000,
+      "top_altitude": 2100,
+      "vertical_drop": 1100,
+      "total_pistes_km": 90,
+      "region": "France",
+      "longitude": 6.451529047489896,
+      "latitude": 45.97020099571824
+    },
+    {
+      "name": "Linden",
+      "base_altitude": 920,
+      "top_altitude": 1088,
+      "vertical_drop": 168,
+      "total_pistes_km": 2.2,
+      "region": "Bern",
+      "longitude": 7.678181680625299,
+      "latitude": 46.84510382114145
+    },
+    {
+      "name": "Massif des Brasses",
+      "base_altitude": 900,
+      "top_altitude": 1500,
+      "vertical_drop": 600,
+      "total_pistes_km": 37,
+      "region": "France",
+      "longitude": 6.450852256640347,
+      "latitude": 46.176490365604295
+    },
+    {
+      "name": "Meiringen-Hasliberg",
+      "base_altitude": 1065,
+      "top_altitude": 2433,
+      "vertical_drop": 1368,
+      "total_pistes_km": 60,
+      "region": "Bern",
+      "longitude": 8.197250324581125,
+      "latitude": 46.74568904336333
+    },
+    {
+      "name": "Melchsee-Frutt",
+      "base_altitude": 1080,
+      "top_altitude": 2255,
+      "vertical_drop": 1175,
+      "total_pistes_km": 36,
+      "region": "Obwalden",
+      "longitude": 8.269084728420161,
+      "latitude": 46.77636399756147
+    },
+    {
+      "name": "Mörlialp Giswil",
+      "base_altitude": 1355,
+      "top_altitude": 1837,
+      "vertical_drop": 482,
+      "total_pistes_km": 12,
+      "region": "Obwalden",
+      "longitude": 8.109592089897003,
+      "latitude": 46.82552410290639
+    },
+    {
+      "name": "Praz de Lys – Sommand",
+      "base_altitude": 1240,
+      "top_altitude": 1966,
+      "vertical_drop": 726,
+      "total_pistes_km": 72,
+      "region": "France",
+      "longitude": 6.593153526341044,
+      "latitude": 46.14929034668601
+    },
+    {
+      "name": "Sörenberg",
+      "base_altitude": 1166,
+      "top_altitude": 2350,
+      "vertical_drop": 1184,
+      "total_pistes_km": 42,
+      "region": "Lucerne",
+      "longitude": 8.032216810631517,
+      "latitude": 46.823930873991756
+    }
+  ]
+}
