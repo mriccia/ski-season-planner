@@ -2,144 +2,155 @@
 
 ## Critical Issues
 
-1. **Python Version Mismatch**: The `pyproject.toml` specifies Python 3.12+ but the Dockerfile uses Python 3.9. This could lead to compatibility issues and unexpected behavior in production. ✅ FIXED
+1. **UI Component Complexity**: The `components.py` file is overly complex with multiple responsibilities and contains a large amount of nested code, particularly in the `render_plan_tab` function which is over 200 lines long. This makes maintenance difficult and increases the risk of bugs. ✅ FIXED
 
-2. **Error Handling in API Calls**: While there's a retry mechanism for the OpenRouteService API, there's no fallback strategy if the API is completely unavailable. However, for a non-production application, the current implementation with retries is adequate. ✅ ADDRESSED
+2. **Duplicate Code**: There are duplicate implementations of `render_distances_table` in the components.py file, which can lead to confusion and maintenance issues. ✅ FIXED
 
-3. **API Key Security**: API keys are stored in `.streamlit/secrets.toml` which is the recommended approach for Streamlit applications. For this non-production application, this approach is adequate. ✅ ADDRESSED
+3. **Lack of Type Annotations**: Many functions lack proper type annotations, making it harder to understand expected inputs and outputs and increasing the risk of type-related bugs. ✅ PARTIALLY FIXED
 
-4. **Missing Data Validation**: There's minimal validation of user inputs and API responses. Date validation has been improved, and the UI components provide inherent validation for most inputs. ✅ PARTIALLY FIXED
+4. **Inconsistent Error Handling**: Error handling is inconsistent across the codebase, with some areas using try/except blocks and others not handling errors at all.
 
-5. **Lack of Comprehensive Testing**: No test files were found in the codebase. Without proper testing, it's difficult to ensure the application works correctly across different scenarios. ⚠️ DEFERRED
+5. **Complex Async Stream Processing**: The streaming implementation in `render_plan_tab` is overly complex and difficult to maintain, with deeply nested logic and state management. ✅ FIXED
 
 ## Major Issues
 
-1. **Singleton Pattern Implementation**: The current singleton implementation using session state is appropriate for Streamlit's execution model. Streamlit runs in a single-threaded environment per user session, so thread safety is not a concern. ✅ ADDRESSED
+1. **UI/Logic Separation**: The UI components contain business logic that should be separated into service classes. This violates the separation of concerns principle. ✅ PARTIALLY FIXED
 
-2. **Inefficient API Usage**: The application makes separate API calls for each resort without batching or caching. This could lead to rate limiting issues and poor performance. ⚠️ DEFERRED
+2. **Session State Management**: The state management approach is scattered across multiple files and functions, making it difficult to track state changes and potential side effects.
 
-3. **Hardcoded Configuration Values**: Many configuration values were hardcoded throughout the codebase. These have now been centralized in the config.py file, including:
-   - Default trip dates
-   - Ski season months
-   - API endpoints and retry configuration
-   - Default model selections
-   - UI configuration values
-   ✅ FIXED
+3. **Hardcoded UI Text**: UI text is hardcoded in the components rather than being centralized for easier maintenance and potential internationalization.
 
-4. **Inconsistent Logging**: Logging is configured centrally in app.py with appropriate levels for different components. The current implementation is adequate for the application's needs. ✅ ADDRESSED
+4. **Lack of Component Reusability**: Many UI components are tightly coupled to specific use cases, limiting their reusability across the application.
 
-5. **Streamlit Session State Management**: The current state management approach is appropriate for a Streamlit application of this size. ✅ ADDRESSED
+5. **Inefficient Data Processing**: Some data processing is done directly in UI components, which can lead to performance issues and poor user experience.
 
-6. **Lack of Type Annotations**: While some functions have type annotations, many don't, making it harder to understand expected inputs and outputs. ⚠️ DEFERRED
+6. **Inconsistent Naming Conventions**: While most of the code follows Python naming conventions, there are inconsistencies in function and variable naming that make the code harder to follow.
 
-7. **Dependency Management**: The project uses Poetry but doesn't specify exact versions for all dependencies, which could lead to inconsistent behavior across environments. ⚠️ DEFERRED
-
-8. **No Environment-Specific Configuration**: The application doesn't have different configurations for development, testing, and production environments. ⚠️ DEFERRED
+7. **Missing Documentation**: Many functions lack proper docstrings explaining their purpose, parameters, and return values. ✅ PARTIALLY FIXED
 
 ## Minor Issues
 
-1. **Code Organization**: Some modules have mixed responsibilities (e.g., `agent_service.py` handles both agent initialization and execution). ⚠️ DEFERRED
+1. **Unused Imports**: Several modules import packages that aren't used, adding unnecessary dependencies.
 
-2. **Inconsistent Error Messages**: Error messages vary in format and detail level across the application. ⚠️ DEFERRED
+2. **Inconsistent Error Messages**: Error messages vary in format and detail level across the application.
 
-3. **Lack of Documentation**: Many functions lacked proper docstrings. Comprehensive docstrings have been added to key classes and functions, explaining their purpose, parameters, and return values. ✅ FIXED
+3. **Missing Input Validation**: Some user inputs lack proper validation before being processed.
 
-4. **Unused Imports**: Several modules imported packages that weren't used. These have been addressed. ✅ FIXED
+4. **Lack of Accessibility Features**: The UI components don't include accessibility attributes.
 
-5. **Hardcoded UI Text**: UI text is hardcoded in the components rather than being centralized for easier maintenance and potential internationalization. ⚠️ DEFERRED
+5. **Inefficient Data Structures**: Some data structures could be optimized for better performance.
 
-6. **Inconsistent Naming Conventions**: The codebase follows consistent Python naming conventions (snake_case for variables/functions, PascalCase for classes). A duplicate variable assignment in openrouteservice_tool.py has been fixed. ✅ FIXED
+6. **Lack of Performance Monitoring**: No instrumentation for monitoring application performance.
 
-7. **No Input Sanitization**: For a Streamlit application with controlled inputs, extensive input sanitization is not necessary. The UI components provide adequate validation. ✅ ADDRESSED
+7. **Inconsistent Logging**: Logging is inconsistent across the application.
 
-8. **Missing Accessibility Features**: The UI components don't include accessibility attributes. ⚠️ DEFERRED
+## Improvement Plan
 
-9. **Lack of Performance Monitoring**: No instrumentation for monitoring application performance. ⚠️ DEFERRED
+### Phase 1: Code Organization and Documentation
 
-10. **Inefficient Data Structures**: Some data structures could be optimized for better performance. ⚠️ DEFERRED
+1. **Refactor UI Components**:
+   - Split large components into smaller, more focused ones ✅ DONE
+   - Remove duplicate code ✅ DONE
+   - Separate UI rendering from business logic ✅ DONE
 
-## Nice to Have
+2. **Improve Type Annotations**:
+   - Add comprehensive type hints to all functions ✅ PARTIALLY DONE
+   - Use appropriate typing constructs (Union, Optional, etc.) ✅ PARTIALLY DONE
 
-1. **Caching Layer**: Implement caching for API responses to improve performance and reduce API calls.
+3. **Enhance Documentation**:
+   - Add proper docstrings to all functions and classes ✅ PARTIALLY DONE
+   - Document complex logic and algorithms
 
-2. **Comprehensive Documentation**: Add detailed documentation for all modules, classes, and functions. ✅ PARTIALLY IMPLEMENTED
+### Phase 2: State Management and Error Handling
 
-3. **CI/CD Pipeline**: Set up automated testing and deployment workflows.
+1. **Centralize State Management**:
+   - Create a more robust state management system
+   - Clearly document state transitions and side effects
 
-4. **User Preferences Persistence**: Allow users to save their preferences for future sessions.
+2. **Standardize Error Handling**:
+   - Implement consistent error handling patterns
+   - Improve error messages and user feedback
 
-5. **Offline Mode**: Implement a mode that works with cached data when APIs are unavailable.
+### Phase 3: Performance and User Experience
 
-6. **Performance Optimizations**: Optimize data processing and API calls for better performance.
+1. **Optimize Data Processing**:
+   - Move data processing out of UI components
+   - Implement caching for expensive operations
 
-7. **Internationalization Support**: Add support for multiple languages.
+2. **Improve UI/UX**:
+   - Centralize UI text for easier maintenance
+   - Add accessibility features
+   - Implement responsive design improvements
 
-8. **Dark Mode**: Implement a dark mode option for the UI.
+### Phase 4: Testing and Quality Assurance
 
-9. **Mobile-Friendly UI**: Optimize the UI for mobile devices.
+1. **Add Comprehensive Testing**:
+   - Unit tests for core functionality
+   - Integration tests for key user flows
+   - UI tests for critical components
 
-10. **Analytics Integration**: Add analytics to track usage patterns and identify areas for improvement.
+2. **Implement Performance Monitoring**:
+   - Add instrumentation for key operations
+   - Monitor and optimize slow operations
 
-11. **User Authentication**: Add user authentication to personalize the experience and secure user data.
+## Progress Summary - June 9, 2025
 
-12. **Export Options**: Allow users to export their plans in different formats (PDF, calendar invites, etc.).
-
-13. **Weather Integration**: Add weather forecasts for selected resorts.
-
-14. **Progressive Web App**: Convert the application to a PWA for offline access and better mobile experience.
-
-15. **Containerization Improvements**: Update the Dockerfile to use multi-stage builds and optimize for production.
-
-16. **Improved Documentation for API Keys**: Add clearer instructions in the README about creating the `.streamlit/secrets.toml` file with the required API keys before starting the application.
-
-17. **SQLite Integration**: Refactor the application to use SQLite for data persistence, caching API responses, and enabling offline functionality. ⚠️ DEFERRED
-
-## Session Summary - June 1, 2025
-
-In today's code review session, we identified and began addressing several issues in the Ski Season Planner application:
-
-1. **Fixed**: Updated the Python version in the Dockerfile from 3.9 to 3.12 to match the requirements in pyproject.toml.
-
-2. **Fixed**: Improved date validation in the trip form component to check for:
-   - Past dates
-   - Maximum trip duration
-   - Maximum future planning timeframe
-   - Dates outside typical ski season
-
-3. **Discussed but deferred**:
-   - Comprehensive testing implementation
-   - API key security (deemed adequate with current approach)
-   - Singleton pattern implementation (current implementation is suitable for Streamlit's execution model)
-   - SQLite integration for data persistence and caching (added to future improvements)
-
-4. **Identified for future work**:
-   - Centralizing configuration values
-   - Improving error handling
-   - Adding documentation
-   - Implementing data validation in other areas
-
-## Session Summary - June 2, 2025
-
-In today's follow-up code review session, we continued addressing issues from the previous review:
+In today's refactoring session, we focused on improving the code organization and separation of concerns:
 
 1. **Fixed**:
-   - Centralized configuration values in config.py, including default dates, API settings, and UI configuration
-   - Added comprehensive docstrings to key classes and functions
-   - Fixed inconsistent naming conventions (duplicate variable assignment in openrouteservice_tool.py)
-   - Fixed import paths in state.py to use absolute imports
+   - Refactored the complex `render_plan_tab` function by:
+     - Extracting streaming logic into a separate service
+     - Creating domain models for streaming events
+     - Implementing a mapper service to transform SDK events into our domain model
+     - Separating UI rendering from business logic
+   - Removed duplicate `render_distances_table` function
+   - Added proper type annotations to UI component functions
+   - Improved documentation with better docstrings
 
-2. **Reassessed**:
-   - Error handling in API calls: Current retry mechanism is adequate for a non-production application
-   - Logging configuration: Current centralized setup in app.py is appropriate
-   - Input sanitization: Streamlit's UI components provide adequate validation for this application
-   - Singleton pattern: Current implementation is appropriate for Streamlit's execution model
+2. **Created new components**:
+   - `StreamingService`: Handles the processing of streaming events and maintains state
+   - `StreamingUI`: Handles the UI rendering of streaming events
+   - Domain models for streaming events: `TextChunk`, `ToolCall`, `ToolResult`, etc.
 
-3. **Still to address** (prioritized):
-   - Comprehensive testing implementation
-   - Type annotations for all functions
-   - Environment-specific configuration
-   - Dependency management with exact versions
-   - Performance optimizations (API caching, efficient data structures)
-   - Code organization improvements
+3. **Benefits of the new approach**:
+   - Clear separation of concerns between data processing and UI rendering
+   - More maintainable and testable code
+   - Better type safety with proper annotations
+   - Improved documentation
+   - Reduced complexity in UI components
 
-The application is now more maintainable with centralized configuration and improved documentation. Future work should focus on testing, type safety, and performance optimizations.
+4. **Verified compatibility**:
+   - Tested imports of new modules
+   - Checked interface compatibility with existing code
+   - Verified that the application should run without issues
+
+## Planned Improvements for Next Session
+
+For our next session, we should focus on the following areas:
+
+### 1. State Management Improvements
+- Create a dedicated `StateManager` class to centralize all state operations
+- Add state validation to prevent invalid state transitions
+- Implement proper state persistence for user sessions
+
+### 2. Error Handling Standardization
+- Create a centralized error handling service
+- Implement custom exception classes for different error types
+- Add proper error logging with context information
+
+### 3. Configuration Management
+- Move all configuration to a centralized location
+- Support different environments (development, testing, production)
+- Implement configuration validation
+
+### 4. Performance Optimizations
+- Implement caching for API responses and distance calculations
+- Add lazy loading for expensive operations
+- Optimize data structures for frequently accessed information
+
+### 5. Testing Infrastructure
+- Add unit tests for core business logic
+- Implement integration tests for key user flows
+- Add UI component tests
+
+These improvements will further enhance the maintainability, reliability, and performance of the application.
