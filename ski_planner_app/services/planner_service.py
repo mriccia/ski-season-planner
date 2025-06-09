@@ -47,6 +47,31 @@ class PlannerService:
         # Use the agent service to execute the prompt with the enriched stations
         response = self.agent_service.get_plan(preferences, trips, model_name)
         return response
+        
+    async def generate_ski_plan_streaming(
+        self,
+        preferences: UserPreferences,
+        trips: List[Trip],
+        model_name: str
+    ):
+        """
+        Generate a personalised ski season plan with streaming output.
+
+        Args:
+            preferences: User preferences including home location and criteria
+            trips: List of planned trips
+            model_name: Name of the LLM model to use
+
+        Yields:
+            dict: Streaming events from the agent
+        """
+        logger.info(
+            f"Generating streaming ski plan for {len(trips)} trips using model {model_name}")
+        logger.debug(f"User preferences: {preferences}")
+        
+        # Use the agent service to execute the prompt with streaming
+        async for event in self.agent_service.get_plan_streaming(preferences, trips, model_name):
+            yield event
 
 
 def get_planner_service():

@@ -134,18 +134,17 @@ class DistanceService:
         else:
             raise ValueError("No routes found in the response")
     
-    def geocode_location(self, location_name, api_key):
+    def geocode_location(self, location_name: str) -> Optional[List[float]]:
         """
         Convert a location name to coordinates using OpenRoute Service Geocoding API.
         
         Args:
             location_name (str): Location name (e.g., "Geneva,Switzerland")
-            api_key (str): Your OpenRoute Service API key
             
         Returns:
-            list: [longitude, latitude] coordinates
+            list: [longitude, latitude] coordinates or None if geocoding failed
         """
-        url = f"https://api.openrouteservice.org/geocode/search"
+        url = "https://api.openrouteservice.org/geocode/search"
         
         headers = {
             'Accept': 'application/json, application/geo+json, application/gpx+xml',
@@ -167,15 +166,16 @@ class DistanceService:
                 coordinates = data['features'][0]['geometry']['coordinates']
                 logger.info(f"Successfully geocoded {location_name} to coordinates {coordinates}")
                 return coordinates  # [longitude, latitude]
-            else:
-                logger.warning(f"Could not find coordinates for {location_name}")
-                return None
+            
+            logger.warning(f"Could not find coordinates for {location_name}")
+            return None
         except requests.exceptions.RequestException as e:
             logger.warning(f"Error geocoding location: {e}")
             raise e  # Re-raise the exception to be handled by the retry decorator
-    def _geocode_origin_with_retry(self, origin: str) -> Optional[List[float]]:
+    @retry_with_backoff(max_retries=3, initial_delay=60)
+    def _geocode_origin(self, origin: str) -> Optional[List[float]]:
         """
-        Geocode the origin location with retry logic.
+        Geocode the origin location with built-in retry logic.
         
         Args:
             origin: Origin location to geocode
@@ -183,18 +183,10 @@ class DistanceService:
         Returns:
             List[float]: Coordinates as [longitude, latitude] or None if geocoding failed
         """
-        @retry_with_backoff(max_retries=3, initial_delay=60)
-        def geocode_origin():
-            return self.geocode_location(origin)
-        
         try:
-            origin_coords = geocode_origin()
-            if not origin_coords:
-                logger.error(f"Could not geocode origin: {origin}")
-                return None
-            return origin_coords
+            return self.geocode_location(origin)
         except Exception as e:
-            logger.error(f"Failed to geocode origin after retries: {e}")
+            logger.error(f"Failed to geocode origin {origin}: {e}")
             return None
             
     def _process_destinations_in_parallel(
@@ -349,7 +341,7 @@ class DistanceService:
         }
         
         # Geocode origin once with retry
-        origin_coords = self._geocode_origin_with_retry(origin)
+        origin_coords = self._geocode_origin(origin)
         if not origin_coords:
             return {
                 "status": "failed",

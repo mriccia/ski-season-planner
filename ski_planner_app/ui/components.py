@@ -2,6 +2,8 @@
 Reusable UI components for the Streamlit application.
 """
 import streamlit as st
+import asyncio
+import json
 from datetime import datetime
 
 from ski_planner_app.models.trip import Trip
@@ -140,26 +142,296 @@ def render_plan_tab(planner_service):
         model_options = st.session_state.available_models
         model_name = st.selectbox("Select AI Model", model_options, index=0)
         
+        # Add a checkbox for streaming mode
+        use_streaming = st.checkbox("Show real-time generation", value=True, 
+                                   help="See the plan being generated in real-time")
+        
         if st.button("Generate Plan"):
-            with st.spinner("Generating your personalized ski season plan..."):
+            # Initialize debug information
+            if "debug_info" not in st.session_state:
+                st.session_state.debug_info = {
+                    "tool_calls": [],
+                    "tool_responses": [],
+                    "events": []
+                }
+            
+            if use_streaming:
+                # Create placeholders for streaming content
+                status_container = st.empty()
+                status_container.info("Starting plan generation...")
+                
+                # Create tool container first so it appears above the text
+                tool_container = st.container()
+                
+                # Create text placeholder last so it appears at the bottom
+                stream_placeholder = st.empty()
+                
                 try:
+                    # Initialize the full plan text
+                    full_plan = ""
+                    current_tool = None
+                    current_tool_id = None
                     
-                    # Generate plan
-                    plan = planner_service.generate_ski_plan(
-                        st.session_state.preferences,
-                        st.session_state.trips,
-                        model_name
-                    )
+                    # Create text placeholder last so it appears at the bottom
+                    text_placeholder = stream_placeholder.empty()
                     
-                    # Store plan in session state
-                    st.session_state.plan = plan
+                    # Dictionary to track tool inputs for updating
+                    tool_input_placeholders = {}
+                    
+                    # Define an async function to process the stream
+                    async def process_stream():
+                        nonlocal full_plan, current_tool, current_tool_id
+                        async_gen = planner_service.generate_ski_plan_streaming(
+                            st.session_state.preferences,
+                            st.session_state.trips,
+                            model_name
+                        )
+                        
+                        # Initialize state following SDK's approach
+                        state = {
+                            "message": {"role": "assistant", "content": []},
+                            "text": "",
+                            "current_tool_use": {},
+                            "reasoningText": "",
+                            "signature": "",
+                            "content": []  # Will be set to message["content"]
+                        }
+                        state["content"] = state["message"]["content"]
+                        
+                        # Process events from the async generator
+                        try:
+                            async for event in async_gen:
+                                # Store event for debugging
+                                st.session_state.debug_info["events"].append(event)
+                                
+                                # Handle initialization events
+                                if "init_event_loop" in event or "start" in event or "start_event_loop" in event:
+                                    continue
+                                
+                                # Handle direct data events (legacy format)
+                                if "data" in event:
+                                    chunk = event["data"]
+                                    full_plan += chunk
+                                    text_placeholder.markdown(full_plan)
+                                    continue
+                                
+                                # Handle event-based updates
+                                if "event" in event:
+                                    event_data = event["event"]
+                                    
+                                    # Handle message start
+                                    if "messageStart" in event_data:
+                                        state["message"]["role"] = event_data["messageStart"].get("role", "assistant")
+                                        status_container.info("Agent is generating a response...")
+                                        continue
+                                    
+                                    # Handle content block start
+                                    if "contentBlockStart" in event_data and "start" in event_data["contentBlockStart"]:
+                                        start_data = event_data["contentBlockStart"]["start"]
+                                        
+                                        # Reset current text accumulation
+                                        state["text"] = ""
+                                        
+                                        # Check if this is a tool use block
+                                        if start_data and "toolUse" in start_data:
+                                            tool_info = start_data["toolUse"]
+                                            tool_name = tool_info.get("name")
+                                            tool_id = tool_info.get("toolUseId")
+                                            
+                                            if tool_name:
+                                                current_tool = tool_name
+                                                current_tool_id = tool_id
+                                                
+                                                # Initialize tool use state
+                                                state["current_tool_use"] = {
+                                                    "toolUseId": tool_id,
+                                                    "name": tool_name,
+                                                    "input": ""
+                                                }
+                                                
+                                                status_container.info(f"Using tool: {current_tool}...")
+                                                
+                                                # Add to debug info
+                                                st.session_state.debug_info["tool_calls"].append({
+                                                    "name": tool_name,
+                                                    "id": tool_id,
+                                                    "input": ""
+                                                })
+                                                
+                                                # Display in tool container
+                                                with tool_container:
+                                                    st.info(f"🔧 **Tool Call**: {tool_name}")
+                                                    # Create a placeholder for the tool input that we'll update
+                                                    input_placeholder = st.empty()
+                                                    # Store the input placeholder for this tool
+                                                    tool_input_placeholders[tool_id] = input_placeholder
+                                    
+                                    # Handle content block delta
+                                    if "contentBlockDelta" in event_data and "delta" in event_data["contentBlockDelta"]:
+                                        delta = event_data["contentBlockDelta"]["delta"]
+                                        
+                                        if "toolUse" in delta and "input" in delta["toolUse"]:
+                                            input_chunk = delta["toolUse"]["input"]
+                                            if input_chunk:
+                                                state["current_tool_use"]["input"] += str(input_chunk)
+                                                
+                                                # Update the tool input in debug info
+                                                for tool_info in st.session_state.debug_info["tool_calls"]:
+                                                    if tool_info.get("id") == current_tool_id:
+                                                        tool_info["input"] = state["current_tool_use"]["input"]
+                                                
+                                                # Update the tool input placeholder for this specific tool call
+                                                if tool_id in tool_input_placeholders:
+                                                    input_placeholder = tool_input_placeholders[tool_id]
+                                                    input_placeholder.code(f"Input: {state['current_tool_use']['input']}")
+                                        
+                                        # Handle reasoning content delta
+                                        elif "reasoningContent" in delta:
+                                            reasoning_content = delta["reasoningContent"]
+                                            
+                                            # Handle reasoning text
+                                            if "text" in reasoning_content:
+                                                reasoning_chunk = reasoning_content["text"]
+                                                if "reasoningText" not in state:
+                                                    state["reasoningText"] = ""
+                                                state["reasoningText"] += reasoning_chunk
+                                                
+                                            # Handle reasoning signature
+                                            elif "signature" in reasoning_content:
+                                                signature_chunk = reasoning_content["signature"]
+                                                if "signature" not in state:
+                                                    state["signature"] = ""
+                                                state["signature"] += signature_chunk
+                                    
+                                    # Handle content block stop - finalize the current block
+                                    if "contentBlockStop" in event_data:
+                                        # If we have a tool use, finalize it
+                                        if state["current_tool_use"]:
+                                            # Try to parse the input as JSON
+                                            try:
+                                                parsed_input = json.loads(state["current_tool_use"]["input"])
+                                                state["current_tool_use"]["input"] = parsed_input
+                                            except (ValueError, json.JSONDecodeError):
+                                                # If parsing fails, keep as string
+                                                pass
+                                            
+                                            # Add to finalized content
+                                            state["content"].append({
+                                                "toolUse": state["current_tool_use"]
+                                            })
+                                            
+                                            # Reset current tool use
+                                            state["current_tool_use"] = {}
+                                        
+                                        # If we have text, finalize it
+                                        elif state["text"]:
+                                            # Add to finalized content
+                                            state["content"].append({
+                                                "text": state["text"]
+                                            })
+                                            # Reset text accumulation
+                                            state["text"] = ""
+                                        
+                                        # If we have reasoning text, finalize it
+                                        elif state.get("reasoningText"):
+                                            # Add to finalized content
+                                            state["content"].append({
+                                                "reasoningContent": {
+                                                    "reasoningText": {
+                                                        "text": state["reasoningText"],
+                                                        "signature": state.get("signature", "")
+                                                    }
+                                                }
+                                            })
+                                            # Reset reasoning text and signature
+                                            state["reasoningText"] = ""
+                                            state["signature"] = ""
+                                    
+                                    # Handle tool result block
+                                    if "toolResultBlock" in event_data:
+                                        result_data = event_data["toolResultBlock"]
+                                        tool_id = result_data.get("toolUseId")
+                                        result = result_data.get("result", {})
+                                        
+                                        if tool_id and result:
+                                            # Add to debug info
+                                            st.session_state.debug_info["tool_responses"].append(result)
+                                            
+                                            # Display result directly in the tool container
+                                            with tool_container:
+                                                st.success(f"Tool {current_tool} completed")
+                                                content = result.get("content", [])
+                                                for item in content:
+                                                    if item.get("type") == "text":
+                                                        st.code(f"Result: {item.get('text')}", language="json")
+                                            
+                                            status_container.success(f"Tool {current_tool} completed")
+                                    
+                                    # Handle message stop
+                                    if "messageStop" in event_data:
+                                        stop_reason = event_data["messageStop"].get("stopReason", "end_turn")
+                                        status_container.success(f"Generation complete: {stop_reason}")
+                                    
+                                    # Handle metadata
+                                    if "metadata" in event_data:
+                                        metadata = event_data["metadata"]
+                                        if "usage" in metadata:
+                                            usage = metadata["usage"]
+                                    
+                                    # Handle redact content
+                                    if "redactContent" in event_data:
+                                        redact_data = event_data["redactContent"]
+                                        if "redactAssistantContentMessage" in redact_data:
+                                            redact_msg = redact_data["redactAssistantContentMessage"]
+                                            state["message"]["content"] = [{"text": redact_msg}]
+                                            status_container.warning("Some content was redacted")
+                                                
+                        except Exception as e:
+                            status_container.error(f"Error in stream processing: {str(e)}")
+                            raise e
+                    
+                    # Run the async function
+                    asyncio.run(process_stream())
+                    
+                    # Store the complete plan in session state
+                    st.session_state.plan = full_plan
                     st.session_state.plan_generated = True
                     
-                    # Rerun to display the plan
-                    st.rerun()
+                    # Update status
+                    status_container.success("Plan generation complete!")
+                        
                 except Exception as e:
-                    st.error(f"Error generating plan: {str(e)}")
+                    status_container.error(f"Error generating plan: {str(e)}")
+            else:
+                # Use the original non-streaming approach
+                with st.spinner("Generating your personalized ski season plan..."):
+                    try:
+                        # Generate plan
+                        plan = planner_service.generate_ski_plan(
+                            st.session_state.preferences,
+                            st.session_state.trips,
+                            model_name
+                        )
+                        
+                        # Store plan in session state
+                        st.session_state.plan = plan
+                        st.session_state.plan_generated = True
+                        
+                        # Rerun to display the plan
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Error generating plan: {str(e)}")
     else:
+        
+        # Show debug information if available
+        if "debug_info" in st.session_state and st.session_state.debug_info["tool_calls"]:
+            with st.expander("Tool Calls Log", expanded=False):
+                for i, tool_info in enumerate(st.session_state.debug_info["tool_calls"]):
+                    st.write(f"**Tool {i+1}:** {tool_info['name']}")
+                    st.code(f"Input: {tool_info['input']}")
+                    if i < len(st.session_state.debug_info["tool_responses"]):
+                        st.code(f"Response: {st.session_state.debug_info['tool_responses'][i]}")
+        
         # Display the generated plan
         st.markdown(st.session_state.plan)
         

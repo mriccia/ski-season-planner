@@ -65,7 +65,6 @@ class BaseAgent(ABC):
         Args:
             preferences: User preferences including home location and criteria
             trips: List of planned trips
-            stations: List of ski stations/resorts with pre-calculated distance data
             
         Returns:
             str: The generated plan
@@ -81,6 +80,31 @@ class BaseAgent(ABC):
             return response.__str__()
         except Exception as e:
             error_msg = f"Error executing agent prompt: {str(e)}"
+            logger.error(error_msg, exc_info=True)
+            raise e
+            
+    async def get_plan_streaming(self, preferences: UserPreferences, trips: List[Trip]):
+        """
+        Generate a plan using the agent with streaming output.
+        
+        Args:
+            preferences: User preferences including home location and criteria
+            trips: List of planned trips
+            
+        Yields:
+            dict: Streaming events from the agent
+        """
+        try:
+            # Format the prompt
+            prompt = format_prompt(preferences, trips)
+            logger.debug(f"Executing streaming prompt of length {len(prompt)}")
+
+            # Use stream_async method for streaming
+            async for event in self._agent.stream_async(prompt):
+                yield event
+                
+        except Exception as e:
+            error_msg = f"Error executing streaming agent prompt: {str(e)}"
             logger.error(error_msg, exc_info=True)
             raise e
 
@@ -278,5 +302,45 @@ class AgentService:
             return agent.get_plan(preferences, trips)
         except Exception as e:
             error_msg = f"Error executing agent prompt with model {model_id}: {str(e)}"
+            logger.error(error_msg, exc_info=True)
+            raise e
+            
+    async def get_plan_streaming(self,
+                         preferences: UserPreferences,
+                         trips: List[Trip],
+                         model_id: str
+                         ):
+        """
+        Execute a prompt using the specified agent with streaming output.
+
+        Args:
+            preferences: User preferences including home location and criteria
+            trips: List of planned trips
+            model_id: Name of the LLM model to use
+
+        Yields:
+            dict: Streaming events from the agent
+        """
+        try:
+            # Check if the requested model is available
+            if model_id not in self.agents:
+                available_models = self.get_available_models()
+                if not available_models:
+                    raise ValueError("No AI models are available")
+
+                logger.warning(
+                    f"Model {model_id} not available, falling back to {available_models[0]}")
+                model_id = available_models[0]
+
+            # Get the appropriate agent
+            agent = self.agents[model_id]
+            logger.info(f"Using agent for streaming with model: {model_id}")
+
+            # Generate the plan using the selected agent with streaming
+            async for event in agent.get_plan_streaming(preferences, trips):
+                yield event
+                
+        except Exception as e:
+            error_msg = f"Error executing streaming agent prompt with model {model_id}: {str(e)}"
             logger.error(error_msg, exc_info=True)
             raise e
