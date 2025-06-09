@@ -14,12 +14,10 @@ from strands.tools.mcp import MCPClient
 from mcp import stdio_client, StdioServerParameters
 from strands_tools import calculator
 
-# Removed the import for get_directions since we're not using it anymore
 from ski_planner_app.models.trip import Trip, UserPreferences
-# from ski_planner_app.services.prompt import format_prompt
 from ski_planner_app.services.singleton import singleton_session
 from ski_planner_app.config import OLLAMA_DEFAULT_URL, DEFAULT_OPENAI_MODELS, DB_FILE_PATH
-from ski_planner_app.services.improved_prompt import format_prompt
+from ski_planner_app.services.prompt import format_prompt
 
 logger = logging.getLogger(__name__)
 

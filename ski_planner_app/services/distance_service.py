@@ -8,10 +8,13 @@ import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List, Any, Optional, Callable
 from ski_planner_app.services.database_service import DatabaseService
-from ski_planner_app.services.tools.openrouteservice_tool import geocode_location, get_api_key
 import requests
+import streamlit as st
 
 logger = logging.getLogger(__name__)
+
+def get_api_key():
+    return st.secrets.get("OPENROUTE_API_KEY")
 
 def retry_with_backoff(max_retries=3, initial_delay=10, jitter_factor=0.1):
     """
@@ -131,71 +134,45 @@ class DistanceService:
         else:
             raise ValueError("No routes found in the response")
     
-    def calculate_distance(self, origin: str, destination: str, transport_mode: str = "driving-car") -> Dict[str, Any]:
+    def geocode_location(self, location_name, api_key):
         """
-        Calculate distance between two locations, using cache if available.
+        Convert a location name to coordinates using OpenRoute Service Geocoding API.
         
         Args:
-            origin: Origin location
-            destination: Destination location
-            transport_mode: Mode of transport
+            location_name (str): Location name (e.g., "Geneva,Switzerland")
+            api_key (str): Your OpenRoute Service API key
             
         Returns:
-            Dict with distance and duration information
+            list: [longitude, latitude] coordinates
         """
-        # Check cache first
-        cached_data = self.get_cached_distance(origin, destination, transport_mode)
-        if cached_data:
-            return {
-                "start": origin,
-                "destination": destination,
-                "distance_km": cached_data["distance"],
-                "duration_minutes": cached_data["duration"],
-                "cached": True
-            }
+        url = f"https://api.openrouteservice.org/geocode/search"
         
-        # If not in cache, calculate using the API
+        headers = {
+            'Accept': 'application/json, application/geo+json, application/gpx+xml',
+            'Authorization': self.api_key
+        }
+        
+        params = {
+            'text': location_name,
+            'size': 1  # Get only the top result
+        }
+        
         try:
-            # Geocode locations
-            start_coords = geocode_location(origin, self.api_key)
-            end_coords = geocode_location(destination, self.api_key)
+            response = requests.get(url, params=params, headers=headers)
+            response.raise_for_status()
+            data = response.json()
             
-            if not start_coords or not end_coords:
-                logger.warning(f"Could not geocode {origin} or {destination}")
-                return {
-                    "error": "Could not geocode one or both locations",
-                    "distance_km": None,
-                    "duration_minutes": None
-                }
-            
-            # Calculate route
-            route_result = self._calculate_route(start_coords, end_coords, transport_mode)
-            
-            # Save to database
-            self.db_service.save_distance(
-                origin, 
-                destination, 
-                transport_mode, 
-                route_result["distance_km"], 
-                route_result["duration_minutes"]
-            )
-            
-            return {
-                "start": origin,
-                "destination": destination,
-                "distance_km": route_result["distance_km"],
-                "duration_minutes": route_result["duration_minutes"],
-                "cached": False
-            }
-                
-        except Exception as e:
-            logger.error(f"Error calculating distance: {e}")
-            return {
-                "error": str(e),
-                "distance_km": None,
-                "duration_minutes": None
-            }
-    
+            # Extract coordinates from the first feature
+            if data.get('features') and len(data['features']) > 0:
+                coordinates = data['features'][0]['geometry']['coordinates']
+                logger.info(f"Successfully geocoded {location_name} to coordinates {coordinates}")
+                return coordinates  # [longitude, latitude]
+            else:
+                logger.warning(f"Could not find coordinates for {location_name}")
+                return None
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"Error geocoding location: {e}")
+            raise e  # Re-raise the exception to be handled by the retry decorator
     def _geocode_origin_with_retry(self, origin: str) -> Optional[List[float]]:
         """
         Geocode the origin location with retry logic.
@@ -208,7 +185,7 @@ class DistanceService:
         """
         @retry_with_backoff(max_retries=3, initial_delay=60)
         def geocode_origin():
-            return geocode_location(origin, self.api_key)
+            return self.geocode_location(origin)
         
         try:
             origin_coords = geocode_origin()
@@ -392,49 +369,6 @@ class DistanceService:
         
         return results
     
-    def get_closest_stations(self, origin: str, transport_mode: str, limit: int = 10) -> List[Dict[str, Any]]:
-        """
-        Get the closest stations to an origin location.
-        
-        Args:
-            origin: Origin location
-            transport_mode: Mode of transport
-            limit: Maximum number of results
-            
-        Returns:
-            List of station dictionaries with distance information
-        """
-        return self.db_service.get_closest_stations(origin, transport_mode, limit)
-    
-    def get_stations_by_date(self, origin: str, transport_mode: str, date: str, limit: int = 10) -> List[Dict[str, Any]]:
-        """
-        Get stations open on a specific date, sorted by distance.
-        
-        Args:
-            origin: Origin location
-            transport_mode: Mode of transport
-            date: Date in format YYYY-MM-DD
-            limit: Maximum number of results
-            
-        Returns:
-            List of station dictionaries with distance information
-        """
-        return self.db_service.get_stations_by_date(origin, transport_mode, date, limit)
-    
-    def get_stations_by_piste_length(self, origin: str, transport_mode: str, limit: int = 10) -> List[Dict[str, Any]]:
-        """
-        Get stations sorted by piste length and then by distance.
-        
-        Args:
-            origin: Origin location
-            transport_mode: Mode of transport
-            limit: Maximum number of results
-            
-        Returns:
-            List of station dictionaries with distance information
-        """
-        return self.db_service.get_stations_by_piste_length(origin, transport_mode, limit)
-        
     def get_all_distances(self, origin: str, transport_mode: str) -> List[Dict[str, Any]]:
         """
         Get all calculated distances from an origin.
