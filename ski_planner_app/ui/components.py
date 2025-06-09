@@ -5,6 +5,7 @@ import streamlit as st
 import asyncio
 import json
 from datetime import datetime
+from typing import Callable, Dict, List, Any, Optional
 
 from ski_planner_app.models.trip import Trip
 from ski_planner_app.config import (
@@ -19,9 +20,15 @@ from ski_planner_app.config import (
 from ski_planner_app.ui import state
 from ski_planner_app.services.station_service import StationService
 from ski_planner_app.services.distance_service import DistanceService
+from ski_planner_app.services.streaming_service import StreamingService
+from ski_planner_app.ui.streaming_components import StreamingUI
 
-def render_preferences_sidebar():
-    """Render the user preferences in the sidebar."""
+def render_preferences_sidebar() -> None:
+    """
+    Render the user preferences in the sidebar.
+    
+    Updates the session state with the user's preferences.
+    """
     with st.sidebar:
         st.header("Your Profile")
 
@@ -86,8 +93,13 @@ def render_preferences_sidebar():
             st.session_state['distances_calculated'] = False
 
 
-def render_trip_form(on_add_trip):
-    """Render the form for adding a new trip."""
+def render_trip_form(on_add_trip: Callable[[datetime, datetime], None]) -> None:
+    """
+    Render the form for adding a new trip.
+    
+    Args:
+        on_add_trip: Callback function to call when a trip is added
+    """
     with st.expander("Add a New Trip", expanded=True):
         st.write("Select trip dates:")
         col1, col2 = st.columns(2)
@@ -114,8 +126,14 @@ def render_trip_form(on_add_trip):
                 on_add_trip(start_date, end_date)
 
 
-def render_trip_details(trip, index):
-    """Render details for a single trip."""
+def render_trip_details(trip: Trip, index: int) -> None:
+    """
+    Render details for a single trip.
+    
+    Args:
+        trip: The trip to render
+        index: The index of the trip in the list
+    """
     with st.container():
         col1, col2, col3 = st.columns([2, 2, 1])
         with col1:
@@ -133,8 +151,13 @@ def render_trip_details(trip, index):
         st.divider()
 
 
-def render_plan_tab(planner_service):
-    """Render the plan generation tab."""
+def render_plan_tab(planner_service: Any) -> None:
+    """
+    Render the plan generation tab.
+    
+    Args:
+        planner_service: The planner service instance
+    """
     if not st.session_state.plan_generated:
         st.write("Generate a personalized ski season plan based on your preferences and trips.")
         
@@ -147,282 +170,20 @@ def render_plan_tab(planner_service):
                                    help="See the plan being generated in real-time")
         
         if st.button("Generate Plan"):
-            # Initialize debug information
-            if "debug_info" not in st.session_state:
-                st.session_state.debug_info = {
-                    "tool_calls": [],
-                    "tool_responses": [],
-                    "events": []
-                }
+            # Always reset debug information before generating a new plan
+            st.session_state.debug_info = {
+                "tool_calls": [],
+                "tool_responses": [],
+                "events": []
+            }
             
             if use_streaming:
-                # Create placeholders for streaming content
-                status_container = st.empty()
-                status_container.info("Starting plan generation...")
-                
-                # Create tool container first so it appears above the text
-                tool_container = st.container()
-                
-                # Create text placeholder last so it appears at the bottom
-                stream_placeholder = st.empty()
-                
-                try:
-                    # Initialize the full plan text
-                    full_plan = ""
-                    current_tool = None
-                    current_tool_id = None
-                    
-                    # Create text placeholder last so it appears at the bottom
-                    text_placeholder = stream_placeholder.empty()
-                    
-                    # Dictionary to track tool inputs for updating
-                    tool_input_placeholders = {}
-                    
-                    # Define an async function to process the stream
-                    async def process_stream():
-                        nonlocal full_plan, current_tool, current_tool_id
-                        async_gen = planner_service.generate_ski_plan_streaming(
-                            st.session_state.preferences,
-                            st.session_state.trips,
-                            model_name
-                        )
-                        
-                        # Initialize state following SDK's approach
-                        state = {
-                            "message": {"role": "assistant", "content": []},
-                            "text": "",
-                            "current_tool_use": {},
-                            "reasoningText": "",
-                            "signature": "",
-                            "content": []  # Will be set to message["content"]
-                        }
-                        state["content"] = state["message"]["content"]
-                        
-                        # Process events from the async generator
-                        try:
-                            async for event in async_gen:
-                                # Store event for debugging
-                                st.session_state.debug_info["events"].append(event)
-                                
-                                # Handle initialization events
-                                if "init_event_loop" in event or "start" in event or "start_event_loop" in event:
-                                    continue
-                                
-                                # Handle direct data events (legacy format)
-                                if "data" in event:
-                                    chunk = event["data"]
-                                    full_plan += chunk
-                                    text_placeholder.markdown(full_plan)
-                                    continue
-                                
-                                # Handle event-based updates
-                                if "event" in event:
-                                    event_data = event["event"]
-                                    
-                                    # Handle message start
-                                    if "messageStart" in event_data:
-                                        state["message"]["role"] = event_data["messageStart"].get("role", "assistant")
-                                        status_container.info("Agent is generating a response...")
-                                        continue
-                                    
-                                    # Handle content block start
-                                    if "contentBlockStart" in event_data and "start" in event_data["contentBlockStart"]:
-                                        start_data = event_data["contentBlockStart"]["start"]
-                                        
-                                        # Reset current text accumulation
-                                        state["text"] = ""
-                                        
-                                        # Check if this is a tool use block
-                                        if start_data and "toolUse" in start_data:
-                                            tool_info = start_data["toolUse"]
-                                            tool_name = tool_info.get("name")
-                                            tool_id = tool_info.get("toolUseId")
-                                            
-                                            if tool_name:
-                                                current_tool = tool_name
-                                                current_tool_id = tool_id
-                                                
-                                                # Initialize tool use state
-                                                state["current_tool_use"] = {
-                                                    "toolUseId": tool_id,
-                                                    "name": tool_name,
-                                                    "input": ""
-                                                }
-                                                
-                                                status_container.info(f"Using tool: {current_tool}...")
-                                                
-                                                # Add to debug info
-                                                st.session_state.debug_info["tool_calls"].append({
-                                                    "name": tool_name,
-                                                    "id": tool_id,
-                                                    "input": ""
-                                                })
-                                                
-                                                # Display in tool container
-                                                with tool_container:
-                                                    st.info(f"🔧 **Tool Call**: {tool_name}")
-                                                    # Create a placeholder for the tool input that we'll update
-                                                    input_placeholder = st.empty()
-                                                    # Store the input placeholder for this tool
-                                                    tool_input_placeholders[tool_id] = input_placeholder
-                                    
-                                    # Handle content block delta
-                                    if "contentBlockDelta" in event_data and "delta" in event_data["contentBlockDelta"]:
-                                        delta = event_data["contentBlockDelta"]["delta"]
-                                        
-                                        if "toolUse" in delta and "input" in delta["toolUse"]:
-                                            input_chunk = delta["toolUse"]["input"]
-                                            if input_chunk:
-                                                state["current_tool_use"]["input"] += str(input_chunk)
-                                                
-                                                # Update the tool input in debug info
-                                                for tool_info in st.session_state.debug_info["tool_calls"]:
-                                                    if tool_info.get("id") == current_tool_id:
-                                                        tool_info["input"] = state["current_tool_use"]["input"]
-                                                
-                                                # Update the tool input placeholder for this specific tool call
-                                                if tool_id in tool_input_placeholders:
-                                                    input_placeholder = tool_input_placeholders[tool_id]
-                                                    input_placeholder.code(f"Input: {state['current_tool_use']['input']}")
-                                        
-                                        # Handle reasoning content delta
-                                        elif "reasoningContent" in delta:
-                                            reasoning_content = delta["reasoningContent"]
-                                            
-                                            # Handle reasoning text
-                                            if "text" in reasoning_content:
-                                                reasoning_chunk = reasoning_content["text"]
-                                                if "reasoningText" not in state:
-                                                    state["reasoningText"] = ""
-                                                state["reasoningText"] += reasoning_chunk
-                                                
-                                            # Handle reasoning signature
-                                            elif "signature" in reasoning_content:
-                                                signature_chunk = reasoning_content["signature"]
-                                                if "signature" not in state:
-                                                    state["signature"] = ""
-                                                state["signature"] += signature_chunk
-                                    
-                                    # Handle content block stop - finalize the current block
-                                    if "contentBlockStop" in event_data:
-                                        # If we have a tool use, finalize it
-                                        if state["current_tool_use"]:
-                                            # Try to parse the input as JSON
-                                            try:
-                                                parsed_input = json.loads(state["current_tool_use"]["input"])
-                                                state["current_tool_use"]["input"] = parsed_input
-                                            except (ValueError, json.JSONDecodeError):
-                                                # If parsing fails, keep as string
-                                                pass
-                                            
-                                            # Add to finalized content
-                                            state["content"].append({
-                                                "toolUse": state["current_tool_use"]
-                                            })
-                                            
-                                            # Reset current tool use
-                                            state["current_tool_use"] = {}
-                                        
-                                        # If we have text, finalize it
-                                        elif state["text"]:
-                                            # Add to finalized content
-                                            state["content"].append({
-                                                "text": state["text"]
-                                            })
-                                            # Reset text accumulation
-                                            state["text"] = ""
-                                        
-                                        # If we have reasoning text, finalize it
-                                        elif state.get("reasoningText"):
-                                            # Add to finalized content
-                                            state["content"].append({
-                                                "reasoningContent": {
-                                                    "reasoningText": {
-                                                        "text": state["reasoningText"],
-                                                        "signature": state.get("signature", "")
-                                                    }
-                                                }
-                                            })
-                                            # Reset reasoning text and signature
-                                            state["reasoningText"] = ""
-                                            state["signature"] = ""
-                                    
-                                    # Handle tool result block
-                                    if "toolResultBlock" in event_data:
-                                        result_data = event_data["toolResultBlock"]
-                                        tool_id = result_data.get("toolUseId")
-                                        result = result_data.get("result", {})
-                                        
-                                        if tool_id and result:
-                                            # Add to debug info
-                                            st.session_state.debug_info["tool_responses"].append(result)
-                                            
-                                            # Display result directly in the tool container
-                                            with tool_container:
-                                                st.success(f"Tool {current_tool} completed")
-                                                content = result.get("content", [])
-                                                for item in content:
-                                                    if item.get("type") == "text":
-                                                        st.code(f"Result: {item.get('text')}", language="json")
-                                            
-                                            status_container.success(f"Tool {current_tool} completed")
-                                    
-                                    # Handle message stop
-                                    if "messageStop" in event_data:
-                                        stop_reason = event_data["messageStop"].get("stopReason", "end_turn")
-                                        status_container.success(f"Generation complete: {stop_reason}")
-                                    
-                                    # Handle metadata
-                                    if "metadata" in event_data:
-                                        metadata = event_data["metadata"]
-                                        if "usage" in metadata:
-                                            usage = metadata["usage"]
-                                    
-                                    # Handle redact content
-                                    if "redactContent" in event_data:
-                                        redact_data = event_data["redactContent"]
-                                        if "redactAssistantContentMessage" in redact_data:
-                                            redact_msg = redact_data["redactAssistantContentMessage"]
-                                            state["message"]["content"] = [{"text": redact_msg}]
-                                            status_container.warning("Some content was redacted")
-                                                
-                        except Exception as e:
-                            status_container.error(f"Error in stream processing: {str(e)}")
-                            raise e
-                    
-                    # Run the async function
-                    asyncio.run(process_stream())
-                    
-                    # Store the complete plan in session state
-                    st.session_state.plan = full_plan
-                    st.session_state.plan_generated = True
-                    
-                    # Update status
-                    status_container.success("Plan generation complete!")
-                        
-                except Exception as e:
-                    status_container.error(f"Error generating plan: {str(e)}")
+                # Use the new streaming approach with proper separation of concerns
+                handle_streaming_generation(planner_service, model_name)
             else:
                 # Use the original non-streaming approach
-                with st.spinner("Generating your personalized ski season plan..."):
-                    try:
-                        # Generate plan
-                        plan = planner_service.generate_ski_plan(
-                            st.session_state.preferences,
-                            st.session_state.trips,
-                            model_name
-                        )
-                        
-                        # Store plan in session state
-                        st.session_state.plan = plan
-                        st.session_state.plan_generated = True
-                        
-                        # Rerun to display the plan
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Error generating plan: {str(e)}")
+                handle_non_streaming_generation(planner_service, model_name)
     else:
-        
         # Show debug information if available
         if "debug_info" in st.session_state and st.session_state.debug_info["tool_calls"]:
             with st.expander("Tool Calls Log", expanded=False):
@@ -447,10 +208,94 @@ def render_plan_tab(planner_service):
         if st.button("Generate New Plan"):
             st.session_state.plan_generated = False
             st.session_state.plan = None
-            st.rerun()
             
-def render_distances_table(distance_service):
-    """Render a table showing all resorts with their distances and travel times."""
+            # Reset debug information
+            st.session_state.debug_info = {
+                "tool_calls": [],
+                "tool_responses": [],
+                "events": []
+            }
+            
+            st.rerun()
+
+
+def handle_streaming_generation(planner_service: Any, model_name: str) -> None:
+    """
+    Handle streaming generation of the ski plan.
+    
+    Args:
+        planner_service: The planner service instance
+        model_name: The name of the model to use
+    """
+    # Set up the streaming UI components
+    streaming_ui = StreamingUI().setup_ui_containers()
+    
+    # Create the streaming service
+    streaming_service = StreamingService()
+    
+    try:
+        # Define the completion callback
+        def on_complete(final_plan: str) -> None:
+            st.session_state.plan = final_plan
+            st.session_state.plan_generated = True
+        
+        # Run the async function to process the stream
+        asyncio.run(
+            streaming_service.process_stream(
+                planner_service.generate_ski_plan_streaming(
+                    st.session_state.preferences,
+                    st.session_state.trips,
+                    model_name
+                ),
+                on_event=streaming_ui.handle_event,
+                on_state_change=streaming_ui.handle_state_change,
+                on_complete=on_complete
+            )
+        )
+        
+        # Update debug info
+        streaming_ui.update_debug_info(streaming_service.state)
+        
+        # Update status
+        streaming_ui.status_container.success("Plan generation complete!")
+            
+    except Exception as e:
+        streaming_ui.status_container.error(f"Error generating plan: {str(e)}")
+
+
+def handle_non_streaming_generation(planner_service: Any, model_name: str) -> None:
+    """
+    Handle non-streaming generation of the ski plan.
+    
+    Args:
+        planner_service: The planner service instance
+        model_name: The name of the model to use
+    """
+    with st.spinner("Generating your personalized ski season plan..."):
+        try:
+            # Generate plan
+            plan = planner_service.generate_ski_plan(
+                st.session_state.preferences,
+                st.session_state.trips,
+                model_name
+            )
+            
+            # Store plan in session state
+            st.session_state.plan = plan
+            st.session_state.plan_generated = True
+            
+            # Rerun to display the plan
+            st.rerun()
+        except Exception as e:
+            st.error(f"Error generating plan: {str(e)}")
+            
+def render_distances_table(distance_service: DistanceService) -> None:
+    """
+    Render a table showing all resorts with their distances and travel times.
+    
+    Args:
+        distance_service: The distance service instance
+    """
     st.subheader("Resort Distances")
     
     origin = st.session_state.preferences.home_location
@@ -464,85 +309,3 @@ def render_distances_table(distance_service):
         st.dataframe(stations_with_distances)
     else:
         st.info("No distance data available.")
-
-def render_distances_table(distance_service):
-    """
-    Render a table showing all resorts with their distances and travel times.
-    
-    Args:
-        distance_service: The distance service instance
-    """
-    st.subheader("Resort Distances")
-    
-    if not st.session_state.preferences.home_location:
-        st.info("Please set your home location in the preferences to see distances.")
-        return
-    
-    origin = st.session_state.preferences.home_location
-    transport_mode = "driving-car" if st.session_state.preferences.transport_mode == "Car" else "public-transport"
-    
-    # Check if distances have been calculated
-    if not distance_service.is_origin_calculated(origin, transport_mode):
-        st.warning("Distances have not been calculated yet. Please complete the preferences step.")
-        return
-    
-    # Get all distances
-    stations_with_distances = distance_service.get_all_distances(origin, transport_mode)
-    
-    if not stations_with_distances:
-        st.info("No distance data available.")
-        return
-    
-    # Create a DataFrame for better display
-    import pandas as pd
-    
-    df = pd.DataFrame(stations_with_distances)
-    
-    # Select and rename columns for display
-    display_columns = ['name', 'region', 'total_pistes_km', 'base_altitude', 'top_altitude', 'distance', 'duration']
-    available_columns = [col for col in display_columns if col in df.columns]
-    
-    if not available_columns:
-        st.error("No valid data columns found.")
-        return
-        
-    display_df = df[available_columns].copy()
-    
-    # Create a mapping for column renaming
-    column_names = {
-        'name': 'Resort',
-        'region': 'Region',
-        'total_pistes_km': 'Total Pistes (km)',
-        'base_altitude': 'Base Altitude (m)',
-        'top_altitude': 'Top Altitude (m)',
-        'distance': 'Distance (km)',
-        'duration': 'Travel Time (min)'
-    }
-    
-    # Rename only the columns that exist
-    rename_map = {col: column_names[col] for col in available_columns if col in column_names}
-    display_df = display_df.rename(columns=rename_map)
-    
-    # Add sorting options
-    sort_options = [column_names[col] for col in available_columns if col in column_names]
-    if sort_options:
-        sort_by = st.selectbox(
-            "Sort by:",
-            options=sort_options,
-            index=sort_options.index('Distance (km)') if 'Distance (km)' in sort_options else 0
-        )
-        
-        # Sort the DataFrame
-        display_df = display_df.sort_values(by=sort_by)
-    
-    # Display the table
-    st.dataframe(display_df, use_container_width=True)
-    
-    # Add download button
-    csv = display_df.to_csv(index=False)
-    st.download_button(
-        label="Download as CSV",
-        data=csv,
-        file_name="resort_distances.csv",
-        mime="text/csv",
-    )
