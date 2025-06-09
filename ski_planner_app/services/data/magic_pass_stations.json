@@ -557,8 +557,8 @@
       "vertical_drop": 300,
       "total_pistes_km": 5,
       "region": "Valais",
-      "longitude": 7.905446600794134,
-      "latitude": 46.22597736144049
+      "longitude": 7.870814555652585, 
+      "latitude": 46.23178851507617
     },
     {
       "name": "Gurnigelbad",
@@ -577,8 +577,8 @@
       "vertical_drop": 564,
       "total_pistes_km": 7,
       "region": "Bern",
-      "longitude": 7.771890701350116,
-      "latitude": 46.60146929633275
+      "longitude": 7.723553036508048, 
+      "latitude": 46.58550176167791
     },
     {
       "name": "Ste-Croix/Les Rasses",
