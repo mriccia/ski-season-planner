@@ -8,7 +8,8 @@
       "total_pistes_km": 115,
       "region": "Val d'Anniviers, Valais",
       "longitude": 7.5744806137686265,
-      "latitude": 46.17679980063583
+      "latitude": 46.17679980063583,
+      "mp_station_id": "grimentz-zinal-18"
     },
     {
       "name": "Les Mosses",
@@ -18,7 +19,8 @@
       "total_pistes_km": 40,
       "region": "Vaud",
       "longitude": 7.096117784649296,
-      "latitude": 46.39180534790281
+      "latitude": 46.39180534790281,
+      "mp_station_id": "les-mosses-24"
     },
     {
       "name": "Belalp - Blatten",
@@ -28,7 +30,8 @@
       "total_pistes_km": 38.5,
       "region": "Valais",
       "longitude": 7.984297547031418,
-      "latitude": 46.35905672485628
+      "latitude": 46.35905672485628,
+      "mp_station_id": "blatten-belalp-4445"
     },
     {
       "name": "Villars-Gryon-Les Diablerets",
@@ -38,7 +41,8 @@
       "total_pistes_km": 87,
       "region": "Vaud",
       "longitude": 7.056569250212579,
-      "latitude": 46.2967200240667
+      "latitude": 46.2967200240667,
+      "mp_station_id": "villars-gryon-37"
     },
     {
       "name": "Saas-Fee / Saas-Almagell",
@@ -48,7 +52,8 @@
       "total_pistes_km": 100,
       "region": "Valais",
       "longitude": 7.9328470847300965,
-      "latitude": 46.11113950647706
+      "latitude": 46.11113950647706,
+      "mp_station_id": "saas-fee--saas-almagell-600"
     },
     {
       "name": "Bergbahnen Gstaad",
@@ -58,7 +63,8 @@
       "total_pistes_km": 200,
       "region": "Bern",
       "longitude": 7.282579232857604,
-      "latitude": 46.467778704794604
+      "latitude": 46.467778704794604,
+      "mp_station_id": "bergbahnen-gstaad-4447"
     },
     {
       "name": "Lauchernalp",
@@ -68,7 +74,8 @@
       "total_pistes_km": 40,
       "region": "Lötschental, Valais",
       "longitude": 7.779113186627259,
-      "latitude": 46.403695582450545
+      "latitude": 46.403695582450545,
+      "mp_station_id": "lauchernalp-2771"
     },
     {
       "name": "Anzère",
@@ -78,7 +85,8 @@
       "total_pistes_km": 58,
       "region": "Valais",
       "longitude": 7.398798166025691,
-      "latitude": 46.29717209648414
+      "latitude": 46.29717209648414,
+      "mp_station_id": "anzere-4"
     },
     {
       "name": "Bugnenets-Savagnières",
@@ -88,7 +96,8 @@
       "total_pistes_km": 30,
       "region": "Neuchâtel/Bern",
       "longitude": 7.007205401957905,
-      "latitude": 47.12729216204707
+      "latitude": 47.12729216204707,
+      "mp_station_id": "bugnenets-savagnieres-12"
     },
     {
       "name": "Charmey",
@@ -98,7 +107,8 @@
       "total_pistes_km": 30,
       "region": "Fribourg",
       "longitude": 7.168400152999689,
-      "latitude": 46.6182528777703
+      "latitude": 46.6182528777703,
+      "mp_station_id": "charmey-14"
     },
     {
       "name": "Crêt-du-Puy",
@@ -108,7 +118,8 @@
       "total_pistes_km": 7,
       "region": "Neuchâtel",
       "longitude": 6.9826233313158035,
-      "latitude": 47.09321557278646
+      "latitude": 47.09321557278646,
+      "mp_station_id": "cret-du-puy-17"
     },
     {
       "name": "Jaun",
@@ -118,7 +129,8 @@
       "total_pistes_km": 20,
       "region": "Fribourg",
       "longitude": 7.291677411267542,
-      "latitude": 46.60826250328726
+      "latitude": 46.60826250328726,
+      "mp_station_id": "jaun-19"
     },
     {
       "name": "La Berra",
@@ -128,7 +140,8 @@
       "total_pistes_km": 25,
       "region": "Fribourg",
       "longitude": 7.155661502025447,
-      "latitude": 46.687492574649546
+      "latitude": 46.687492574649546,
+      "mp_station_id": "la-berra-20"
     },
     {
       "name": "La Lécherette",
@@ -138,7 +151,8 @@
       "total_pistes_km": 40,
       "region": "Vaud",
       "longitude": 7.111136913000476,
-      "latitude": 46.42037913047577
+      "latitude": 46.42037913047577,
+      "mp_station_id": "la-lecherette-21"
     },
     {
       "name": "Les Marécottes",
@@ -148,7 +162,8 @@
       "total_pistes_km": 25,
       "region": "Valais",
       "longitude": 7.0068532279006215,
-      "latitude": 46.111549603766555
+      "latitude": 46.111549603766555,
+      "mp_station_id": "les-marecottes-23"
     },
     {
       "name": "Les Paccots",
@@ -158,7 +173,8 @@
       "total_pistes_km": 20,
       "region": "Fribourg",
       "longitude": 6.946521337507198,
-      "latitude": 46.52276650517671
+      "latitude": 46.52276650517671,
+      "mp_station_id": "les-paccots-25"
     },
     {
       "name": "Leysin",
@@ -168,7 +184,8 @@
       "total_pistes_km": 60,
       "region": "Vaud",
       "longitude": 7.019105071395185,
-      "latitude": 46.34781193205882
+      "latitude": 46.34781193205882,
+      "mp_station_id": "leysin-26"
     },
     {
       "name": "Moléson",
@@ -178,7 +195,8 @@
       "total_pistes_km": 30,
       "region": "Fribourg",
       "longitude": 7.038398705358019,
-      "latitude": 46.5601823178564
+      "latitude": 46.5601823178564,
+      "mp_station_id": "moleson-28"
     },
     {
       "name": "Nax Mont-Noble",
@@ -188,7 +206,8 @@
       "total_pistes_km": 35,
       "region": "Valais",
       "longitude": 7.462498044989972,
-      "latitude": 46.22529292045039
+      "latitude": 46.22529292045039,
+      "mp_station_id": "nax--mt-noble-29"
     },
     {
       "name": "Ovronnaz",
@@ -198,7 +217,8 @@
       "total_pistes_km": 30,
       "region": "Valais",
       "longitude": 7.160779151880754,
-      "latitude": 46.204730045940906
+      "latitude": 46.204730045940906,
+      "mp_station_id": "ovronnaz-30"
     },
     {
       "name": "Mayens de Conthey",
@@ -208,7 +228,8 @@
       "total_pistes_km": 1,
       "region": "Valais",
       "longitude": 7.2853090192870855,
-      "latitude": 46.252276153347864
+      "latitude": 46.252276153347864,
+      "mp_station_id": "mayens-de-conthey-27"
     },
     {
       "name": "Rathvel",
@@ -218,7 +239,8 @@
       "total_pistes_km": 8,
       "region": "Fribourg",
       "longitude": 6.980290807151173,
-      "latitude": 46.542813807344736
+      "latitude": 46.542813807344736,
+      "mp_station_id": "rathvel-31"
     },
     {
       "name": "Schwarzsee",
@@ -228,7 +250,8 @@
       "total_pistes_km": 20,
       "region": "Fribourg",
       "longitude": 7.29186785540081,
-      "latitude": 46.671614755067665
+      "latitude": 46.671614755067665,
+      "mp_station_id": "schwarzsee-32"
     },
     {
       "name": "St-Luc / Chandolin",
@@ -238,7 +261,8 @@
       "total_pistes_km": 60,
       "region": "Valais",
       "longitude": 7.60255664004766,
-      "latitude": 46.22027298109393
+      "latitude": 46.22027298109393,
+      "mp_station_id": "st-luc--chandolin-33"
     },
     {
       "name": "Tramelan",
@@ -248,7 +272,8 @@
       "total_pistes_km": 14,
       "region": "Bern",
       "longitude": 7.085732928189592,
-      "latitude": 47.21979893640261
+      "latitude": 47.21979893640261,
+      "mp_station_id": "tramelan-34"
     },
     {
       "name": "Vercorin",
@@ -258,7 +283,8 @@
       "total_pistes_km": 35,
       "region": "Valais",
       "longitude": 7.534187790967095,
-      "latitude": 46.254106179532414
+      "latitude": 46.254106179532414,
+      "mp_station_id": "vercorin-35"
     },
     {
       "name": "Glacier 3000",
@@ -268,7 +294,8 @@
       "total_pistes_km": 31,
       "region": "Vaud",
       "longitude": 7.2052656939964494,
-      "latitude": 46.353951236806175
+      "latitude": 46.353951236806175,
+      "mp_station_id": "glacier-3000-85"
     },
     {
       "name": "Vallée de Joux",
@@ -278,7 +305,8 @@
       "total_pistes_km": 42,
       "region": "Vaud",
       "longitude": 6.2179459091681615,
-      "latitude": 46.58009523342686
+      "latitude": 46.58009523342686,
+      "mp_station_id": "vallee-de-joux-87"
     },
     {
       "name": "Espace Dent-Blanche (Evolène)",
@@ -288,7 +316,8 @@
       "total_pistes_km": 41.1,
       "region": "Valais",
       "longitude": 7.479179981661317,
-      "latitude": 46.12202699025095
+      "latitude": 46.12202699025095,
+      "mp_station_id": "espace-dent-blanche-evolene-88"
     },
     {
       "name": "Les Pléiades",
@@ -298,7 +327,8 @@
       "total_pistes_km": 8,
       "region": "Vaud",
       "longitude": 6.913848304191754,
-      "latitude": 46.485467484843724
+      "latitude": 46.485467484843724,
+      "mp_station_id": "les-pleiades-89"
     },
     {
       "name": "Les Rochers - de - Naye",
@@ -308,7 +338,8 @@
       "total_pistes_km": 10,
       "region": "Vaud",
       "longitude": 6.947966204409186,
-      "latitude": 46.43438594998082
+      "latitude": 46.43438594998082,
+      "mp_station_id": "les-rochers--de--naye-90"
     },
     {
       "name": "Espace Dent-Blanche (La Forclaz)",
@@ -318,7 +349,8 @@
       "total_pistes_km": 5.3,
       "region": "Valais",
       "longitude": 7.522107357134711,
-      "latitude": 46.08556622285488
+      "latitude": 46.08556622285488,
+      "mp_station_id": "espace-dent-blanche-la-forclaz-117"
     },
     {
       "name": "Espace Dent-Blanche (Arolla)",
@@ -328,7 +360,8 @@
       "total_pistes_km": 26.7,
       "region": "Valais",
       "longitude": 7.481427424673634,
-      "latitude": 46.021648420417456
+      "latitude": 46.021648420417456,
+      "mp_station_id": "espace-dent-blanche-arolla-118"
     },
     {
       "name": "Prés-d'Orvin",
@@ -338,7 +371,8 @@
       "total_pistes_km": 15,
       "region": "Bern",
       "longitude": 7.176382239919043,
-      "latitude": 47.15572616788173
+      "latitude": 47.15572616788173,
+      "mp_station_id": "pres-d-orvin-601"
     },
     {
       "name": "Leukerbad (Torrent & Gemmi)",
@@ -348,7 +382,8 @@
       "total_pistes_km": 47.5,
       "region": "Valais",
       "longitude": 7.62543440140486,
-      "latitude": 46.38389498303766
+      "latitude": 46.38389498303766,
+      "mp_station_id": "leukerbad-torrent-gemmi-602"
     },
     {
       "name": "Robella Val-de-Travers",
@@ -358,7 +393,8 @@
       "total_pistes_km": 20,
       "region": "Neuchâtel",
       "longitude": 6.55138268861228,
-      "latitude": 46.88616586226736
+      "latitude": 46.88616586226736,
+      "mp_station_id": "robella-val-de-travers-937"
     },
     {
       "name": "Springenboden",
@@ -368,7 +404,8 @@
       "total_pistes_km": 6,
       "region": "Bern",
       "longitude": 7.57652948897846,
-      "latitude": 46.61886855926571
+      "latitude": 46.61886855926571,
+      "mp_station_id": "springenboden-1360"
     },
     {
       "name": "Jeizinen",
@@ -378,7 +415,8 @@
       "total_pistes_km": 10,
       "region": "Valais",
       "longitude": 7.7223122842073035,
-      "latitude": 46.32950529662316
+      "latitude": 46.32950529662316,
+      "mp_station_id": "jeizinen-1381"
     },
     {
       "name": "Grimmialp",
@@ -388,7 +426,8 @@
       "total_pistes_km": 7.2,
       "region": "Bern",
       "longitude": 7.4840357831569095,
-      "latitude": 46.56808914585159
+      "latitude": 46.56808914585159,
+      "mp_station_id": "grimmialp-1382"
     },
     {
       "name": "Wiriehorn",
@@ -398,7 +437,8 @@
       "total_pistes_km": 11.2,
       "region": "Bern",
       "longitude": 7.5325803582942035,
-      "latitude": 46.61252901034902
+      "latitude": 46.61252901034902,
+      "mp_station_id": "wiriehorn-1383"
     },
     {
       "name": "Métabief",
@@ -408,7 +448,8 @@
       "total_pistes_km": 26,
       "region": "France",
       "longitude": 6.356785137984372,
-      "latitude": 46.76819341181181
+      "latitude": 46.76819341181181,
+      "mp_station_id": "metabief-1794"
     },
     {
       "name": "Heimenschwand",
@@ -418,7 +459,8 @@
       "total_pistes_km": 5,
       "region": "Bern",
       "longitude": 7.682016440043427,
-      "latitude": 46.82587250228796
+      "latitude": 46.82587250228796,
+      "mp_station_id": "heimenschwand-1795"
     },
     {
       "name": "Niederhorn",
@@ -428,7 +470,8 @@
       "total_pistes_km": 12,
       "region": "Bern",
       "longitude": 7.7657496890212085,
-      "latitude": 46.69088660780959
+      "latitude": 46.69088660780959,
+      "mp_station_id": "niederhorn-1796"
     },
     {
       "name": "Eriz",
@@ -438,7 +481,8 @@
       "total_pistes_km": 6,
       "region": "Bern",
       "longitude": 7.8269260255131,
-      "latitude": 46.784517474297665
+      "latitude": 46.784517474297665,
+      "mp_station_id": "eriz-1797"
     },
     {
       "name": "Habkern",
@@ -448,7 +492,8 @@
       "total_pistes_km": 3,
       "region": "Bern",
       "longitude": 7.86272033342666,
-      "latitude": 46.731880132067644
+      "latitude": 46.731880132067644,
+      "mp_station_id": "habkern-1798"
     },
     {
       "name": "Beatenberg-Hohwald",
@@ -458,7 +503,8 @@
       "total_pistes_km": 8,
       "region": "Bern",
       "longitude": 7.816372607499774,
-      "latitude": 46.70502657551941
+      "latitude": 46.70502657551941,
+      "mp_station_id": "beatenberg-hohwald-1799"
     },
     {
       "name": "Axalp",
@@ -468,7 +514,8 @@
       "total_pistes_km": 15,
       "region": "Bern",
       "longitude": 8.037253647808717,
-      "latitude": 46.7186670279118
+      "latitude": 46.7186670279118,
+      "mp_station_id": "axalp-1800"
     },
     {
       "name": "Rossberg",
@@ -478,7 +525,8 @@
       "total_pistes_km": 5,
       "region": "Bern",
       "longitude": 7.445543490301837,
-      "latitude": 46.63787110202527
+      "latitude": 46.63787110202527,
+      "mp_station_id": "rossberg-1801"
     },
     {
       "name": "Jaunpass",
@@ -488,7 +536,8 @@
       "total_pistes_km": 12.5,
       "region": "Bern",
       "longitude": 7.336747734696657,
-      "latitude": 46.59128900579244
+      "latitude": 46.59128900579244,
+      "mp_station_id": "jaunpass-1802"
     },
     {
       "name": "Rosswald",
@@ -498,7 +547,8 @@
       "total_pistes_km": 25,
       "region": "Valais",
       "longitude": 8.042697042499132,
-      "latitude": 46.30418953623298
+      "latitude": 46.30418953623298,
+      "mp_station_id": "rosswald-1803"
     },
     {
       "name": "Faltschen",
@@ -508,7 +558,8 @@
       "total_pistes_km": 2.2,
       "region": "Bern",
       "longitude": 7.719865889035955,
-      "latitude": 46.6309195466475
+      "latitude": 46.6309195466475,
+      "mp_station_id": "faltschen-1804"
     },
     {
       "name": "Aeschiallmend",
@@ -518,7 +569,8 @@
       "total_pistes_km": 4,
       "region": "Bern",
       "longitude": 7.7271129824733205,
-      "latitude": 46.647512270457185
+      "latitude": 46.647512270457185,
+      "mp_station_id": "aeschiallmend-1805"
     },
     {
       "name": "Bumbach Schangnau",
@@ -528,7 +580,8 @@
       "total_pistes_km": 10,
       "region": "Bern",
       "longitude": 7.891206355837492,
-      "latitude": 46.813433950646036
+      "latitude": 46.813433950646036,
+      "mp_station_id": "bumbach-schangnau-2765"
     },
     {
       "name": "Eischoll",
@@ -538,7 +591,8 @@
       "total_pistes_km": 15,
       "region": "Valais",
       "longitude": 7.780841811807964,
-      "latitude": 46.29277565138114
+      "latitude": 46.29277565138114,
+      "mp_station_id": "eischoll-2766"
     },
     {
       "name": "Gantrisch Gurnigel",
@@ -548,7 +602,8 @@
       "total_pistes_km": 6,
       "region": "Bern",
       "longitude": 7.446287520177475,
-      "latitude": 46.7242719793097
+      "latitude": 46.7242719793097,
+      "mp_station_id": "gantrisch-gurnigel-2767"
     },
     {
       "name": "Gspon",
@@ -557,8 +612,9 @@
       "vertical_drop": 300,
       "total_pistes_km": 5,
       "region": "Valais",
-      "longitude": 7.870814555652585, 
-      "latitude": 46.23178851507617
+      "longitude": 7.870814555652585,
+      "latitude": 46.23178851507617,
+      "mp_station_id": "gspon-2768"
     },
     {
       "name": "Gurnigelbad",
@@ -568,7 +624,8 @@
       "total_pistes_km": 0.7,
       "region": "Bern",
       "longitude": 7.450451660540231,
-      "latitude": 46.75988160723069
+      "latitude": 46.75988160723069,
+      "mp_station_id": "gurnigelbad-2769"
     },
     {
       "name": "Kiental",
@@ -577,8 +634,9 @@
       "vertical_drop": 564,
       "total_pistes_km": 7,
       "region": "Bern",
-      "longitude": 7.723553036508048, 
-      "latitude": 46.58550176167791
+      "longitude": 7.723553036508048,
+      "latitude": 46.58550176167791,
+      "mp_station_id": "kiental-2770"
     },
     {
       "name": "Ste-Croix/Les Rasses",
@@ -588,7 +646,8 @@
       "total_pistes_km": 20,
       "region": "Vaud",
       "longitude": 6.541234622902881,
-      "latitude": 46.830841759572465
+      "latitude": 46.830841759572465,
+      "mp_station_id": "ste-croix-les-rasses-2772"
     },
     {
       "name": "Marbachegg",
@@ -598,7 +657,8 @@
       "total_pistes_km": 15,
       "region": "Lucerne",
       "longitude": 7.896084391752267,
-      "latitude": 46.84999848429507
+      "latitude": 46.84999848429507,
+      "mp_station_id": "marbachegg-2773"
     },
     {
       "name": "Moosalp",
@@ -608,7 +668,8 @@
       "total_pistes_km": 25,
       "region": "Valais",
       "longitude": 7.827340818715531,
-      "latitude": 46.27122916145885
+      "latitude": 46.27122916145885,
+      "mp_station_id": "moosalp-2774"
     },
     {
       "name": "Ottenleue",
@@ -618,7 +679,8 @@
       "total_pistes_km": 5,
       "region": "Bern",
       "longitude": 7.365524934075745,
-      "latitude": 46.73198020575114
+      "latitude": 46.73198020575114,
+      "mp_station_id": "ottenleue-2775"
     },
     {
       "name": "Riffenmatt",
@@ -628,7 +690,8 @@
       "total_pistes_km": 0.3,
       "region": "Bern",
       "longitude": 7.354398821930542,
-      "latitude": 46.76355537386148
+      "latitude": 46.76355537386148,
+      "mp_station_id": "riffenmatt-2776"
     },
     {
       "name": "Rüschegg",
@@ -638,7 +701,8 @@
       "total_pistes_km": 13,
       "region": "Bern",
       "longitude": 7.421135203385842,
-      "latitude": 46.76022316893306
+      "latitude": 46.76022316893306,
+      "mp_station_id": "ruschegg-2777"
     },
     {
       "name": "Selital",
@@ -648,7 +712,8 @@
       "total_pistes_km": 10,
       "region": "Bern",
       "longitude": 7.391487981966824,
-      "latitude": 46.74106393630991
+      "latitude": 46.74106393630991,
+      "mp_station_id": "selital-2778"
     },
     {
       "name": "Unterbäch",
@@ -658,7 +723,8 @@
       "total_pistes_km": 20,
       "region": "Valais",
       "longitude": 7.801307927153058,
-      "latitude": 46.284095061517014
+      "latitude": 46.284095061517014,
+      "mp_station_id": "unterbach-2779"
     },
     {
       "name": "Visperterminen",
@@ -668,7 +734,8 @@
       "total_pistes_km": 20,
       "region": "Valais",
       "longitude": 7.9082947980938005,
-      "latitude": 46.258966141419734
+      "latitude": 46.258966141419734,
+      "mp_station_id": "visperterminen-2780"
     },
     {
       "name": "Schwanden",
@@ -678,7 +745,8 @@
       "total_pistes_km": 5,
       "region": "Bern",
       "longitude": 7.731701782397368,
-      "latitude": 46.73315477442338
+      "latitude": 46.73315477442338,
+      "mp_station_id": "schwanden-3587"
     },
     {
       "name": "Wilerallmi",
@@ -688,7 +756,8 @@
       "total_pistes_km": 5,
       "region": "Obwalden",
       "longitude": 7.7394430536394605,
-      "latitude": 46.724501791507016
+      "latitude": 46.724501791507016,
+      "mp_station_id": "wilerallmi-3588"
     },
     {
       "name": "Homberg",
@@ -698,7 +767,8 @@
       "total_pistes_km": 3,
       "region": "Bern",
       "longitude": 7.677867575059558,
-      "latitude": 46.77274679281021
+      "latitude": 46.77274679281021,
+      "mp_station_id": "homberg-3589"
     },
     {
       "name": "Hirmentaz",
@@ -708,7 +778,8 @@
       "total_pistes_km": 25,
       "region": "France",
       "longitude": 6.505831361324095,
-      "latitude": 46.244893410774466
+      "latitude": 46.244893410774466,
+      "mp_station_id": "hirmentaz-3590"
     },
     {
       "name": "Les Habères",
@@ -718,7 +789,8 @@
       "total_pistes_km": 18,
       "region": "France",
       "longitude": 6.479924130994449,
-      "latitude": 46.239820344792356
+      "latitude": 46.239820344792356,
+      "mp_station_id": "les-haberes-3607"
     },
     {
       "name": "Jura-sur-Léman (Transfrontalier)",
@@ -728,7 +800,8 @@
       "total_pistes_km": 40,
       "region": "France/Switzerland",
       "longitude": 6.083164632197836,
-      "latitude": 46.44107424696443
+      "latitude": 46.44107424696443,
+      "mp_station_id": "jura-sur-leman-transfrontalier-3608"
     },
     {
       "name": "Monts Jura",
@@ -738,7 +811,8 @@
       "total_pistes_km": 19.5,
       "region": "France",
       "longitude": 6.007458301516019,
-      "latitude": 46.28278674737834
+      "latitude": 46.28278674737834,
+      "mp_station_id": "monts-jura-3609"
     },
     {
       "name": "Thollon Les Mémises",
@@ -748,7 +822,8 @@
       "total_pistes_km": 17,
       "region": "France",
       "longitude": 6.717127921284948,
-      "latitude": 46.39057276009724
+      "latitude": 46.39057276009724,
+      "mp_station_id": "thollon-les-memises-3610"
     },
     {
       "name": "Saint-Cergue",
@@ -758,7 +833,8 @@
       "total_pistes_km": 10,
       "region": "Vaud",
       "longitude": 6.155524835072194,
-      "latitude": 46.44583574475864
+      "latitude": 46.44583574475864,
+      "mp_station_id": "saint-cergue-3611"
     },
     {
       "name": "San Domenico",
@@ -768,7 +844,8 @@
       "total_pistes_km": 32.6,
       "region": "Italy",
       "longitude": 8.188886053624275,
-      "latitude": 46.24990903906886
+      "latitude": 46.24990903906886,
+      "mp_station_id": "san-domenico-3613"
     },
     {
       "name": "Devero",
@@ -778,7 +855,8 @@
       "total_pistes_km": 9,
       "region": "Italy",
       "longitude": 8.255122160082493,
-      "latitude": 46.31477423646774
+      "latitude": 46.31477423646774,
+      "mp_station_id": "devero-3614"
     },
     {
       "name": "Balmberg",
@@ -788,7 +866,8 @@
       "total_pistes_km": 5,
       "region": "Solothurn",
       "longitude": 7.543731020116581,
-      "latitude": 47.26655077895426
+      "latitude": 47.26655077895426,
+      "mp_station_id": "balmberg-4444"
     },
     {
       "name": "Grenchenberg",
@@ -798,7 +877,8 @@
       "total_pistes_km": 10,
       "region": "Solothurn",
       "longitude": 7.385460711838013,
-      "latitude": 47.22382662984919
+      "latitude": 47.22382662984919,
+      "mp_station_id": "grenchenberg-4446"
     },
     {
       "name": "Le Grand-Bornand",
@@ -808,7 +888,8 @@
       "total_pistes_km": 90,
       "region": "France",
       "longitude": 6.451529047489896,
-      "latitude": 45.97020099571824
+      "latitude": 45.97020099571824,
+      "mp_station_id": "le-grand-bornand-4448"
     },
     {
       "name": "Linden",
@@ -818,7 +899,8 @@
       "total_pistes_km": 2.2,
       "region": "Bern",
       "longitude": 7.678181680625299,
-      "latitude": 46.84510382114145
+      "latitude": 46.84510382114145,
+      "mp_station_id": "linden-4449"
     },
     {
       "name": "Massif des Brasses",
@@ -828,7 +910,8 @@
       "total_pistes_km": 37,
       "region": "France",
       "longitude": 6.450852256640347,
-      "latitude": 46.176490365604295
+      "latitude": 46.176490365604295,
+      "mp_station_id": "massif-des-brasses-4450"
     },
     {
       "name": "Meiringen-Hasliberg",
@@ -838,7 +921,8 @@
       "total_pistes_km": 60,
       "region": "Bern",
       "longitude": 8.197250324581125,
-      "latitude": 46.74568904336333
+      "latitude": 46.74568904336333,
+      "mp_station_id": "meiringen-hasliberg-4451"
     },
     {
       "name": "Melchsee-Frutt",
@@ -848,7 +932,8 @@
       "total_pistes_km": 36,
       "region": "Obwalden",
       "longitude": 8.269084728420161,
-      "latitude": 46.77636399756147
+      "latitude": 46.77636399756147,
+      "mp_station_id": "melchsee-frutt-4452"
     },
     {
       "name": "Mörlialp Giswil",
@@ -858,7 +943,8 @@
       "total_pistes_km": 12,
       "region": "Obwalden",
       "longitude": 8.109592089897003,
-      "latitude": 46.82552410290639
+      "latitude": 46.82552410290639,
+      "mp_station_id": "morlialp-giswil-4453"
     },
     {
       "name": "Praz de Lys – Sommand",
@@ -868,7 +954,8 @@
       "total_pistes_km": 72,
       "region": "France",
       "longitude": 6.593153526341044,
-      "latitude": 46.14929034668601
+      "latitude": 46.14929034668601,
+      "mp_station_id": "praz-de-lys-sommand-4454"
     },
     {
       "name": "Sörenberg",
@@ -878,7 +965,8 @@
       "total_pistes_km": 42,
       "region": "Lucerne",
       "longitude": 8.032216810631517,
-      "latitude": 46.823930873991756
+      "latitude": 46.823930873991756,
+      "mp_station_id": "sorenberg-4455"
     }
   ]
 }
