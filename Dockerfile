@@ -3,16 +3,10 @@ FROM python:3.12-slim
 # Set the working directory
 WORKDIR /app
 
-# Copy the pyproject.toml and poetry.lock files
-COPY pyproject.toml poetry.lock* /app/
-
 # Install Poetry
-RUN pip install poetry
+RUN pip install poetry uv
 
-# Create data directory for SQLite database
-RUN mkdir -p /app/data
-
-# Copy the rest of the application code
+# Copy the application code
 COPY . /app
 
 # Install dependencies
@@ -25,4 +19,4 @@ VOLUME ["/app/data"]
 EXPOSE 8501
 
 # Command to run the application
-CMD ["poetry", "run", "streamlit", "run", "ski_planner_app/app.py"]
+CMD ["poetry", "run", "python", "-m", "streamlit", "run", "ski_planner_app/app.py"]

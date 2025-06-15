@@ -16,8 +16,7 @@ dependencies = [
 ]
 
 packages = [
-    { include = "agent" },
-    { include = "src" },
+    { include = "ski_planner_app" },
 ] 
 
 [build-system]
