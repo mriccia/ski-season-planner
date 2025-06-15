@@ -46,6 +46,7 @@ class DatabaseService:
             total_pistes_km REAL,
             longitude REAL,
             latitude REAL,
+            magic_pass_url TEXT,
             UNIQUE(name)
         )
         ''')
@@ -82,6 +83,7 @@ class DatabaseService:
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_stations_region ON stations(region)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_stations_pistes ON stations(total_pistes_km)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_stations_coordinates ON stations(longitude, latitude)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_stations_magic_pass_url ON stations(magic_pass_url)')
         
         conn.commit()
         conn.close()
@@ -144,7 +146,7 @@ class DatabaseService:
             return 0
         
         try:
-            with open(json_path, 'r') as f:
+            with open(json_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
             conn = self._get_connection()
@@ -155,8 +157,8 @@ class DatabaseService:
                 cursor.execute('''
                 INSERT OR REPLACE INTO stations 
                 (name, region, base_altitude, top_altitude, vertical_drop, 
-                total_pistes_km, longitude, latitude)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                total_pistes_km, longitude, latitude, magic_pass_url)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     station.get('name'),  # Name is required
                     station.get('region'),
@@ -165,7 +167,8 @@ class DatabaseService:
                     station.get('vertical_drop'),
                     station.get('total_pistes_km'),
                     station.get('longitude'),
-                    station.get('latitude')
+                    station.get('latitude'),
+                    f"https://www.magicpass.ch/en/ski-resorts/{station['mp_station_id']}"
                 ))
                 count += 1
             

@@ -41,7 +41,7 @@ def render_preferences_sidebar() -> None:
         # Transport mode selection
         transport_mode = st.radio(
             "Mode of Transport",
-            options=["Car", "Public Transport"],
+            options=["Car"],
             index=0 if st.session_state.preferences.transport_mode == "Car" else 1,
             horizontal=True
         )

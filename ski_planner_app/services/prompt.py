@@ -69,7 +69,7 @@ Use these queries as templates to access the data you need:
 
 1. To find resorts with specific characteristics:
 ```sql
-SELECT name, region, base_altitude, top_altitude, vertical_drop, total_pistes_km
+SELECT name, region, base_altitude, top_altitude, vertical_drop, total_pistes_km, magic_pass_url
 FROM stations
 WHERE total_pistes_km > 50
 ORDER BY total_pistes_km DESC;
@@ -77,7 +77,7 @@ ORDER BY total_pistes_km DESC;
 
 2. To get travel information from the user's home location:
 ```sql
-SELECT s.name, s.region, s.total_pistes_km, s.vertical_drop, d.distance, d.duration
+SELECT s.name, s.region, s.total_pistes_km, s.vertical_drop, s.magic_pass_url, d.distance, d.duration
 FROM stations s
 JOIN distances d ON s.name = d.destination
 WHERE d.origin = '{preferences.home_location}'
@@ -87,7 +87,7 @@ ORDER BY d.duration ASC;
 
 3. To find resorts with good snow conditions (higher altitude):
 ```sql
-SELECT name, region, base_altitude, top_altitude, total_pistes_km
+SELECT name, region, base_altitude, top_altitude, total_pistes_km, magic_pass_url
 FROM stations
 WHERE top_altitude > 2500
 ORDER BY top_altitude DESC;
@@ -95,7 +95,7 @@ ORDER BY top_altitude DESC;
 
 4. To find resorts that match specific criteria and are within reasonable travel time:
 ```sql
-SELECT s.name, s.region, s.total_pistes_km, s.vertical_drop, d.distance, d.duration
+SELECT s.name, s.region, s.total_pistes_km, s.vertical_drop, s.magic_pass_url, d.distance, d.duration
 FROM stations s
 JOIN distances d ON s.name = d.destination
 WHERE d.origin = '{preferences.home_location}'
@@ -107,18 +107,16 @@ ORDER BY s.total_pistes_km DESC;
 
 **Preferences:**
 - Criteria: {', '.join(preferences.criteria)}
-- Priorities (between 1 and 10): {priorities_text}
+- User Priorities, defining how important a each aspect is for the user (between 1 and 10. 1=least important, 10=most important): {priorities_text}
 - Mode of Transport: {transport}
 
 **Tasks:**
 1. First, use the SQLite MCP to query the database and find suitable resorts based on the user's preferences.
 2. Recommend one specific resort for each of the {len(trips)} trips.
-3. For EACH recommended resort, use the Fetch MCP tool to check the Magic Pass website (https://www.magicpass.ch/en/stations) for additional information.
+3. For EACH recommended resort, use the Fetch MCP tool to check the resort link in the field `magic_pass_url` for additional information. Inlcude this information and reference using the format: [Magic Pass - Resort Name](magic_pass_url).
 4. Include key data points in your recommendations: resort name, region, total piste length, vertical drop, distance from home, and travel duration.
-5. Explain why each resort matches their preferences, using specific data from the database.
-6. Suggest any adjustments to trip dates for a better experience (e.g., based on altitude for snow conditions).
-7. Provide tips for each resort (best runs, facilities, etc.) using information from both the database AND the Magic Pass website.
-8. Include transport recommendations based on their preferred mode of transport ({transport}).
+5. Explain why each resort matches their preferences, using specific data from the database and Magic Pass website data.
+6. When multiple trips are planned, ensure each trip has a unique recommendation based on the date and user preferences.
 
 **Guidelines for Using SQLite MCP:**
 1. Start by exploring the available data with basic queries to understand what's available.
@@ -128,12 +126,13 @@ ORDER BY s.total_pistes_km DESC;
 5. Filter by the user's transport mode: `d.transport_mode = '{transport}'`
 6. Consider the user's priorities when ordering results (e.g., if they prioritize short travel time, order by duration).
 7. Use multiple queries to gather different perspectives on the data before making recommendations.
-8. For EACH resort you recommend, use the Fetch MCP tool to look up additional information at https://www.magicpass.ch/en/stations to enhance your recommendations with the most current details.
 
 **Format:**
 1. Introduction
-2. Trip Overview with Recommendations (include specific data points for each resort)
-3. Tips and Recommendations
+2. Trip x of {len(trips)}: Resort Name
+2a. Overview with Recommendations (include dates, specific data points and Magic Pass link)
+2b. Tips and Recommendations
+
 
 Please ensure you have all the necessary data available to complete this task. Only return your response once the plan is fully generated and all steps are completed.
 """

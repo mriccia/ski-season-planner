@@ -71,33 +71,11 @@ class StationService:
                     logger.info(f"Loaded {len(db_stations)} stations from database")
                     self._stations = [self._dict_to_station(s) for s in db_stations]
                 else:
-                    # Fall back to JSON file
-                    logger.info(f"No stations in database, loading from {self.data_file}")
-                    self._load_from_json()
+                    raise RuntimeError("No stations found in the database")
             except Exception as e:
                 logger.error(f"Error loading stations from database: {str(e)}", exc_info=True)
-                # Fall back to JSON file
-                logger.info(f"Falling back to loading from {self.data_file}")
-                self._load_from_json()
                 
         return self._stations
-    
-    def _load_from_json(self):
-        """Load stations from the JSON file."""
-        try:
-            with open(self.data_file, 'r') as f:
-                data = json.load(f)
-            self._stations = [Station.from_dict(s) for s in data['stations']]
-            logger.info(f"Successfully loaded {len(self._stations)} stations from JSON")
-        except FileNotFoundError as e:
-            logger.error(f"Station data file not found: {self.data_file}", exc_info=True)
-            raise RuntimeError(f"Error loading station data: {str(e)}")
-        except json.JSONDecodeError as e:
-            logger.error(f"Invalid JSON in station data file: {self.data_file}", exc_info=True)
-            raise RuntimeError(f"Error loading station data: {str(e)}")
-        except Exception as e:
-            logger.error(f"Unexpected error loading stations: {str(e)}", exc_info=True)
-            raise RuntimeError(f"Error loading station data: {str(e)}")
     
     def _dict_to_station(self, station_dict: Dict[str, Any]) -> Station:
         """
@@ -109,16 +87,18 @@ class StationService:
         Returns:
             Station: A Station object
         """
+            
         # Create station object with flattened structure
         return Station(
-            name=station_dict.get('name', ''),
-            region=station_dict.get('region', ''),
-            base_altitude=station_dict.get('base_altitude', 0),
-            top_altitude=station_dict.get('top_altitude', 0),
-            vertical_drop=station_dict.get('vertical_drop', 0),
-            total_pistes_km=station_dict.get('total_pistes_km', 0),
-            longitude=station_dict.get('longitude', 0.0),
-            latitude=station_dict.get('latitude', 0.0)
+            name=station_dict.get('name'),
+            region=station_dict.get('region'),
+            base_altitude=station_dict.get('base_altitude'),
+            top_altitude=station_dict.get('top_altitude'),
+            vertical_drop=station_dict.get('vertical_drop'),
+            total_pistes_km=station_dict.get('total_pistes_km'),
+            longitude=station_dict.get('longitude'),
+            latitude=station_dict.get('latitude'),
+            magic_pass_url=station_dict.get('magic_pass_url')
         )
     
     def get_all_stations(self) -> List[Station]:

@@ -18,6 +18,7 @@ class Station:
         total_pistes_km (float): Total length of all ski slopes in kilometers
         longitude (float): Longitude coordinate
         latitude (float): Latitude coordinate
+        magic_pass_url (str): URL to the Magic Pass page for this station
     """
     name: str
     region: str
@@ -27,6 +28,7 @@ class Station:
     total_pistes_km: float
     longitude: float
     latitude: float
+    magic_pass_url: str
     
     @classmethod
     def from_dict(cls, data: Dict) -> 'Station':
@@ -41,13 +43,14 @@ class Station:
         """
         return cls(
             name=data['name'],
-            region=data.get('region', ''),
-            base_altitude=data.get('base_altitude', 0),
-            top_altitude=data.get('top_altitude', 0),
-            vertical_drop=data.get('vertical_drop', 0),
-            total_pistes_km=data.get('total_pistes_km', 0),
-            longitude=data.get('longitude', 0.0),
-            latitude=data.get('latitude', 0.0)
+            region=data.get('region'),
+            base_altitude=data.get('base_altitude'),
+            top_altitude=data.get('top_altitude'),
+            vertical_drop=data.get('vertical_drop'),
+            total_pistes_km=data.get('total_pistes_km'),
+            longitude=data.get('longitude'),
+            latitude=data.get('latitude'),
+            magic_pass_url=data['magic_pass_url']
         )
     
     def to_dict(self) -> Dict:
@@ -65,7 +68,8 @@ class Station:
             'vertical_drop': self.vertical_drop,
             'total_pistes_km': self.total_pistes_km,
             'longitude': self.longitude,
-            'latitude': self.latitude
+            'latitude': self.latitude,
+            'magic_pass_url': self.magic_pass_url
         }
     
     def get_coordinates(self) -> List[float]:

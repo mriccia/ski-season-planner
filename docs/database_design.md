@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS stations (
     total_pistes_km REAL,
     longitude REAL,
     latitude REAL,
+    magic_pass_url TEXT,
     UNIQUE(name)
 )
 ```
@@ -62,6 +63,7 @@ CREATE INDEX IF NOT EXISTS idx_stations_name ON stations(name)
 CREATE INDEX IF NOT EXISTS idx_stations_region ON stations(region)
 CREATE INDEX IF NOT EXISTS idx_stations_pistes ON stations(total_pistes_km)
 CREATE INDEX IF NOT EXISTS idx_stations_coordinates ON stations(longitude, latitude)
+CREATE INDEX IF NOT EXISTS idx_stations_magic_pass_url ON stations(magic_pass_url)
 ```
 
 ## Common Queries
@@ -75,7 +77,7 @@ WHERE origin = ?;
 
 ### 2. Get closest resorts for a city
 ```sql
-SELECT s.name, s.region, s.total_pistes_km, d.distance, d.duration 
+SELECT s.name, s.region, s.total_pistes_km, s.magic_pass_url, d.distance, d.duration 
 FROM stations s
 JOIN distances d ON s.name = d.destination
 WHERE d.origin = ? AND d.transport_mode = ?
@@ -84,7 +86,7 @@ ORDER BY d.distance ASC;
 
 ### 3. Get resorts sorted by piste length
 ```sql
-SELECT s.name, s.region, s.total_pistes_km, d.distance, d.duration 
+SELECT s.name, s.region, s.total_pistes_km, s.magic_pass_url, d.distance, d.duration 
 FROM stations s
 JOIN distances d ON s.name = d.destination
 WHERE d.origin = ? AND d.transport_mode = ?
@@ -93,7 +95,7 @@ ORDER BY s.total_pistes_km DESC, d.distance ASC;
 
 ### 4. Get resorts with specific criteria
 ```sql
-SELECT s.name, s.region, s.total_pistes_km, s.vertical_drop, d.distance, d.duration 
+SELECT s.name, s.region, s.total_pistes_km, s.vertical_drop, s.magic_pass_url, d.distance, d.duration 
 FROM stations s
 JOIN distances d ON s.name = d.destination
 WHERE d.origin = ? 
