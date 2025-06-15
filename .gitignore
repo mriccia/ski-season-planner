@@ -8,7 +8,6 @@ poetry.lock
 *.egg
 *.egg-info
 *.whl
-*.db
 *.sqlite3
 *.log
 *.coverage

@@ -116,17 +116,17 @@ The application interacts with the database through a `DatabaseService` class th
    - `initialize_db(self)`: Create tables and indexes if they don't exist
 
 2. **Station Operations**:
-   - `import_stations_from_json(self, json_data)`: Import stations from JSON data
+   - `import_stations_from_json(self, json_path)`: Import stations from JSON file
    - `get_all_stations(self)`: Get all stations from the database
-   - `get_station_by_name(self, name)`: Get a station by name
-   - `get_stations_by_region(self, region)`: Get stations by region
+   - `get_all_stations_with_distances(self, origin, transport_mode)`: Get stations with distance information
+   - `is_stations_table_populated(self)`: Check if stations table has data
 
 3. **Distance Operations**:
    - `save_distance(self, origin, destination, transport_mode, distance, duration)`: Save distance calculation
    - `get_distance(self, origin, destination, transport_mode)`: Get distance between two locations
-   - `get_all_distances(self, origin, transport_mode)`: Get all distances from an origin
+   - `get_all_destinations_with_distances(self, origin, transport_mode)`: Get all destinations with calculated distances
    - `mark_origin_calculated(self, origin, transport_mode, complete=True)`: Mark an origin as calculated
-   - `is_origin_calculated(self, origin, transport_mode)`: Check if an origin has been calculated
+   - `check_origin_calculated(self, origin, transport_mode)`: Check if an origin has been calculated
 
 ## Performance Considerations
 1. The database is used to cache distance calculations to reduce API calls
@@ -166,4 +166,4 @@ The application interacts with the database through a `DatabaseService` class th
 6. **Performance Metrics**: Add logging for performance monitoring
 
 ## MCP Integration
-The database can be accessed through the Claude MCP SQLite server, allowing the Agent Service to query the database directly. See the `mcp_usage.md` document for details on setting up and using the MCP server with this database.
+The database can be accessed through the Claude MCP SQLite server, allowing the Agent Service to query the database directly for enhanced LLM-powered recommendations.
