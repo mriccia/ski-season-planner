@@ -3,6 +3,12 @@
 ## Overview
 The Ski Season Planner is a Streamlit application designed to help users plan their ski trips efficiently. This application allows users to manage their ski season activities, including tracking locations, dates, and preferences to generate personalised ski trip recommendations using AI.
 
+## Demo
+Here a demo of the solution.
+
+https://github.com/user-attachments/assets/02af48ad-88a9-4e05-806d-073b4392139e
+
+
 ## Features
 - Set user preferences including home location and skiing criteria
 - Add multiple ski trips with specific dates
